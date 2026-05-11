@@ -31,7 +31,7 @@
   "devDependencies": {
     "@axe-core/react": "^4.11.1",
     "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
+    "@commitlint/config-conventional": "^21.0.0",
     "@eslint/eslintrc": "^3",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.58.2",
