@@ -25,6 +25,7 @@ const Header: React.FC = () => {
       { label: 'Home', path: '/#hero' },
       { label: 'Mission', path: '/#mission' },
       { label: 'Areas of Ministry', path: '/#areas' },
+      { label: 'Blog', path: '/blog' },
       { label: 'Support', path: '/#support' },
       { label: 'Contact', path: '/#contact' },
     ],
@@ -33,7 +34,10 @@ const Header: React.FC = () => {
 
   const sections = useMemo(
     () =>
-      menuItems.map((item) => item.path.replace('/#', '')).filter((section) => section !== 'hero'),
+      menuItems
+        .filter((item) => item.path.startsWith('/#'))
+        .map((item) => item.path.replace('/#', ''))
+        .filter((section) => section !== 'hero'),
     [menuItems]
   )
 
@@ -75,6 +79,7 @@ const Header: React.FC = () => {
   }
 
   const isActive = (path: string) => {
+    if (!path.startsWith('/#')) return false
     const sectionId = path.replace('/#', '')
     if (sectionId === 'hero') return activeSection === ''
     return activeSection === sectionId
