@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'pay.thewayofyeshuaministries.org',
+        hostname: 'www.zeffy.com',
       },
     ],
   },
