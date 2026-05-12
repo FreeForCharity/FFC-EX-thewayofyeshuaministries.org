@@ -5,7 +5,7 @@ const VerseBanner = () => {
     <section
       className="relative py-[80px] bg-cover bg-center"
       style={{
-        backgroundImage: 'url(/Images/yeshua/verse-bg.jpg)',
+        backgroundImage: 'url(/Images/yeshua/gallery-3.jpg)',
       }}
       aria-label="Scripture banner"
     >

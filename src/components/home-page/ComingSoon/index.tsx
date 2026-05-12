@@ -18,7 +18,7 @@ const ComingSoon = () => {
           Coming Soon
         </h2>
         <h3
-          className="font-[500] text-[20px] lg:text-[24px] leading-[140%] text-center mb-[30px] text-[#2E6F8E]"
+          className="font-[500] text-[20px] lg:text-[24px] leading-[140%] text-center mb-[30px] text-[#C9A24B]"
           id="lato-font"
         >
           Exploring Thewayofyeshuaministries.org

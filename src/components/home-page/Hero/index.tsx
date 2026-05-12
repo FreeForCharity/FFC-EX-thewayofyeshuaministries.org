@@ -1,74 +1,59 @@
 import React from 'react'
-import Image from 'next/image'
 
 const YeshuaHero = () => {
   return (
-    <div id="hero" className="relative w-full pb-[100px] overflow-hidden">
-      {/* Base sky-blue layer */}
-      <div className="absolute inset-0 bg-[#2E6F8E]" />
-      {/* Subtle light diagonal strip */}
+    <section
+      id="hero"
+      className="relative w-full min-h-[640px] lg:min-h-[760px] overflow-hidden pt-[80px]"
+    >
+      {/* Full-bleed photographic hero */}
       <div
-        className="absolute inset-0 bg-white"
-        style={{
-          clipPath: 'polygon(0% 108%, 100% 32%, 100% 35%, 0% 111%)',
-        }}
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: 'url(/Images/yeshua/hero-dove-cross.jpg)' }}
+        aria-hidden="true"
       />
-      {/* Warm bottom-right section */}
-      <div
-        className="absolute inset-0 bg-[#C9A24B]"
-        style={{
-          clipPath: 'polygon(0% 111%, 100% 35%, 100% 100%, 0% 100%)',
-        }}
-      />
+      {/* Soft dark overlay so text remains readable */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/45 to-black/70" />
 
-      <div className="hero-container flex flex-col lg:flex-row gap-[40px] lg:gap-[0px] items-center justify-between relative z-10 text-white pt-[130px] w-[90%] mx-auto max-w-[1280px] lg:px-[20px]">
-        <div className="w-full lg:w-[565px]">
-          <h1
-            className="text-[44px] lg:text-[56px] font-[500] text-[#FFFFFF] leading-[120%] mb-[20px]"
-            id="faustina-font"
-          >
-            The Way of Yeshua Ministries
-          </h1>
-          <p
-            className="text-[22px] font-[400] leading-[140%] text-[#FFFFFF] mb-[30px]"
+      <div className="relative z-10 w-[90%] max-w-[1100px] mx-auto pt-[60px] pb-[120px] text-center text-white flex flex-col items-center">
+        <h1
+          className="text-[40px] sm:text-[52px] lg:text-[68px] font-[500] leading-[110%] mb-[24px] drop-shadow-md"
+          id="faustina-font"
+        >
+          The Way of Yeshua Ministries
+        </h1>
+        <p
+          className="text-[20px] lg:text-[24px] font-[400] leading-[150%] mb-[40px] max-w-[760px] drop-shadow"
+          id="lato-font"
+        >
+          Christian Teachings and Community Inspiration &mdash; spreading the Word of God and
+          fostering a vibrant faith community.
+        </p>
+        <div className="flex flex-wrap gap-[12px] justify-center">
+          <a
+            href="#mission"
+            className="rounded-[27px] px-[30px] py-[15px] bg-[#C9A24B] text-black text-[18px] font-[600] hover:bg-[#b18d39] transition-colors"
             id="lato-font"
           >
-            Christian Teachings and Community Inspiration — spreading the Word of God and fostering
-            a vibrant faith community.
-          </p>
-          <div className="flex flex-wrap gap-[10px]">
-            <a
-              href="#mission"
-              className="w-[230px] h-[54px] rounded-[27px] px-[32px] py-[18px] flex items-center justify-center gap-[10px] bg-[#FFFFFF] text-[#113563] text-[20px] font-[500] leading-[100%] whitespace-nowrap"
-              id="lato-font"
-            >
-              Our Mission
-            </a>
-            <a
-              href="#contact"
-              className="w-[230px] h-[54px] rounded-[27px] px-[32px] py-[18px] flex items-center justify-center gap-[10px] bg-[#FFFFFF] text-[#113563] text-[20px] font-[500] leading-[100%] whitespace-nowrap"
-              id="lato-font"
-            >
-              Contact Us
-            </a>
-          </div>
-        </div>
-
-        {/* Right side hero image */}
-        <div className="relative w-full max-w-[445px] aspect-square bg-white rounded-full p-8 flex items-center justify-center">
-          <div className="relative w-full h-full rounded-full overflow-hidden">
-            <Image
-              src="/Images/yeshua/hero-dove-cross.jpg"
-              alt="A white dove flying near a wooden cross and an open Bible"
-              fill
-              className="object-cover"
-              priority
-              sizes="(max-width: 1024px) 100vw, 445px"
-            />
-          </div>
+            Our Mission
+          </a>
+          <a
+            href="#areas"
+            className="rounded-[27px] px-[30px] py-[15px] bg-white text-black text-[18px] font-[600] hover:bg-gray-100 transition-colors"
+            id="lato-font"
+          >
+            Areas of Ministry
+          </a>
+          <a
+            href="#support"
+            className="rounded-[27px] px-[30px] py-[15px] border-2 border-white text-white text-[18px] font-[600] hover:bg-white hover:text-black transition-colors"
+            id="lato-font"
+          >
+            Support Us
+          </a>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 

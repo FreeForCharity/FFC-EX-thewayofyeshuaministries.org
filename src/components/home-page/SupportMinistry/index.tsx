@@ -35,7 +35,7 @@ const SupportMinistry = () => {
               href="https://pay.thewayofyeshuaministries.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full text-center rounded-[27px] px-[24px] py-[16px] bg-[#2E6F8E] text-white text-[20px] font-[500] hover:bg-[#235673] transition-colors"
+              className="block w-full text-center rounded-[27px] px-[24px] py-[16px] bg-[#C9A24B] text-black text-[20px] font-[500] hover:bg-[#a87f2d] transition-colors"
               id="lato-font"
             >
               Give Online

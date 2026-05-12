@@ -44,12 +44,12 @@ const Contact = () => {
             </div>
 
             <div className="flex items-start gap-3">
-              <Phone className="w-7 h-7 text-[#2E6F8E] flex-shrink-0 mt-1" />
+              <Phone className="w-7 h-7 text-[#C9A24B] flex-shrink-0 mt-1" />
               <div>
                 <p className="font-[700]">Phone</p>
                 <a
                   href="tel:5203024034"
-                  className="text-[17px] hover:text-[#2E6F8E] transition-colors"
+                  className="text-[17px] hover:text-[#C9A24B] transition-colors"
                 >
                   (520) 302-4034
                 </a>
@@ -57,12 +57,12 @@ const Contact = () => {
             </div>
 
             <div className="flex items-start gap-3">
-              <Mail className="w-7 h-7 text-[#2E6F8E] flex-shrink-0 mt-1" />
+              <Mail className="w-7 h-7 text-[#C9A24B] flex-shrink-0 mt-1" />
               <div>
                 <p className="font-[700]">Email</p>
                 <a
                   href="mailto:Info@thewayofyeshuaministries.org"
-                  className="text-[17px] hover:text-[#2E6F8E] transition-colors break-all"
+                  className="text-[17px] hover:text-[#C9A24B] transition-colors break-all"
                 >
                   Info@thewayofyeshuaministries.org
                 </a>
@@ -70,7 +70,7 @@ const Contact = () => {
             </div>
 
             <div className="flex items-start gap-3">
-              <MapPin className="w-7 h-7 text-[#2E6F8E] flex-shrink-0 mt-1" />
+              <MapPin className="w-7 h-7 text-[#C9A24B] flex-shrink-0 mt-1" />
               <div>
                 <p className="font-[700]">Mailing Address</p>
                 <p className="text-[17px]">
@@ -86,7 +86,7 @@ const Contact = () => {
             </div>
 
             <div className="flex items-start gap-3">
-              <Clock className="w-7 h-7 text-[#2E6F8E] flex-shrink-0 mt-1" />
+              <Clock className="w-7 h-7 text-[#C9A24B] flex-shrink-0 mt-1" />
               <div>
                 <p className="font-[700]">Hours</p>
                 <p className="text-[17px]">09:00 – 17:00 daily</p>
@@ -109,7 +109,7 @@ const Contact = () => {
                 id="contact-name"
                 name="name"
                 type="text"
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2E6F8E]"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A24B]"
               />
             </div>
 
@@ -122,7 +122,7 @@ const Contact = () => {
                 name="email"
                 type="email"
                 required
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2E6F8E]"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A24B]"
               />
             </div>
 
@@ -134,13 +134,13 @@ const Contact = () => {
                 id="contact-message"
                 name="message"
                 rows={5}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2E6F8E]"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A24B]"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full rounded-[27px] px-6 py-3 bg-[#2E6F8E] text-white text-[18px] font-[500] hover:bg-[#235673] transition-colors"
+              className="w-full rounded-[27px] px-6 py-3 bg-[#C9A24B] text-black text-[18px] font-[500] hover:bg-[#a87f2d] transition-colors"
             >
               Send
             </button>

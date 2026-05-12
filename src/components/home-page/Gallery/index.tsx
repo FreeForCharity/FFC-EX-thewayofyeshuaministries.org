@@ -50,7 +50,7 @@ const Gallery = () => {
             type="button"
             onClick={prev}
             aria-label="Previous photo"
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#113563] w-10 h-10 rounded-full flex items-center justify-center shadow"
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#000000] w-10 h-10 rounded-full flex items-center justify-center shadow"
           >
             &#8249;
           </button>
@@ -58,7 +58,7 @@ const Gallery = () => {
             type="button"
             onClick={next}
             aria-label="Next photo"
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#113563] w-10 h-10 rounded-full flex items-center justify-center shadow"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#000000] w-10 h-10 rounded-full flex items-center justify-center shadow"
           >
             &#8250;
           </button>

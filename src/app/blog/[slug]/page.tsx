@@ -41,13 +41,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <article className="w-[90%] mx-auto max-w-[800px]">
         <Link
           href="/blog"
-          className="text-[#2E6F8E] hover:underline text-[15px] font-[500] inline-block mb-6"
+          className="text-[#C9A24B] hover:underline text-[15px] font-[500] inline-block mb-6"
           id="lato-font"
         >
           &larr; Back to Blog
         </Link>
 
-        <p className="text-[14px] uppercase tracking-[0.15em] text-[#2E6F8E] mb-3" id="lato-font">
+        <p className="text-[14px] uppercase tracking-[0.15em] text-[#C9A24B] mb-3" id="lato-font">
           {formatDate(post.date)}
         </p>
 
@@ -67,14 +67,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="mt-10 pt-8 border-t border-gray-200 flex flex-wrap gap-3">
           <Link
             href="/blog"
-            className="rounded-[27px] px-[24px] py-[12px] border border-[#2E6F8E] text-[#2E6F8E] text-[16px] font-[500] hover:bg-[#2E6F8E] hover:text-white transition-colors"
+            className="rounded-[27px] px-[24px] py-[12px] border border-[#C9A24B] text-[#C9A24B] text-[16px] font-[500] hover:bg-[#C9A24B] hover:text-black transition-colors"
             id="lato-font"
           >
             More Posts
           </Link>
           <Link
             href="/#support"
-            className="rounded-[27px] px-[24px] py-[12px] bg-[#2E6F8E] text-white text-[16px] font-[500] hover:bg-[#235673] transition-colors"
+            className="rounded-[27px] px-[24px] py-[12px] bg-[#C9A24B] text-black text-[16px] font-[500] hover:bg-[#a87f2d] transition-colors"
             id="lato-font"
           >
             Support This Ministry
