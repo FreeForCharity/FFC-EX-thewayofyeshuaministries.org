@@ -1,22 +1,21 @@
 import React from 'react'
 import Image from 'next/image'
 
-const CharityHeroBackground = () => {
+const YeshuaHero = () => {
   return (
     <div id="hero" className="relative w-full pb-[100px] overflow-hidden">
-      {/* 1. Base Blue Layer */}
+      {/* Base sky-blue layer */}
       <div className="absolute inset-0 bg-[#2E6F8E]" />
-      {/* 2. ULTRA-THIN White Diagonal Strip - HALF HEIGHT */}
+      {/* Subtle light diagonal strip */}
       <div
         className="absolute inset-0 bg-white"
         style={{
           clipPath: 'polygon(0% 108%, 100% 32%, 100% 35%, 0% 111%)',
         }}
       />
-
-      {/* 3. Orange Bottom-Right Section - Starts exactly where white ends */}
+      {/* Warm bottom-right section */}
       <div
-        className="absolute inset-0 bg-[#F57C20]"
+        className="absolute inset-0 bg-[#C9A24B]"
         style={{
           clipPath: 'polygon(0% 111%, 100% 35%, 100% 100%, 0% 100%)',
         }}
@@ -25,50 +24,44 @@ const CharityHeroBackground = () => {
       <div className="hero-container flex flex-col lg:flex-row gap-[40px] lg:gap-[0px] items-center justify-between relative z-10 text-white pt-[130px] w-[90%] mx-auto max-w-[1280px] lg:px-[20px]">
         <div className="w-full lg:w-[565px]">
           <h1
-            className="text-[50px] lg:text-[60px] font-[500] text-[#FFFFFF] leading-[120%] mb-[20px]"
+            className="text-[44px] lg:text-[56px] font-[500] text-[#FFFFFF] leading-[120%] mb-[20px]"
             id="faustina-font"
           >
-            Welcome to <br /> Free For Charity
+            The Way of Yeshua Ministries
           </h1>
           <p
-            className="text-[24px] font-[400] leading-[120%] text-[#FFFFFF] mb-[20px]"
+            className="text-[22px] font-[400] leading-[140%] text-[#FFFFFF] mb-[30px]"
             id="lato-font"
           >
-            Connecting Students, Professionals, & Businesses with Charities in Need
+            Christian Teachings and Community Inspiration — spreading the Word of God and fostering
+            a vibrant faith community.
           </p>
-          <a
-            href="#volunteer"
-            className="top-[378px] w-[300px] lg:w-[351px] h-[54px] opacity-100 rounded-[27px] px-[32px] py-[18px] flex items-center justify-center gap-[10px] bg-[#FFFFFF] text-[#113563] text-[20px] font-[400] leading-[100%] mb-[10px] whitespace-nowrap"
-            id="lato-font"
-          >
-            Volunteer
-          </a>
-          <div className="flex gap-[5px]">
+          <div className="flex flex-wrap gap-[10px]">
             <a
-              href="#donate"
-              className="top-[442px] w-[130px] lg:w-[173px] h-[54px] opacity-100 rounded-[27px] px-[32px] py-[18px] flex items-center justify-center gap-[10px] bg-[#FFFFFF] text-[#113563] text-[20px] font-[400] leading-[100%] whitespace-nowrap"
+              href="#mission"
+              className="w-[230px] h-[54px] rounded-[27px] px-[32px] py-[18px] flex items-center justify-center gap-[10px] bg-[#FFFFFF] text-[#113563] text-[20px] font-[500] leading-[100%] whitespace-nowrap"
               id="lato-font"
             >
-              Donate
+              Our Mission
             </a>
             <a
-              href="#programs"
-              className="top-[442px] w-[173px] h-[54px] opacity-100 rounded-[27px] px-[32px] py-[18px] flex items-center justify-center gap-[10px] bg-[#FFFFFF] text-[#113563] text-[20px] font-[400] leading-[100%] whitespace-nowrap"
+              href="#contact"
+              className="w-[230px] h-[54px] rounded-[27px] px-[32px] py-[18px] flex items-center justify-center gap-[10px] bg-[#FFFFFF] text-[#113563] text-[20px] font-[500] leading-[100%] whitespace-nowrap"
               id="lato-font"
             >
-              Our Programs
+              Contact Us
             </a>
           </div>
         </div>
 
-        {/* Fixed right side image section */}
-        <div className="relative w-full max-w-[445px] aspect-square bg-white rounded-full p-12 flex items-center justify-center">
-          <div className="relative w-full h-full">
+        {/* Right side hero image */}
+        <div className="relative w-full max-w-[445px] aspect-square bg-white rounded-full p-8 flex items-center justify-center">
+          <div className="relative w-full h-full rounded-full overflow-hidden">
             <Image
-              src="/Images/figma-hero-img.webp"
-              alt="Hero image"
+              src="/Images/yeshua/hero-dove-cross.jpg"
+              alt="A white dove flying near a wooden cross and an open Bible"
               fill
-              className="object-contain"
+              className="object-cover"
               priority
               sizes="(max-width: 1024px) 100vw, 445px"
             />
@@ -79,4 +72,4 @@ const CharityHeroBackground = () => {
   )
 }
 
-export default CharityHeroBackground
+export default YeshuaHero

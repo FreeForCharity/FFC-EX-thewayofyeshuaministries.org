@@ -19,21 +19,21 @@ import {
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ffcworkingsite1.org'),
+  metadataBase: new URL('https://thewayofyeshuaministries.org'),
   title: {
-    default: 'Free For Charity | Reduce Costs, Increase Impact',
-    template: '%s | Free For Charity',
+    default: 'The Way of Yeshua Ministries | Christian Teachings and Community Inspiration',
+    template: '%s | The Way of Yeshua Ministries',
   },
   description:
-    'Free For Charity connects students, professionals, and businesses with nonprofits to reduce costs and increase revenues—putting more resources back into their missions.',
+    'The Way of Yeshua Ministries is dedicated to spreading Bible teachings and fostering a vibrant faith community through inspirational videos, our Prison Program, and outreach.',
   keywords: [
-    'nonprofit',
-    'charity',
-    'volunteer',
-    'donate',
-    'free hosting',
-    'domains',
-    'Microsoft 365',
+    'ministry',
+    'christian',
+    'bible teachings',
+    'faith community',
+    'yeshua',
+    'prison program',
+    'Sun City AZ',
   ],
   robots: {
     index: true,
@@ -51,27 +51,26 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    url: 'https://ffcworkingsite1.org/',
-    siteName: 'Free For Charity',
-    title: 'Free For Charity | Reduce Costs, Increase Impact',
+    url: 'https://thewayofyeshuaministries.org/',
+    siteName: 'The Way of Yeshua Ministries',
+    title: 'The Way of Yeshua Ministries | Christian Teachings and Community Inspiration',
     description:
-      'Connecting students, professionals, and businesses with nonprofits to reduce costs and increase revenues.',
+      'Spreading Bible teachings and fostering a vibrant faith community through inspirational videos and outreach.',
     images: [
       {
-        url: '/web-app-manifest-512x512.png',
-        width: 512,
-        height: 512,
-        alt: 'Free For Charity',
+        url: '/Images/yeshua/logo.jpg',
+        width: 800,
+        height: 800,
+        alt: 'The Way of Yeshua Ministries',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@freeforcharity',
-    title: 'Free For Charity | Reduce Costs, Increase Impact',
+    title: 'The Way of Yeshua Ministries | Christian Teachings and Community Inspiration',
     description:
-      'Connecting students, professionals, and businesses with nonprofits to reduce costs and increase revenues.',
-    images: ['/web-app-manifest-512x512.png'],
+      'Spreading Bible teachings and fostering a vibrant faith community through inspirational videos and outreach.',
+    images: ['/Images/yeshua/logo.jpg'],
   },
   icons: {
     icon: [
@@ -104,7 +103,7 @@ export default function RootLayout({
         <link
           rel="preload"
           as="image"
-          href={`${basePath}/Images/figma-hero-img.webp`}
+          href={`${basePath}/Images/yeshua/hero-dove-cross.jpg`}
           fetchPriority="high"
         />
 
