@@ -1,6 +1,6 @@
 import React from 'react'
 
-const index = () => {
+const Mission = () => {
   return (
     <div id="mission" className="py-[52px]">
       <div className="w-[90%] mx-auto py-[27px] mb-[60px] max-w-[1280px]">
@@ -8,37 +8,33 @@ const index = () => {
           className="font-[400] text-[40px] lg:text-[48px] leading-[100%] tracking-[0] text-center w-full lg:w-[906px] mx-auto mb-[50px]"
           id="faustina-font"
         >
-          Free For Charity has a simple mission with broad implications
+          About Our Ministry
         </h1>
         <p
           className="font-[700] text-[25px] leading-[150%] tracking-[0] text-center mb-[30px]"
           id="lato-font"
         >
-          Reduce costs and increase revenues for nonprofits; putting that money back into their
-          charitable mission where it belongs.
+          Our Mission
         </p>
         <p
-          className="font-[500] text-[25px] leading-[150%] tracking-[0] text-center"
+          className="font-[500] text-[22px] leading-[150%] tracking-[0] text-center max-w-[900px] mx-auto"
           id="lato-font"
         >
-          This charity for charities seeks to replace as many functions as possible that current
-          nonprofits pay for to for-profit companies with free or at cost work from our campus, on
-          site projects, or partnerships with other entities.
+          We are dedicated to spreading the Bible teachings and fostering a vibrant faith
+          community. Our mission is to inspire individuals through inspirational videos to deepen
+          their relationship with God and actively live out their faith.
         </p>
         <div className="mt-[50px] flex justify-center">
-          <video
-            className="w-full max-w-[800px] rounded-lg shadow-lg"
-            controls
-            playsInline
-            preload="metadata"
-            poster="/videos/mission-video-poster.webp"
-            aria-label="Free For Charity mission video"
-            title="Learn about Free For Charity's mission to help nonprofits reduce costs"
-          >
-            {/* <source src="/videos/mission-video.mp4" type="video/mp4" /> */}
-            <source src="https://ffcsites.org/videos/mission-video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <div className="w-full max-w-[800px] aspect-video rounded-lg shadow-lg overflow-hidden">
+            <iframe
+              className="w-full h-full"
+              src="https://www.youtube.com/embed/8YYBFKrrvMA"
+              title="Jesus is God and the Bible is final - The Way of Yeshua"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
         </div>
       </div>
 
@@ -47,4 +43,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Mission

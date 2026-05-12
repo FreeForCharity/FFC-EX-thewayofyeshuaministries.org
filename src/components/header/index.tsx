@@ -24,11 +24,7 @@ const Header: React.FC = () => {
     () => [
       { label: 'Home', path: '/#hero' },
       { label: 'Mission', path: '/#mission' },
-      { label: 'Programs', path: '/#programs' },
-      { label: 'Volunteer', path: '/#volunteer' },
-      { label: 'Donate', path: '/#donate' },
-      { label: 'FAQ', path: '/#faq' },
-      { label: 'Team', path: '/#team' },
+      { label: 'Contact', path: '/#contact' },
     ],
     []
   )
@@ -98,9 +94,11 @@ const Header: React.FC = () => {
             >
               <Link href="/" onClick={handleLinkClick} className="block">
                 <img
-                  src="https://freeforcharity.org/wp-content/uploads/2024/04/Screenshot_145.png"
-                  alt="Free For Charity"
-                  className={`transition-all duration-300 ${isScrolled ? 'h-7' : 'h-11'}`}
+                  src="/Images/yeshua/logo.jpg"
+                  alt="The Way of Yeshua Ministries"
+                  className={`transition-all duration-300 rounded-full ${
+                    isScrolled ? 'h-7 w-7' : 'h-11 w-11'
+                  } object-cover`}
                 />
               </Link>
             </div>
