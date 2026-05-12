@@ -14,7 +14,10 @@ test.describe('Homepage Support section', () => {
 
     const give = section.getByRole('link', { name: /Give Online/i })
     await expect(give).toBeVisible()
-    await expect(give).toHaveAttribute('href', 'https://pay.thewayofyeshuaministries.org')
+    await expect(give).toHaveAttribute(
+      'href',
+      'https://www.zeffy.com/en-US/donation-form/donate-for-our-ministry'
+    )
     await expect(give).toHaveAttribute('target', '_blank')
 
     await expect(section).toContainText(/PO Box 1153/i)

@@ -26,13 +26,13 @@ const SupportMinistry = () => {
               className="w-[260px] max-w-full"
             />
             <p className="text-[14px] text-center text-gray-600 mt-3" id="lato-font">
-              Scan to pay via pay.thewayofyeshuaministries.org
+              Scan to donate via www.zeffy.com
             </p>
           </div>
 
           <div className="space-y-6">
             <a
-              href="https://pay.thewayofyeshuaministries.org"
+              href="https://www.zeffy.com/en-US/donation-form/donate-for-our-ministry"
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full text-center rounded-[27px] px-[24px] py-[16px] bg-[#C9A24B] text-black text-[20px] font-[500] hover:bg-[#a87f2d] transition-colors"
