@@ -10,19 +10,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ffcworkingsite1.org',
+        hostname: 'thewayofyeshuaministries.org',
       },
       {
         protocol: 'https',
-        hostname: 'staging.freeforcharity.org',
+        hostname: 'staging.thewayofyeshuaministries.org',
       },
       {
         protocol: 'https',
-        hostname: 'freeforcharity.org',
-      },
-      {
-        protocol: 'https',
-        hostname: 'static.vecteezy.com',
+        hostname: 'pay.thewayofyeshuaministries.org',
       },
     ],
   },
