@@ -20,9 +20,9 @@ const Mission = () => {
           className="font-[500] text-[22px] leading-[150%] tracking-[0] text-center max-w-[900px] mx-auto"
           id="lato-font"
         >
-          We are dedicated to spreading the Bible teachings and fostering a vibrant faith
-          community. Our mission is to inspire individuals through inspirational videos to deepen
-          their relationship with God and actively live out their faith.
+          We are dedicated to spreading the Bible teachings and fostering a vibrant faith community.
+          Our mission is to inspire individuals through inspirational videos to deepen their
+          relationship with God and actively live out their faith.
         </p>
         <div className="mt-[50px] flex justify-center">
           <div className="w-full max-w-[800px] aspect-video rounded-lg shadow-lg overflow-hidden">

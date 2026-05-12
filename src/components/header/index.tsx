@@ -24,6 +24,8 @@ const Header: React.FC = () => {
     () => [
       { label: 'Home', path: '/#hero' },
       { label: 'Mission', path: '/#mission' },
+      { label: 'Areas of Ministry', path: '/#areas' },
+      { label: 'Support', path: '/#support' },
       { label: 'Contact', path: '/#contact' },
     ],
     []

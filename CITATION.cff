@@ -2,36 +2,34 @@
 # Visit https://bit.ly/cffinit to generate yours today!
 
 cff-version: 1.2.0
-title: Free For Charity Website Template
+title: The Way of Yeshua Ministries Website
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
 type: software
 authors:
-  - given-names: Clarke
-    family-names: Moyer
-    email: clarkemoyer@freeforcharity.org
-    affiliation: Free For Charity
-repository-code: 'https://github.com/FreeForCharity/FFC_Single_Page_Template'
-url: 'https://ffcworkingsite1.org'
+  - name: The Way of Yeshua Ministries Inc.
+    email: Info@thewayofyeshuaministries.org
+repository-code: 'https://github.com/FreeForCharity/FFC-EX-thewayofyeshuaministries.org'
+url: 'https://thewayofyeshuaministries.org'
 abstract: >-
-  Single-page Next.js 16.0.7 website template built with App
-  Router for Free For Charity nonprofit organization. This
-  template provides a professional, accessible, and
-  performant foundation for nonprofit websites, featuring
-  global popups for donations and volunteer applications,
-  comprehensive testing, and GitHub Pages deployment
-  support.
+  Next.js 16.0.7 single-page website for The Way of Yeshua
+  Ministries Inc., a 501(c)(3) Christian ministry based in
+  Sun City, Arizona. The site documents the ministry's
+  outreach programs (Prison Program, Build the Church,
+  Tiny Home Project, Automobile Donation Program) and
+  invites visitors to support the ministry. Built on the
+  Free For Charity Single Page Template and hosted free of
+  charge by Free For Charity.
 keywords:
+  - ministry
   - nonprofit
-  - charity
+  - christian
   - nextjs
-  - website-template
   - 501c3
   - typescript
   - tailwindcss
   - accessibility
-  - open-source
 license: Apache-2.0
 version: 0.1.0
-date-released: '2025-12-11'
+date-released: '2026-05-11'

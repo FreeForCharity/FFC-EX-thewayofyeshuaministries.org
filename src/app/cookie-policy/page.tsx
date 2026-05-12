@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Cookie Policy | Free For Charity',
-  description: 'Cookie Policy for Free For Charity website',
+  title: 'Cookie Policy | The Way of Yeshua Ministries',
+  description: 'Cookie Policy for The Way of Yeshua Ministries website',
 }
 
 // Update this date when the policy changes
@@ -492,8 +492,11 @@ export default function CookiePolicy() {
           <ul className="list-inside list-disc space-y-[4px] pb-[1em]">
             <li className="text-[14px] text-[#666] leading-[24px] font-[500]">
               <strong>Email:</strong>{' '}
-              <a href="mailto:privacy@freeforcharity.org" className="text-blue-600 hover:underline">
-                privacy@freeforcharity.org
+              <a
+                href="mailto:privacy@thewayofyeshuaministries.org"
+                className="text-blue-600 hover:underline"
+              >
+                privacy@thewayofyeshuaministries.org
               </a>
             </li>
             <li className="text-[14px] text-[#666] leading-[24px] font-[500]">

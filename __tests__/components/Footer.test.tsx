@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import Footer from '../../src/components/footer'
 
-// Extend Jest matchers
 expect.extend(toHaveNoViolations)
 
 describe('Footer component', () => {
@@ -13,9 +12,9 @@ describe('Footer component', () => {
     expect(footer).toBeInTheDocument()
   })
 
-  it('should display Endorsements section', () => {
+  it('should display the ministry name in the about column', () => {
     render(<Footer />)
-    expect(screen.getByText('Endorsements')).toBeInTheDocument()
+    expect(screen.getByText('The Way of Yeshua Ministries')).toBeInTheDocument()
   })
 
   it('should display Quick Links section', () => {
@@ -30,7 +29,6 @@ describe('Footer component', () => {
 
   it('should have social media links', () => {
     render(<Footer />)
-    // Check for social media links by their aria-labels or visible text
     const links = screen.getAllByRole('link')
     expect(links.length).toBeGreaterThan(0)
   })
@@ -41,18 +39,23 @@ describe('Footer component', () => {
     expect(screen.getByText(new RegExp(currentYear.toString()))).toBeInTheDocument()
   })
 
-  it('should have GuideStar profile link', () => {
+  it('should reference Free For Charity as the hosting provider', () => {
     render(<Footer />)
-    const guidestarLink = screen.getByText(/GuideStar Profile/i)
-    expect(guidestarLink).toBeInTheDocument()
+    expect(screen.getByText('Free For Charity')).toBeInTheDocument()
   })
 
   it('should have email contact link', () => {
     render(<Footer />)
-    // Look for email link
     const links = screen.getAllByRole('link')
     const emailLink = links.find((link) => link.getAttribute('href')?.includes('mailto:'))
     expect(emailLink).toBeDefined()
+  })
+
+  it('should have phone contact link', () => {
+    render(<Footer />)
+    const links = screen.getAllByRole('link')
+    const phoneLink = links.find((link) => link.getAttribute('href')?.includes('tel:5203024034'))
+    expect(phoneLink).toBeDefined()
   })
 
   it('should not have accessibility violations', async () => {
