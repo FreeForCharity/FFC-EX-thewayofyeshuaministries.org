@@ -114,12 +114,12 @@ const Footer: React.FC = () => {
 
           <div className="space-y-4 text-sm">
             <div className="flex items-start gap-3">
-              <Mail className="w-10 h-10 text-orange-500 flex-shrink-0 mt-0.5" />
+              <Mail className="w-10 h-10 text-[#C9A24B] flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-[500] text-[22px]">Email</p>
                 <a
                   href="mailto:Info@thewayofyeshuaministries.org"
-                  className="font-[500] text-[15px] hover:text-cyan-400 transition-colors break-all"
+                  className="font-[500] text-[15px] hover:text-[#C9A24B] transition-colors break-all"
                   id="aria-font"
                 >
                   Info@thewayofyeshuaministries.org
@@ -128,12 +128,12 @@ const Footer: React.FC = () => {
             </div>
 
             <div className="flex items-start gap-3">
-              <Phone className="w-10 h-10 text-orange-500 flex-shrink-0 mt-0.5" />
+              <Phone className="w-10 h-10 text-[#C9A24B] flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-[500] text-[22px]">Phone</p>
                 <a
                   href="tel:5203024034"
-                  className="font-[500] text-[16px] hover:text-cyan-400 transition-colors"
+                  className="font-[500] text-[16px] hover:text-[#C9A24B] transition-colors"
                   id="aria-font"
                 >
                   (520) 302-4034
@@ -148,7 +148,7 @@ const Footer: React.FC = () => {
               aria-label="Open mailing address in Google Maps"
               className="flex items-start gap-3 hover:opacity-80 transition-opacity"
             >
-              <MapPin className="w-10 h-10 text-orange-500 flex-shrink-0 mt-0.5" />
+              <MapPin className="w-10 h-10 text-[#C9A24B] flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-[500] text-[22px]">Mailing Address</p>
                 <p className="font-[500] text-[16px]" id="aria-font">
@@ -160,7 +160,7 @@ const Footer: React.FC = () => {
             </a>
 
             <div className="flex items-start gap-3">
-              <MapPin className="w-10 h-10 text-orange-500 flex-shrink-0 mt-0.5" />
+              <MapPin className="w-10 h-10 text-[#C9A24B] flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-[500] text-[22px]">PO Box</p>
                 <p className="font-[500] text-[16px]" id="aria-font">
@@ -179,7 +179,7 @@ const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="bg-orange-500 p-2 rounded-full hover:bg-orange-600 transition-colors"
+                  className="bg-[#C9A24B] p-2 rounded-full hover:bg-[#a87f2d] transition-colors"
                 >
                   <Icon className="w-6 h-6 text-white" />
                 </a>

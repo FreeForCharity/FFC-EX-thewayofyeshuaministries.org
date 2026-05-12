@@ -28,7 +28,7 @@ const CausePage: React.FC<CausePageProps> = ({
       <section className="w-[90%] mx-auto max-w-[900px] py-[60px] text-center">
         {subheading && (
           <h2
-            className="text-[18px] tracking-[0.18em] uppercase text-[#2E6F8E] mb-3"
+            className="text-[18px] tracking-[0.18em] uppercase text-[#C9A24B] mb-3"
             id="lato-font"
           >
             {subheading}
@@ -52,14 +52,14 @@ const CausePage: React.FC<CausePageProps> = ({
             href={donateHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-[27px] px-[28px] py-[14px] bg-[#2E6F8E] text-white text-[18px] font-[500] hover:bg-[#235673] transition-colors"
+            className="rounded-[27px] px-[28px] py-[14px] bg-[#C9A24B] text-black text-[18px] font-[500] hover:bg-[#a87f2d] transition-colors"
             id="lato-font"
           >
             Donate
           </a>
           <Link
             href="/#contact"
-            className="rounded-[27px] px-[28px] py-[14px] border border-[#2E6F8E] text-[#2E6F8E] text-[18px] font-[500] hover:bg-[#2E6F8E] hover:text-white transition-colors"
+            className="rounded-[27px] px-[28px] py-[14px] border border-[#C9A24B] text-[#C9A24B] text-[18px] font-[500] hover:bg-[#C9A24B] hover:text-black transition-colors"
             id="lato-font"
           >
             Contact Us

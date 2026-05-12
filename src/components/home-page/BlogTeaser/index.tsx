@@ -25,7 +25,7 @@ const BlogTeaser = () => {
               className="bg-white border border-[#E5DFD3] rounded-lg p-6 shadow-sm flex flex-col"
             >
               <p
-                className="text-[13px] uppercase tracking-[0.15em] text-[#2E6F8E] mb-2"
+                className="text-[13px] uppercase tracking-[0.15em] text-[#C9A24B] mb-2"
                 id="lato-font"
               >
                 {formatDate(post.date)}
@@ -33,7 +33,7 @@ const BlogTeaser = () => {
               <h3 className="font-[500] text-[22px] leading-[125%] mb-3" id="faustina-font">
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="hover:text-[#2E6F8E] transition-colors"
+                  className="hover:text-[#C9A24B] transition-colors"
                 >
                   {post.title}
                 </Link>
@@ -43,7 +43,7 @@ const BlogTeaser = () => {
               </p>
               <Link
                 href={`/blog/${post.slug}`}
-                className="text-[#2E6F8E] hover:underline text-[15px] font-[500] mt-auto"
+                className="text-[#C9A24B] hover:underline text-[15px] font-[500] mt-auto"
                 id="lato-font"
               >
                 Continue reading &rarr;
@@ -55,7 +55,7 @@ const BlogTeaser = () => {
         <div className="text-center mt-[40px]">
           <Link
             href="/blog"
-            className="inline-block rounded-[27px] px-[28px] py-[12px] border border-[#2E6F8E] text-[#2E6F8E] text-[16px] font-[500] hover:bg-[#2E6F8E] hover:text-white transition-colors"
+            className="inline-block rounded-[27px] px-[28px] py-[12px] border border-[#C9A24B] text-[#C9A24B] text-[16px] font-[500] hover:bg-[#C9A24B] hover:text-black transition-colors"
             id="lato-font"
           >
             View All Posts
