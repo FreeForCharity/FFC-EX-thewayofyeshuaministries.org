@@ -15,18 +15,30 @@ test.describe('Blog list and detail pages', () => {
     await expect(section.getByRole('link', { name: /^View All Posts$/i })).toBeVisible()
   })
 
-  test('/blog index lists all 3 posts newest-first', async ({ page }) => {
+  test('/blog index lists all posts newest-first', async ({ page }) => {
     await page.goto('/blog')
     await expect(page.getByRole('heading', { name: /^Blog$/, level: 1 })).toBeVisible()
 
     const items = page.locator('main ul > li')
-    await expect(items).toHaveCount(3)
+    await expect(items).toHaveCount(4)
 
-    // Newest-first: Blessings (Jan 2026) should appear before Sermon (Dec 2025)
+    // Newest-first: Rosh Hashanah (May 2026), Blessings (Jan 2026), Sermon (Dec 21 2025), Statement (Dec 10 2025)
     const titles = await items.locator('h2 a').allTextContents()
-    expect(titles[0]).toMatch(/Blessings/i)
-    expect(titles[1]).toMatch(/Sermon Of The Day/i)
-    expect(titles[2]).toMatch(/Statement Of Faith/i)
+    expect(titles[0]).toMatch(/Rosh Hashanah/i)
+    expect(titles[1]).toMatch(/Blessings/i)
+    expect(titles[2]).toMatch(/Sermon Of The Day/i)
+    expect(titles[3]).toMatch(/Statement Of Faith/i)
+  })
+
+  test('Rosh Hashanah at-home guide renders correctly', async ({ page }) => {
+    await page.goto('/blog/rosh-hashanah-at-home')
+    await expect(page.getByRole('heading', { name: /Rosh Hashanah/i, level: 1 })).toBeVisible()
+    await expect(page.locator('main')).toContainText(/Feast of Trumpets/i)
+    await expect(page.locator('main')).toContainText(/shofar/i)
+    await expect(page.locator('main')).toContainText(/Ten Days of Awe/i)
+    await expect(page.locator('main')).toContainText(/Tashlikh/i)
+    await expect(page.locator('main')).toContainText(/520\) 302-4034/)
+    await expect(page.locator('main')).toContainText(/Info@thewayofyeshuaministries\.org/)
   })
 
   test('Blessings post renders correctly at /blog/blessings', async ({ page }) => {
