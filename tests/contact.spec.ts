@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Homepage Contact section', () => {
-  test('renders heading, contact info, and form fields', async ({ page }) => {
+  test('renders heading and contact info', async ({ page }) => {
     await page.goto('/')
     const section = page.locator('section#contact')
     await expect(section).toBeVisible()
@@ -13,11 +13,6 @@ test.describe('Homepage Contact section', () => {
     await expect(section).toContainText(/9802 W\. Bell Road #1153/i)
     await expect(section).toContainText(/Sun City, AZ 85351/i)
     await expect(section).toContainText(/09:00 . 17:00 daily/i)
-
-    await expect(section.locator('input#contact-name')).toBeVisible()
-    await expect(section.locator('input#contact-email')).toBeVisible()
-    await expect(section.locator('textarea#contact-message')).toBeVisible()
-    await expect(section.getByRole('button', { name: /^Send$/ })).toBeVisible()
   })
 
   test('phone and email links use correct protocols', async ({ page }) => {
@@ -29,5 +24,15 @@ test.describe('Homepage Contact section', () => {
 
     const email = section.locator('a[href^="mailto:Info@thewayofyeshuaministries.org"]')
     await expect(email).toBeVisible()
+  })
+
+  test('contact form has been removed', async ({ page }) => {
+    await page.goto('/')
+    const section = page.locator('section#contact')
+
+    await expect(section.locator('form')).toHaveCount(0)
+    await expect(section.locator('input#contact-name')).toHaveCount(0)
+    await expect(section.locator('input#contact-email')).toHaveCount(0)
+    await expect(section.locator('textarea#contact-message')).toHaveCount(0)
   })
 })
