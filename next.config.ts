@@ -16,10 +16,6 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'staging.thewayofyeshuaministries.org',
       },
-      {
-        protocol: 'https',
-        hostname: 'pay.thewayofyeshuaministries.org',
-      },
     ],
   },
   // Optional: base path and asset prefix if using a subdirectory deployment

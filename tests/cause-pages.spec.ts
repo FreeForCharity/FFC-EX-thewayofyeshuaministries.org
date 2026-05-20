@@ -41,7 +41,9 @@ test.describe('Cause subpages', () => {
       await expect(page.locator('main')).toContainText(p.subheading)
       await expect(page.locator('main')).toContainText(p.bodyText)
 
-      const donate = page.locator('a[href="https://pay.thewayofyeshuaministries.org"]').first()
+      const donate = page
+        .locator('a[href="https://www.zeffy.com/en-US/donation-form/donate-for-our-ministry"]')
+        .first()
       await expect(donate).toBeVisible()
       await expect(donate).toHaveAttribute('target', '_blank')
 
