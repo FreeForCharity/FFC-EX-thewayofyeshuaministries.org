@@ -16,7 +16,7 @@ const CausePage: React.FC<CausePageProps> = ({
   body,
   image,
   imageAlt,
-  donateHref = 'https://pay.thewayofyeshuaministries.org',
+  donateHref = 'https://www.zeffy.com/en-US/donation-form/donate-for-our-ministry',
 }) => {
   return (
     <main className="pt-[80px]">
