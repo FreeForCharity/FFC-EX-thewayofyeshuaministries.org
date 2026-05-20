@@ -17,8 +17,8 @@ const Contact = () => {
             <h3 className="text-[24px] font-[500] mb-2">Questions or Comments</h3>
             <p className="text-[17px] leading-[150%]">
               Feel free to reach out by phone or email with questions about Bible teachings or our
-              faith community. We will do our best to respond soon with some inspirational videos
-              or useful information.
+              faith community. We will do our best to respond soon with some inspirational videos or
+              useful information.
             </p>
           </div>
 
