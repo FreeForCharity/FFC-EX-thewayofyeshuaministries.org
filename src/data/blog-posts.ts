@@ -8,6 +8,23 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: 'shavuot-get-together',
+    title: 'Join Us for a Shavuot Get-Together',
+    date: '2026-05-20',
+    excerpt:
+      'Shavuot begins at sundown on Thursday, May 21, 2026. Join The Way of Yeshua Ministries for a get-together to celebrate the giving of the Torah and the outpouring of the Holy Spirit.',
+    body: [
+      'Shalom and blessings! <strong>Shavuot</strong> &mdash; the Feast of Weeks, also called Pentecost &mdash; begins at sundown on <strong>Thursday, May 21, 2026</strong> and continues through nightfall on Saturday, May 23.',
+      'Shavuot is one of the three pilgrimage feasts the Lord set apart in His Word (Leviticus 23:15-22, Deuteronomy 16:9-12). It marks the day God gave the Torah to Israel at Mount Sinai &mdash; and, in the book of Acts, the day the Holy Spirit was poured out on the disciples of Yeshua in Jerusalem (Acts 2). The same feast carries both moments: the Word written on stone, and the Word written on our hearts.',
+      'In honor of this appointed time, <strong>The Way of Yeshua Ministries is hosting a Shavuot get-together</strong>. Come share in fellowship, Scripture, prayer, and a meal together &mdash; following the long-standing tradition of celebrating Shavuot with dairy foods, sweet things, and the joy of community.',
+      '<strong>How to join us:</strong> we&rsquo;d love to have you. Because seating and food are limited, please <strong>RSVP</strong> so we can plan well and share the time and location with you. Reach out by phone or email:',
+      '&nbsp;&nbsp;&bull; Phone: <a href="tel:5203024034" class="text-[#C9A24B] hover:underline">(520) 302-4034</a><br />&nbsp;&nbsp;&bull; Email: <a href="mailto:Info@thewayofyeshuaministries.org" class="text-[#C9A24B] hover:underline">Info@thewayofyeshuaministries.org</a>',
+      'Whether you have walked with Yeshua for many years or are simply curious about how the feasts of the Lord point to the Messiah, you are welcome. Bring a friend, bring a hungry heart, and come ready to lift up His Name together.',
+      '<em>&ldquo;You shall count seven full weeks &hellip; then you shall present a grain offering of new grain to the Lord.&rdquo;</em> &mdash; Leviticus 23:15-16',
+      'Chag Shavuot Sameach! May the Lord meet you in His Word and pour out His Spirit afresh on you this season.',
+    ],
+  },
+  {
     slug: 'blessings',
     title: 'Blessings',
     date: '2026-01-27',
