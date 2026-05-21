@@ -11,13 +11,13 @@ const causePages = [
     path: '/build-the-church',
     title: /Help Us Build the Church/i,
     subheading: /Our Vision/i,
-    bodyText: /building a church/i,
+    bodyText: /worship space|permanent home/i,
   },
   {
     path: '/sponsor-a-tiny-home',
     title: /Sponsor a Tiny Home/i,
     subheading: /Housing the Vulnerable/i,
-    bodyText: /affordable housing/i,
+    bodyText: /tiny home|dignified|sleeping in cars/i,
   },
   {
     path: '/automobile-program',
@@ -29,7 +29,7 @@ const causePages = [
     path: '/support-this-ministry',
     title: /Support The Way of Yeshua Ministries/i,
     subheading: /Stand With Us/i,
-    bodyText: /Your support and contributions/i,
+    bodyText: /Scripture lesson|every gift|standing with us/i,
   },
 ]
 
