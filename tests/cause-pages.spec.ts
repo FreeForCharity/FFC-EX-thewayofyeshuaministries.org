@@ -23,7 +23,7 @@ const causePages = [
     path: '/automobile-program',
     title: /Help someone that needs a car/i,
     subheading: /Our Program/i,
-    bodyText: /vehicles that can be donated/i,
+    bodyText: /donated vehicles|reliable vehicle|volunteer mechanics/i,
   },
   {
     path: '/support-this-ministry',
