@@ -15,44 +15,44 @@ export default function PrisonProgram() {
       body={
         <>
           <p>
-            Yeshua told us plainly: <em>&ldquo;I was in prison and you came to Me.&rdquo;</em>{' '}
-            (Matthew 25:36). Behind every set of bars there is a person made in the image of God,
-            often forgotten by the world and hungry for hope.
+            Yeshua told us plainly: <em>“I was in prison and you came to Me.”</em> (Matthew 25:36).
+            Behind every set of bars there is a person made in the image of God, often forgotten by
+            the world and hungry for hope.
           </p>
           <p>
             Through our Prison Outreach Program, <strong>The Way of Yeshua Ministries</strong> sends{' '}
             <strong>communion supplies</strong>, <strong>Holy Day supplies</strong>, and
             Scripture-based encouragement to incarcerated brothers and sisters so they can keep the
             appointed times of the Lord even from inside a cell. For a believer behind bars, a small
-            package can be the difference between an ordinary Friday and a real Shabbat &mdash;
-            between a long Sunday and a real Passover.
+            package can be the difference between an ordinary Friday and a real Shabbat — between a
+            long Sunday and a real Passover.
           </p>
           <p>
-            We send what each correctional facility&rsquo;s rules allow: small portions of grape
-            juice, unleavened bread, candles where permitted, devotional materials, and letters of
-            prayer and Scripture from our community. Every package is a quiet reminder that they are
-            not forgotten and that the Lord sees them where they are.
+            We send what each correctional facility’s rules allow: small portions of grape juice,
+            unleavened bread, candles where permitted, devotional materials, and letters of prayer
+            and Scripture from our community. Every package is a quiet reminder that they are not
+            forgotten and that the Lord sees them where they are.
           </p>
           <p>
             <strong>How you can help:</strong>
           </p>
           <ul>
             <li>
-              <strong>Give financially</strong> &mdash; every dollar covers postage, supplies, and
+              <strong>Give financially</strong> — every dollar covers postage, supplies, and
               materials that go directly into a package
             </li>
             <li>
-              <strong>Donate supplies in kind</strong> &mdash; small Bibles, devotionals, paper,
-              stamps; contact us first so we can confirm what each facility accepts
+              <strong>Donate supplies in kind</strong> — small Bibles, devotionals, paper, stamps;
+              contact us first so we can confirm what each facility accepts
             </li>
             <li>
-              <strong>Pray</strong> with us for those we write to &mdash; the families on the
-              outside as well as the prisoners themselves
+              <strong>Pray</strong> with us for those we write to — the families on the outside as
+              well as the prisoners themselves
             </li>
           </ul>
           <p>
-            <em>&ldquo;Remember those who are in prison, as though in prison with them.&rdquo;</em>{' '}
-            &mdash; Hebrews 13:3
+            <em>“Remember those who are in prison, as though in prison with them.”</em> — Hebrews
+            13:3
           </p>
           <p>
             To partner with this program, give using the button below or reach out by phone at{' '}
