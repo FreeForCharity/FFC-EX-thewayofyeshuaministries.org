@@ -17,31 +17,31 @@ test.describe('Homepage Areas of Ministry grid', () => {
 
   test('Prison Program tile links to /prison-program', async ({ page }) => {
     await page.goto('/')
-    const link = page.locator('section#areas a[href="/prison-program"]').first()
+    const link = page.locator('section#areas a[href="/prison-program/"]').first()
     await expect(link).toBeVisible()
   })
 
   test('Build the Church tile links to /build-the-church', async ({ page }) => {
     await page.goto('/')
-    const link = page.locator('section#areas a[href="/build-the-church"]').first()
+    const link = page.locator('section#areas a[href="/build-the-church/"]').first()
     await expect(link).toBeVisible()
   })
 
   test('Sponsor a Tiny Home tile links to /sponsor-a-tiny-home', async ({ page }) => {
     await page.goto('/')
-    const link = page.locator('section#areas a[href="/sponsor-a-tiny-home"]').first()
+    const link = page.locator('section#areas a[href="/sponsor-a-tiny-home/"]').first()
     await expect(link).toBeVisible()
   })
 
   test('Automobile Program tile links to /automobile-program', async ({ page }) => {
     await page.goto('/')
-    const link = page.locator('section#areas a[href="/automobile-program"]').first()
+    const link = page.locator('section#areas a[href="/automobile-program/"]').first()
     await expect(link).toBeVisible()
   })
 
   test('Support tile links to /support-this-ministry', async ({ page }) => {
     await page.goto('/')
-    const link = page.locator('section#areas a[href="/support-this-ministry"]').first()
+    const link = page.locator('section#areas a[href="/support-this-ministry/"]').first()
     await expect(link).toBeVisible()
   })
 
