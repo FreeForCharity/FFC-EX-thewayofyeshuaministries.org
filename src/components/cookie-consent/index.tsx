@@ -494,11 +494,18 @@ export default function CookieConsent() {
       role="region"
       aria-label="Cookie consent notice"
     >
-      <div className="max-w-7xl mx-auto p-4 sm:p-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex-1">
-            <h3 className="text-lg font-bold text-gray-900 mb-2">We Value Your Privacy</h3>
-            <p className="text-sm text-gray-600 mb-3">
+      <div className="max-w-7xl mx-auto p-3 md:p-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1 md:mb-2">
+              We Value Your Privacy
+            </h3>
+            {/* Mobile shows a short tagline (no "cookies" wording to keep the DOM
+                single-match for the unit tests). Desktop shows the full paragraph. */}
+            <p className="text-xs md:hidden text-gray-600 mb-2">
+              Manage your privacy preferences below.
+            </p>
+            <p className="hidden md:block text-sm text-gray-600 mb-3">
               We use cookies to improve your experience on our site, analyze traffic, and enable
               certain features. By clicking &quot;Accept All&quot;, you consent to our use of
               cookies for analytics and marketing purposes. You can manage your preferences or
@@ -513,22 +520,23 @@ export default function CookieConsent() {
               </Link>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+          {/* Buttons: row layout on mobile too — they're short enough to fit. */}
+          <div className="grid grid-cols-3 md:flex md:flex-row gap-2 w-full md:w-auto">
             <button
               onClick={handleDeclineAll}
-              className="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-sm whitespace-nowrap"
+              className="px-2 md:px-6 py-2 md:py-2.5 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-xs md:text-sm whitespace-nowrap"
             >
               Decline All
             </button>
             <button
               onClick={handleShowPreferences}
-              className="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-sm whitespace-nowrap"
+              className="px-2 md:px-6 py-2 md:py-2.5 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-xs md:text-sm whitespace-nowrap"
             >
               Customize
             </button>
             <button
               onClick={handleAcceptAll}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm whitespace-nowrap"
+              className="px-2 md:px-6 py-2 md:py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-xs md:text-sm whitespace-nowrap"
             >
               Accept All
             </button>
