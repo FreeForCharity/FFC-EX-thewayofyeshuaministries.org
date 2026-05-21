@@ -40,12 +40,11 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          static_site_generator: next
+      # Note: actions/configure-pages was removed because its static_site_generator: next
+      # mode rewrites next.config.ts and strips properties it doesn't recognize
+      # (e.g. trailingSlash). We use a custom domain (CNAME) so basePath is always ""
+      # — set via the NEXT_PUBLIC_BASE_PATH env var on the build step below. The
+      # upload-pages-artifact step that follows does not require configure-pages.
 
       - name: Restore Next.js cache
         uses: actions/cache@v5
