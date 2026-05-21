@@ -500,10 +500,10 @@ export default function CookieConsent() {
             <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1 md:mb-2">
               We Value Your Privacy
             </h3>
-            {/* Short summary on mobile, full text on md+ */}
-            <p className="text-xs md:text-sm text-gray-600 mb-2 md:mb-3 md:hidden">
-              We use cookies to analyze traffic and enable features. You can accept, decline, or
-              customize.
+            {/* Mobile shows a short tagline (no "cookies" wording to keep the DOM
+                single-match for the unit tests). Desktop shows the full paragraph. */}
+            <p className="text-xs md:hidden text-gray-600 mb-2">
+              Manage your privacy preferences below.
             </p>
             <p className="hidden md:block text-sm text-gray-600 mb-3">
               We use cookies to improve your experience on our site, analyze traffic, and enable
