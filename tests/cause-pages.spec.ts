@@ -3,33 +3,33 @@ import { test, expect } from '@playwright/test'
 const causePages = [
   {
     path: '/prison-program',
-    title: /Help Our Cause/i,
+    title: /Prison Outreach Program/i,
     subheading: /Join Us/i,
     bodyText: /prison outreach/i,
   },
   {
     path: '/build-the-church',
-    title: /Help Our Cause/i,
-    subheading: /Build the Church/i,
-    bodyText: /building a church/i,
+    title: /Help Us Build the Church/i,
+    subheading: /Our Vision/i,
+    bodyText: /worship space|permanent home/i,
   },
   {
     path: '/sponsor-a-tiny-home',
-    title: /Help Our Cause/i,
-    subheading: /Tiny Home Project/i,
-    bodyText: /affordable housing/i,
+    title: /Sponsor a Tiny Home/i,
+    subheading: /Housing the Vulnerable/i,
+    bodyText: /tiny home|dignified|sleeping in cars/i,
   },
   {
     path: '/automobile-program',
     title: /Help someone that needs a car/i,
     subheading: /Our Program/i,
-    bodyText: /vehicles that can be donated/i,
+    bodyText: /donated vehicles|reliable vehicle|volunteer mechanics/i,
   },
   {
     path: '/support-this-ministry',
-    title: /Help Our Cause/i,
-    subheading: /Support This Ministry/i,
-    bodyText: /Your support and contributions/i,
+    title: /Support The Way of Yeshua Ministries/i,
+    subheading: /Stand With Us/i,
+    bodyText: /Scripture lesson|every gift|standing with us/i,
   },
 ]
 
