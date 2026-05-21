@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Cookie Policy | The Way of Yeshua Ministries',
+  title: 'Cookie Policy',
   description: 'Cookie Policy for The Way of Yeshua Ministries website',
 }
 
