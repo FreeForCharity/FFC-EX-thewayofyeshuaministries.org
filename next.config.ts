@@ -2,6 +2,9 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   output: 'export',
+  // Emit /path/index.html for every route so URLs with and without a trailing
+  // slash both resolve on GitHub Pages (which would otherwise 404 /path/).
+  trailingSlash: true,
   // Images configuration
   images: {
     // This allows all images, local or external, to load without optimization
@@ -10,19 +13,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ffcworkingsite1.org',
+        hostname: 'thewayofyeshuaministries.org',
       },
       {
         protocol: 'https',
-        hostname: 'staging.freeforcharity.org',
-      },
-      {
-        protocol: 'https',
-        hostname: 'freeforcharity.org',
-      },
-      {
-        protocol: 'https',
-        hostname: 'static.vecteezy.com',
+        hostname: 'staging.thewayofyeshuaministries.org',
       },
     ],
   },
