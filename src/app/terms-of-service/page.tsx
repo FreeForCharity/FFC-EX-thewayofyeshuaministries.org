@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | The Way of Yeshua Ministries',
+  title: 'Terms of Service',
   description: 'Terms of Service for The Way of Yeshua Ministries website',
 }
 
