@@ -2,55 +2,42 @@ import { test, expect } from '@playwright/test'
 import { testConfig } from './test.config'
 
 /**
- * Logo and Image Visibility Tests
+ * Logo and Hero Visibility Tests
  *
- * These tests verify that critical images are present and visible on the homepage:
- * 1. Header logo (top left corner) - validates the organization branding
- * 2. Hero section image - validates the decorative hero image is displayed
- *
- * Note: Test expectations use values from test.config.ts for easy customization
+ * 1. Header logo (top left) - validates the organization branding
+ * 2. Hero section - validates the photographic hero section is present
+ *    (Hero uses a CSS background-image, not an <img>, so we verify the
+ *    section is visible and has a non-empty backgroundImage style.)
  */
 
-test.describe('Logo and Image Visibility', () => {
+test.describe('Logo and Hero Visibility', () => {
   test('should display logo in header', async ({ page }) => {
-    // Navigate to the homepage
     await page.goto('/')
 
-    // Find the logo in the Header
-    // The logo is in a Link element that points to "/" with img alt text
     const headerLogo = page.locator(`header a[href="/"] img[alt="${testConfig.logo.headerAlt}"]`)
-
-    // Verify the logo exists
     await expect(headerLogo).toBeVisible()
-
-    // Verify the logo has the correct alt text
     await expect(headerLogo).toHaveAttribute('alt', testConfig.logo.headerAlt)
   })
 
-  test('should display hero section image', async ({ page }) => {
-    // Navigate to the homepage
+  test('should display hero section with background image', async ({ page }) => {
     await page.goto('/')
 
-    // Find the hero image
-    const heroImage = page.locator(`img[alt="${testConfig.logo.heroAlt}"]`)
+    const hero = page.locator('section#hero')
+    await expect(hero).toBeVisible()
 
-    // Verify the image exists
-    await expect(heroImage).toBeVisible()
-
-    // Verify the image has the correct alt text
-    await expect(heroImage).toHaveAttribute('alt', testConfig.logo.heroAlt)
+    // The hero background lives on an inner absolutely-positioned div with
+    // backgroundImage set inline; verify a URL is present.
+    const bg = await hero.locator('div[style*="background-image"]').first().getAttribute('style')
+    expect(bg).toContain('hero-dove-cross.jpg')
   })
 
-  test('both header logo and hero image should be present on the same page', async ({ page }) => {
-    // Navigate to the homepage
+  test('both header logo and hero section should be present on the same page', async ({ page }) => {
     await page.goto('/')
 
-    // Find both images
     const headerLogo = page.locator(`header a[href="/"] img[alt="${testConfig.logo.headerAlt}"]`)
-    const heroImage = page.locator(`img[alt="${testConfig.logo.heroAlt}"]`)
+    const hero = page.locator('section#hero')
 
-    // Verify both are visible simultaneously
     await expect(headerLogo).toBeVisible()
-    await expect(heroImage).toBeVisible()
+    await expect(hero).toBeVisible()
   })
 })
