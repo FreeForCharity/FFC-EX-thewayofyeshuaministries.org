@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | The Way of Yeshua Ministries',
+  title: 'Privacy Policy',
   description: 'Privacy Policy for The Way of Yeshua Ministries website',
 }
 

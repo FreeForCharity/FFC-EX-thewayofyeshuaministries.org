@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function SponsorATinyHome() {
   return (
     <CausePage
-      heading="Help Our Cause"
-      subheading="Tiny Home Project"
+      heading="Sponsor a Tiny Home"
+      subheading="Housing the Vulnerable"
       body="We're building affordable housing for people in need. We need sponsors to launch this project."
       image="/Images/yeshua/tiny-home-hero.jpg"
       imageAlt="Modern affordable housing project with sleek design and greenery"
