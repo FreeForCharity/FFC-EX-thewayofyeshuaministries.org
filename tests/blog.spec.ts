@@ -82,7 +82,7 @@ test.describe('Blog list and detail pages', () => {
 
   test('header navigation has a Blog link', async ({ page }) => {
     await page.goto('/')
-    const blogLink = page.locator('header a[href="/blog"]').first()
+    const blogLink = page.locator('header a[href="/blog/"]').first()
     await expect(blogLink).toBeVisible()
   })
 })
