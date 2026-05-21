@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function SupportThisMinistry() {
   return (
     <CausePage
-      heading="Help Our Cause"
-      subheading="Support This Ministry"
+      heading="Support The Way of Yeshua Ministries"
+      subheading="Stand With Us"
       body="Your support and contributions will enable us to meet our goals and fund our mission."
       image="/Images/yeshua/ministry-2.jpg"
       imageAlt="The Way of Yeshua Ministries"

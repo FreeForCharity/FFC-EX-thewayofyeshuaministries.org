@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function PrisonProgram() {
   return (
     <CausePage
-      heading="Help Our Cause"
+      heading="Prison Outreach Program"
       subheading="Join Us"
       body="Donate to support our prison outreach. We send communion supplies and Holy Day supplies to those in need."
       image="/Images/yeshua/prison-program-hero.jpg"

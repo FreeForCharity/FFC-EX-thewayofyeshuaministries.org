@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function BuildTheChurch() {
   return (
     <CausePage
-      heading="Help Our Cause"
-      subheading="Build the Church"
+      heading="Help Us Build the Church"
+      subheading="Our Vision"
       body="We are building a church and need your support. Be part of the start of this ministry."
       image="/Images/yeshua/build-church-hero.jpg"
       imageAlt="Open Bible in front of a stained glass window in a dimly lit church"
