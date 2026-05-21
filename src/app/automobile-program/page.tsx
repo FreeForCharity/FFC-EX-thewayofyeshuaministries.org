@@ -19,31 +19,29 @@ export default function AutomobileProgram() {
       body={
         <>
           <p>
-            For many families, the gap between &ldquo;getting by&rdquo; and &ldquo;falling
-            behind&rdquo; is one broken-down car. A reliable vehicle means a job kept, a child
-            picked up on time, a doctor&rsquo;s appointment made, a grocery run that doesn&rsquo;t
-            take three bus transfers.
+            For many families, the gap between “getting by” and “falling behind” is one broken-down
+            car. A reliable vehicle means a job kept, a child picked up on time, a doctor’s
+            appointment made, a grocery run that doesn’t take three bus transfers.
           </p>
           <p>
             Our <strong>Automobile Program</strong> bridges that gap. We accept donated vehicles,
             our volunteer mechanics repair them, and we gift the repaired cars to people in our
-            community who need transportation but can&rsquo;t afford it.
+            community who need transportation but can’t afford it.
           </p>
           <p>
             <strong>How it works:</strong>
           </p>
           <ul>
             <li>
-              <strong>You donate a vehicle</strong> &mdash; running or in need of repair, sedan,
+              <strong>You donate a vehicle</strong> — running or in need of repair, sedan,
               hatchback, SUV, or van
             </li>
             <li>
-              <strong>Our mechanics restore it</strong> &mdash; safety, reliability, and the
-              essentials
+              <strong>Our mechanics restore it</strong> — safety, reliability, and the essentials
             </li>
             <li>
-              <strong>We place it with a family in need</strong> &mdash; identified through our
-              ministry and community connections
+              <strong>We place it with a family in need</strong> — identified through our ministry
+              and community connections
             </li>
           </ul>
           <p>
@@ -52,10 +50,10 @@ export default function AutomobileProgram() {
           </p>
           <p>
             <em>
-              &ldquo;Whoever is generous to the poor lends to the Lord, and He will repay him for
-              his deed.&rdquo;
+              “Whoever is generous to the poor lends to the Lord, and He will repay him for his
+              deed.”
             </em>{' '}
-            &mdash; Proverbs 19:17
+            — Proverbs 19:17
           </p>
           <p>
             If you have a vehicle to donate, or want to support the program financially, please
@@ -63,7 +61,7 @@ export default function AutomobileProgram() {
             <a href="tel:5203024034" className="text-[#C9A24B] hover:underline">
               (520) 302-4034
             </a>{' '}
-            &middot;{' '}
+            ·{' '}
             <a
               href="mailto:Info@thewayofyeshuaministries.org"
               className="text-[#C9A24B] hover:underline"
@@ -78,8 +76,8 @@ export default function AutomobileProgram() {
             </h2>
             <p className="text-[16px] text-gray-700 mb-6" id="lato-font">
               We work with a range of donated vehicles. Below are examples of the makes and models
-              we&rsquo;ve received and placed in the past &mdash; if your car isn&rsquo;t shown,
-              reach out anyway. We can usually find a way to put it to use.
+              we’ve received and placed in the past — if your car isn’t shown, reach out anyway. We
+              can usually find a way to put it to use.
             </p>
             <img
               src="/Images/yeshua/automobile-program.png"
