@@ -1,10 +1,7 @@
 name: Weekly Torah Portion Blog Post
 
 on:
-  schedule:
-    # Every Friday at 6:00 AM UTC (11pm Thursday / midnight Friday in Arizona MST)
-    - cron: '0 6 * * 5'
-  workflow_dispatch: # Allow manual trigger from the Actions tab
+  workflow_dispatch: # Manual trigger only — schedule disabled
 
 permissions:
   contents: write
