@@ -20,16 +20,17 @@ test.describe('Blog list and detail pages', () => {
     await expect(page.getByRole('heading', { name: /^Blog$/, level: 1 })).toBeVisible()
 
     const items = page.locator('main ul > li')
-    await expect(items).toHaveCount(5)
+    await expect(items).toHaveCount(6)
 
-    // Newest-first: Shavuot + Rosh Hashanah (both May 20 2026, insertion order),
-    // then Blessings (Jan 2026), Sermon (Dec 21 2025), Statement (Dec 10 2025)
+    // Newest-first: Beha'alotcha (Jun 6 2026), Shavuot + Rosh Hashanah (both May 20 2026,
+    // insertion order), then Blessings (Jan 2026), Sermon (Dec 21 2025), Statement (Dec 10 2025)
     const titles = await items.locator('h2 a').allTextContents()
-    expect(titles[0]).toMatch(/Shavuot/i)
-    expect(titles[1]).toMatch(/Rosh Hashanah/i)
-    expect(titles[2]).toMatch(/Blessings/i)
-    expect(titles[3]).toMatch(/Sermon Of The Day/i)
-    expect(titles[4]).toMatch(/Statement Of Faith/i)
+    expect(titles[0]).toMatch(/Beha.alotcha/i)
+    expect(titles[1]).toMatch(/Shavuot/i)
+    expect(titles[2]).toMatch(/Rosh Hashanah/i)
+    expect(titles[3]).toMatch(/Blessings/i)
+    expect(titles[4]).toMatch(/Sermon Of The Day/i)
+    expect(titles[5]).toMatch(/Statement Of Faith/i)
   })
 
   test('Shavuot get-together post renders correctly', async ({ page }) => {
