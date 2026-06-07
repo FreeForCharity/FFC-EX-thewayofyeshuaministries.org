@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import Script from 'next/script'
+import { useRef } from 'react'
 
 declare global {
   interface Window {
@@ -17,34 +18,17 @@ export default function PayPalButton({ hostedButtonId }: { hostedButtonId: strin
   const containerId = `paypal-container-${hostedButtonId}`
   const rendered = useRef(false)
 
-  useEffect(() => {
+  const handleLoad = () => {
     if (rendered.current) return
+    if (!window.paypal) return
+    rendered.current = true
+    window.paypal.HostedButtons({ hostedButtonId }).render(`#${containerId}`)
+  }
 
-    const renderButton = () => {
-      if (window.paypal && document.getElementById(containerId)) {
-        rendered.current = true
-        window.paypal.HostedButtons({ hostedButtonId }).render(`#${containerId}`)
-      }
-    }
-
-    // If SDK already loaded, render immediately
-    if (window.paypal) {
-      renderButton()
-      return
-    }
-
-    // Otherwise inject the script
-    const existing = document.querySelector(`script[src="${PAYPAL_SDK_URL}"]`)
-    if (existing) {
-      existing.addEventListener('load', renderButton)
-      return
-    }
-
-    const script = document.createElement('script')
-    script.src = PAYPAL_SDK_URL
-    script.onload = renderButton
-    document.body.appendChild(script)
-  }, [containerId, hostedButtonId])
-
-  return <div id={containerId} className="w-full max-w-[300px] mx-auto" />
+  return (
+    <>
+      <Script src={PAYPAL_SDK_URL} strategy="afterInteractive" onLoad={handleLoad} />
+      <div id={containerId} className="w-full max-w-[300px] mx-auto" />
+    </>
+  )
 }
