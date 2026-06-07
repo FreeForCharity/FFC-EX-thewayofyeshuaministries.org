@@ -44,7 +44,7 @@ const SupportMinistry = () => {
 
             <div className="flex flex-col items-center gap-2">
               <p className="text-[14px] text-gray-500" id="lato-font">
-                Or give with PayPal
+                Or give with PayPal / Venmo
               </p>
               <PayPalButton hostedButtonId="HAM5646L3JSBW" />
             </div>
