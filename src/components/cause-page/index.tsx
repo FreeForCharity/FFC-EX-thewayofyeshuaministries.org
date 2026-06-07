@@ -8,6 +8,7 @@ export interface CausePageProps {
   image: string
   imageAlt: string
   donateHref?: string
+  footer?: React.ReactNode
 }
 
 const CausePage: React.FC<CausePageProps> = ({
@@ -17,6 +18,7 @@ const CausePage: React.FC<CausePageProps> = ({
   image,
   imageAlt,
   donateHref = 'https://www.zeffy.com/en-US/donation-form/donate-for-our-ministry',
+  footer,
 }) => {
   return (
     <main className="pt-[80px]">
@@ -65,6 +67,8 @@ const CausePage: React.FC<CausePageProps> = ({
             Contact Us
           </Link>
         </div>
+
+        {footer && <div className="mt-[32px]">{footer}</div>}
       </section>
     </main>
   )
