@@ -1,4 +1,5 @@
 import React from 'react'
+import PayPalButton from '@/components/ui/PayPalButton'
 
 const SupportMinistry = () => {
   return (
@@ -38,8 +39,15 @@ const SupportMinistry = () => {
               className="block w-full text-center rounded-[27px] px-[24px] py-[16px] bg-[#C9A24B] text-black text-[20px] font-[500] hover:bg-[#a87f2d] transition-colors"
               id="lato-font"
             >
-              Give Online
+              Give Online (Zeffy)
             </a>
+
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-[14px] text-gray-500" id="lato-font">
+                Or give with PayPal / Venmo
+              </p>
+              <PayPalButton hostedButtonId="HAM5646L3JSBW" />
+            </div>
 
             <div className="bg-[#F8F5F0] rounded-lg p-6 text-[16px]" id="lato-font">
               <p className="font-[700] mb-2">Mail a check to:</p>
