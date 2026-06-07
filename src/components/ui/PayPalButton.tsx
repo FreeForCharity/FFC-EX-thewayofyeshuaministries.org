@@ -12,7 +12,7 @@ declare global {
 }
 
 const PAYPAL_SDK_URL =
-  'https://www.paypal.com/sdk/js?client-id=BAAKZs1na6t7YhDm4AL11b5DhKbuSHByRjwmZSxIRyEnshIT1XpiGg5cYinaIwWgBagmKfz7CkTBNOjeH8&components=hosted-buttons&disable-funding=venmo&currency=USD'
+  'https://www.paypal.com/sdk/js?client-id=BAAKZs1na6t7YhDm4AL11b5DhKbuSHByRjwmZSxIRyEnshIT1XpiGg5cYinaIwWgBagmKfz7CkTBNOjeH8&components=hosted-buttons&enable-funding=venmo&currency=USD'
 
 export default function PayPalButton({ hostedButtonId }: { hostedButtonId: string }) {
   const containerId = `paypal-container-${hostedButtonId}`
