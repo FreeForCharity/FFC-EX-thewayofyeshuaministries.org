@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import CausePage from '@/components/cause-page'
+import PayPalButton from '@/components/ui/PayPalButton'
 
 export const metadata: Metadata = {
   title: 'Support This Ministry',
@@ -98,6 +99,14 @@ export default function SupportThisMinistry() {
       }
       image="/Images/yeshua/ministry-2.jpg"
       imageAlt="The Way of Yeshua Ministries"
+      footer={
+        <div className="text-center">
+          <p className="text-[16px] text-gray-500 mb-4" id="lato-font">
+            Or donate securely with PayPal
+          </p>
+          <PayPalButton hostedButtonId="HAM5646L3JSBW" />
+        </div>
+      }
     />
   )
 }
