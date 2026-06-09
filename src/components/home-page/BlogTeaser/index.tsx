@@ -1,9 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
-import { blogPosts, formatDate } from '@/data/blog-posts'
+import { getPublishedPosts, formatDate } from '@/data/blog-posts'
 
 const BlogTeaser = () => {
-  const recent = [...blogPosts].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3)
+  const recent = getPublishedPosts()
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 3)
 
   return (
     <section id="blog" className="py-[52px]">
