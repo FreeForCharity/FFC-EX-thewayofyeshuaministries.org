@@ -11,6 +11,12 @@ on:
   # Allows manual deployment from Actions tab
   workflow_dispatch:
 
+  # Weekly rebuild every Friday at 14:00 UTC (7:00 AM in Arizona, which does
+  # not observe DST) so date-scheduled blog posts — like the weekly Torah
+  # portion sermons — go live on their publish date without a new commit.
+  schedule:
+    - cron: '0 14 * * 5'
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -27,8 +33,9 @@ jobs:
   build:
     name: Build for GitHub Pages
     runs-on: ubuntu-latest
-    # Only run if CI workflow succeeded or if manually triggered
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    # Only run if CI workflow succeeded, or if triggered manually or by the
+    # weekly schedule (both of which build the default branch directly)
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
 
     steps:
       - name: Checkout repository

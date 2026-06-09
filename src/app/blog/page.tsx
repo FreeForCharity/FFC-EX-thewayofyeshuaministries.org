@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { blogPosts, formatDate } from '@/data/blog-posts'
+import { getPublishedPosts, formatDate } from '@/data/blog-posts'
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default function BlogIndex() {
-  const sorted = [...blogPosts].sort((a, b) => b.date.localeCompare(a.date))
+  const sorted = getPublishedPosts().sort((a, b) => b.date.localeCompare(a.date))
 
   return (
     <main className="pt-[100px] pb-[60px]">

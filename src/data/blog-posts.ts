@@ -315,8 +315,16 @@ export const blogPosts: BlogPost[] = [
   },
 ]
 
+// Posts dated in the future are drafts scheduled for a later deploy; the
+// site is rebuilt weekly (see .github/workflows/deploy.yml) so each one goes
+// live on its date. "Today" is computed in ministry-local time (Arizona).
+export function getPublishedPosts(): BlogPost[] {
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Phoenix' })
+  return blogPosts.filter((p) => p.date <= today)
+}
+
 export function getPost(slug: string): BlogPost | undefined {
-  return blogPosts.find((p) => p.slug === slug)
+  return getPublishedPosts().find((p) => p.slug === slug)
 }
 
 export function formatDate(iso: string): string {

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { blogPosts } from '@/data/blog-posts'
+import { getPublishedPosts } from '@/data/blog-posts'
 
 export const dynamic = 'force-static'
 
@@ -24,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: route === '/' || route === '/blog' ? 'weekly' : 'monthly',
     priority: route === '/' ? 1 : 0.7,
   }))
-  const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+  const blogRoutes: MetadataRoute.Sitemap = getPublishedPosts().map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.date + 'T00:00:00Z'),
     changeFrequency: 'yearly',
