@@ -142,6 +142,22 @@ jobs:
               time.sleep(min(delay_seconds, remaining))
           PY
 
+  keepalive:
+    name: Keep weekly schedule active
+    # GitHub disables cron triggers after 60 days without repository
+    # activity. Re-enabling this workflow on every scheduled run resets
+    # that timer so date-scheduled blog posts keep publishing even when
+    # no commits land for months.
+    if: ${{ github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Reset scheduled-workflow inactivity timer
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${{ github.repository }}/actions/workflows/deploy.yml/enable"
+
   notify-failure:
     name: Notify on production deploy failure
     needs: [deploy]
