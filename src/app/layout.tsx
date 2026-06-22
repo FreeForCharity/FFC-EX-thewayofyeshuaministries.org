@@ -4,6 +4,7 @@ import Header from './../components/header'
 import Footer from './../components/footer'
 import CookieConsent from './../components/cookie-consent'
 import GoogleTagManager, { GoogleTagManagerNoScript } from './../components/google-tag-manager'
+import ServiceWorkerRegistration from './../components/ServiceWorkerRegistration'
 import {
   openSans,
   lato,
@@ -108,6 +109,12 @@ export default function RootLayout({
         />
 
         <GoogleTagManager />
+
+        {/* PWA / Apple smart-banner meta tags */}
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Yeshua Min." />
       </head>
       <body
         className={[
@@ -124,6 +131,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <GoogleTagManagerNoScript />
+        <ServiceWorkerRegistration />
         {/* <PopupProvider> */}
         <Header />
         {children}
