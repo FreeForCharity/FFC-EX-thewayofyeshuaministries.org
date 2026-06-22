@@ -22,6 +22,9 @@ const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null)
+  const [isIOS, setIsIOS] = useState(false)
+  const [isInstalled, setIsInstalled] = useState(false)
 
   const menuItems: MenuItem[] = useMemo(
     () => [
@@ -48,6 +51,37 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  useEffect(() => {
+    setIsIOS(
+      /iPhone|iPad|iPod/.test(navigator.userAgent) &&
+        !(window as unknown as Record<string, unknown>).MSStream
+    )
+    setIsInstalled(
+      window.matchMedia('(display-mode: standalone)').matches ||
+        (navigator as unknown as { standalone?: boolean }).standalone === true
+    )
+    const handler = (e: Event) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+    }
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => window.removeEventListener('beforeinstallprompt', handler)
+  }, [])
+
+  const handleInstallPrompt = async () => {
+    if (!deferredPrompt) return
+    const prompt = deferredPrompt as unknown as {
+      prompt: () => void
+      userChoice: Promise<{ outcome: string }>
+    }
+    prompt.prompt()
+    const { outcome } = await prompt.userChoice
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null)
+      setIsInstalled(true)
+    }
+  }
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -206,6 +240,38 @@ const Header: React.FC = () => {
                   )
                 })}
               </ul>
+
+              {/* Install App section */}
+              {isInstalled ? (
+                <div className="mt-4 pt-4 border-t border-[#C9A24B]/30">
+                  <p className="px-3 py-2 text-[14px] text-[#C9A24B]" id="lato-font">
+                    ✓ App installed on this device
+                  </p>
+                </div>
+              ) : deferredPrompt ? (
+                <div className="mt-4 pt-4 border-t border-[#C9A24B]/30">
+                  <button
+                    onClick={handleInstallPrompt}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-[#C9A24B] text-black text-[15px] font-[600] active:bg-[#a87f2d] transition-colors"
+                    id="lato-font"
+                  >
+                    <span aria-hidden="true">📲</span>
+                    Add App to Home Screen
+                  </button>
+                </div>
+              ) : isIOS ? (
+                <div className="mt-4 pt-4 border-t border-[#C9A24B]/30">
+                  <div className="rounded-lg bg-[#C9A24B]/10 border border-[#C9A24B]/30 px-4 py-3">
+                    <p className="text-[13px] font-[600] text-[#C9A24B] mb-1" id="lato-font">
+                      📲 Add to Home Screen
+                    </p>
+                    <p className="text-[13px] text-gray-300 leading-[150%]" id="lato-font">
+                      Tap the <strong className="text-white">Share</strong> button in Safari, then
+                      tap <strong className="text-white">&ldquo;Add to Home Screen&rdquo;</strong>
+                    </p>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </motion.div>
         )}
