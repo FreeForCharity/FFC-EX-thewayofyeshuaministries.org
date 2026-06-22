@@ -4,6 +4,21 @@ import '@testing-library/jest-dom'
 // Configure jest-axe for accessibility testing
 import 'jest-axe/extend-expect'
 
+// jsdom doesn't implement matchMedia — mock it globally for component tests
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+})
+
 // Suppress Next.js Link component act() warnings
 // These warnings occur because Next.js Link uses internal intersection observer
 // that triggers state updates after render. This is expected behavior and not a test issue.
