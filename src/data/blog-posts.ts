@@ -690,3 +690,25 @@ export function formatDate(iso: string): string {
     day: 'numeric',
   })
 }
+
+export type BlogCategory = 'Torah Study' | 'Holidays & Feasts' | 'Faith & Teaching'
+
+const HOLIDAY_SLUGS = new Set([
+  'simchat-torah-vezot-haberachah',
+  'sukkot-the-god-who-dwells-with-us',
+  'yom-teruah-the-shofar-and-the-lamb',
+  'shavuot-get-together',
+  'rosh-hashanah-at-home',
+])
+
+export function getCategory(slug: string): BlogCategory {
+  if (slug.startsWith('parashat-')) return 'Torah Study'
+  if (HOLIDAY_SLUGS.has(slug)) return 'Holidays & Feasts'
+  return 'Faith & Teaching'
+}
+
+export const ALL_CATEGORIES: BlogCategory[] = [
+  'Torah Study',
+  'Holidays & Feasts',
+  'Faith & Teaching',
+]

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getPublishedPosts, getPost, formatDate } from '@/data/blog-posts'
+import { getPublishedPosts, getPost, formatDate, getCategory } from '@/data/blog-posts'
 
 export const dynamicParams = false
 
@@ -47,9 +47,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           &larr; Back to Blog
         </Link>
 
-        <p className="text-[14px] uppercase tracking-[0.15em] text-[#C9A24B] mb-3" id="lato-font">
-          {formatDate(post.date)}
-        </p>
+        <div className="flex flex-wrap items-center gap-3 mb-3">
+          <p className="text-[14px] uppercase tracking-[0.15em] text-[#C9A24B]" id="lato-font">
+            {formatDate(post.date)}
+          </p>
+          <span
+            className="text-[12px] px-[10px] py-[3px] rounded-full bg-[#F3ECE0] text-[#6B5A3A] font-[500]"
+            id="lato-font"
+          >
+            {getCategory(post.slug)}
+          </span>
+        </div>
 
         <h1
           className="font-[400] text-[34px] lg:text-[42px] leading-[115%] mb-[28px]"
