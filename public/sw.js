@@ -1,4 +1,4 @@
-const CACHE = 'yeshua-ministries-v1'
+const CACHE = 'yeshua-ministries-v2'
 
 const PRECACHE = ['/', '/blog/', '/support-this-ministry/', '/offline/']
 
@@ -56,16 +56,33 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // JS / CSS / fonts: stale-while-revalidate
-  event.respondWith(
-    caches.open(CACHE).then((cache) =>
-      cache.match(event.request).then((cached) => {
-        const fetched = fetch(event.request).then((res) => {
-          cache.put(event.request, res.clone())
-          return res
+  // Content-hashed build assets (/_next/static/): filenames change when
+  // content changes, so a cached copy is never wrong — stale-while-revalidate
+  if (url.pathname.startsWith('/_next/static/')) {
+    event.respondWith(
+      caches.open(CACHE).then((cache) =>
+        cache.match(event.request).then((cached) => {
+          const fetched = fetch(event.request).then((res) => {
+            cache.put(event.request, res.clone())
+            return res
+          })
+          return cached || fetched
         })
-        return cached || fetched
-      })
+      )
     )
+    return
+  }
+
+  // Everything else — route data (.txt payloads for client-side navigation),
+  // sitemap, manifest: network-first. The blog gains a new post every Friday;
+  // serving these cache-first shows last week's site until a second visit.
+  event.respondWith(
+    fetch(event.request)
+      .then((res) => {
+        const clone = res.clone()
+        caches.open(CACHE).then((c) => c.put(event.request, clone))
+        return res
+      })
+      .catch(() => caches.match(event.request).then((cached) => cached || Response.error()))
   )
 })
