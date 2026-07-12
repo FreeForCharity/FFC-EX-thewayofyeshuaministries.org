@@ -39,9 +39,24 @@ describe('Footer component', () => {
     expect(screen.getByText(new RegExp(currentYear.toString()))).toBeInTheDocument()
   })
 
-  it('should reference Free For Charity as the hosting provider', () => {
+  it('should show the Supported by Free For Charity attribution', () => {
     render(<Footer />)
-    expect(screen.getByText('Free For Charity')).toBeInTheDocument()
+    expect(screen.getByRole('contentinfo')).toHaveTextContent(/Supported by/i)
+    const ffcLink = screen.getByRole('link', { name: 'Free For Charity' })
+    expect(ffcLink).toHaveAttribute('href', 'https://freeforcharity.org')
+  })
+
+  it('should have the Supported Charity Login hub link', () => {
+    render(<Footer />)
+    const hubLink = screen.getByRole('link', { name: 'Supported Charity Login' })
+    expect(hubLink).toHaveAttribute('href', 'https://freeforcharity.org/hub/')
+  })
+
+  it('should state the registered 501(c)(3) status', () => {
+    render(<Footer />)
+    expect(
+      screen.getByText('The Way of Yeshua Ministries Inc. is a registered 501(c)(3) nonprofit.')
+    ).toBeInTheDocument()
   })
 
   it('should have email contact link', () => {
