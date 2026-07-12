@@ -191,18 +191,27 @@ const Footer: React.FC = () => {
 
       {/* Bottom Bar */}
       <div
-        className="mt-12 py-6 px-4 border-t border-gray-800 text-center text-[18px] font-[500] w-full"
+        className="mt-12 py-6 px-4 border-t border-gray-800 text-center text-[18px] font-[500] w-full space-y-2"
         id="aria-font"
       >
         <p>
-          © {currentYear} The Way of Yeshua Ministries — All Rights Reserved. | Website hosted free
-          by{' '}
+          © {currentYear} The Way of Yeshua Ministries — All Rights Reserved. | Supported by{' '}
           <Link
             href="https://freeforcharity.org"
             className="underline text-[#2EA3F2] hover:text-[#2EA3F2] transition-colors"
           >
             Free For Charity
+          </Link>{' '}
+          |{' '}
+          <Link
+            href="https://freeforcharity.org/hub/"
+            className="underline text-[#2EA3F2] hover:text-[#2EA3F2] transition-colors"
+          >
+            Supported Charity Login
           </Link>
+        </p>
+        <p className="text-[14px] text-gray-400">
+          The Way of Yeshua Ministries Inc. is a registered 501(c)(3) nonprofit.
         </p>
       </div>
     </footer>
