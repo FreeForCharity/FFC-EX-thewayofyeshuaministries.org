@@ -50,28 +50,26 @@ jobs:
             echo "✓ Post committed and pushed to main."
           fi
 
-      - name: Post new blog link to Facebook Page
-        if: steps.generate.outputs.posted == 'true'
-        env:
-          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
-          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
-          POST_TITLE: ${{ steps.generate.outputs.title }}
-          POST_EXCERPT: ${{ steps.generate.outputs.excerpt }}
-          POST_URL: https://thewayofyeshuaministries.org/blog/${{ steps.generate.outputs.slug }}
-        run: |
-          if [ -z "$FACEBOOK_PAGE_ACCESS_TOKEN" ] || [ -z "$FACEBOOK_PAGE_ID" ]; then
-            echo "::warning::FACEBOOK_PAGE_ACCESS_TOKEN or FACEBOOK_PAGE_ID not set — skipping Facebook post. Add both under Settings → Secrets → Actions to enable auto-sharing."
-            exit 0
-          fi
+      - name: Warn if email secrets missing
+        if: steps.generate.outputs.posted == 'true' && (secrets.GMAIL_ADDRESS == '' || secrets.GMAIL_APP_PASSWORD == '')
+        run: echo "::warning::GMAIL_ADDRESS or GMAIL_APP_PASSWORD not set — skipping blog link email. Add both under Settings → Secrets → Actions to enable."
 
-          MESSAGE="${POST_TITLE}"$'\n\n'"${POST_EXCERPT}"
-          RESPONSE=$(curl -sS -X POST "https://graph.facebook.com/v19.0/${FACEBOOK_PAGE_ID}/feed" \
-            --data-urlencode "message=${MESSAGE}" \
-            --data-urlencode "link=${POST_URL}" \
-            --data-urlencode "access_token=${FACEBOOK_PAGE_ACCESS_TOKEN}")
+      - name: Email new blog link
+        if: steps.generate.outputs.posted == 'true' && secrets.GMAIL_ADDRESS != '' && secrets.GMAIL_APP_PASSWORD != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.GMAIL_ADDRESS }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          from: ${{ secrets.GMAIL_ADDRESS }}
+          to: patrickbearup94@gmail.com
+          subject: 'New Blog Post: ${{ steps.generate.outputs.title }}'
+          body: |
+            A new weekly blog post was just published:
 
-          if echo "$RESPONSE" | grep -q '"error"'; then
-            echo "::error::Facebook post failed: ${RESPONSE}"
-            exit 1
-          fi
-          echo "✓ Posted new blog link to Facebook Page."
+            ${{ steps.generate.outputs.title }}
+
+            ${{ steps.generate.outputs.excerpt }}
+
+            Read it here: https://thewayofyeshuaministries.org/blog/${{ steps.generate.outputs.slug }}
