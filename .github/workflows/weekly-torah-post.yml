@@ -29,6 +29,7 @@ jobs:
           node-version: '20'
 
       - name: Generate Torah portion blog post
+        id: generate
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node .github/scripts/generate-torah-post.mjs
@@ -48,3 +49,29 @@ jobs:
             git push origin main
             echo "✓ Post committed and pushed to main."
           fi
+
+      - name: Post new blog link to Facebook Page
+        if: steps.generate.outputs.posted == 'true'
+        env:
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          POST_TITLE: ${{ steps.generate.outputs.title }}
+          POST_EXCERPT: ${{ steps.generate.outputs.excerpt }}
+          POST_URL: https://thewayofyeshuaministries.org/blog/${{ steps.generate.outputs.slug }}
+        run: |
+          if [ -z "$FACEBOOK_PAGE_ACCESS_TOKEN" ] || [ -z "$FACEBOOK_PAGE_ID" ]; then
+            echo "::warning::FACEBOOK_PAGE_ACCESS_TOKEN or FACEBOOK_PAGE_ID not set — skipping Facebook post. Add both under Settings → Secrets → Actions to enable auto-sharing."
+            exit 0
+          fi
+
+          MESSAGE="${POST_TITLE}"$'\n\n'"${POST_EXCERPT}"
+          RESPONSE=$(curl -sS -X POST "https://graph.facebook.com/v19.0/${FACEBOOK_PAGE_ID}/feed" \
+            --data-urlencode "message=${MESSAGE}" \
+            --data-urlencode "link=${POST_URL}" \
+            --data-urlencode "access_token=${FACEBOOK_PAGE_ACCESS_TOKEN}")
+
+          if echo "$RESPONSE" | grep -q '"error"'; then
+            echo "::error::Facebook post failed: ${RESPONSE}"
+            exit 1
+          fi
+          echo "✓ Posted new blog link to Facebook Page."
