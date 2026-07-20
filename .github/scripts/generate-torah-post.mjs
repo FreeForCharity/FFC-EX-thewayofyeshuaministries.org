@@ -2,7 +2,7 @@
 // Fetches the current week's Torah portion from Hebcal and generates a blog post via Claude API.
 // Runs every Friday via GitHub Actions; commits directly to main.
 
-import { readFileSync, writeFileSync, appendFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
 if (!ANTHROPIC_API_KEY) {
@@ -156,15 +156,3 @@ blogPostsContent = blogPostsContent.replace(
 writeFileSync(blogPostsPath, blogPostsContent)
 console.log(`✓ Blog post written: ${slug}`)
 console.log(`  Title: ${postData.title}`)
-
-// ── 6. Expose outputs for downstream GitHub Actions steps (e.g. Facebook post) ─
-if (process.env.GITHUB_OUTPUT) {
-  const setOutput = (name, value) => {
-    const delimiter = `ghadelimiter_${name}`
-    appendFileSync(process.env.GITHUB_OUTPUT, `${name}<<${delimiter}\n${value}\n${delimiter}\n`)
-  }
-  setOutput('posted', 'true')
-  setOutput('slug', slug)
-  setOutput('title', postData.title)
-  setOutput('excerpt', postData.excerpt)
-}
