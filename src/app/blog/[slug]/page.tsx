@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPublishedPosts, getPost, formatDate, getCategory } from '@/data/blog-posts'
+import ShareButtons from '@/components/blog/ShareButtons'
 
 export const dynamicParams = false
 
@@ -72,7 +73,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           ))}
         </div>
 
-        <div className="mt-10 pt-8 border-t border-gray-200 flex flex-wrap gap-3">
+        <div className="mt-10 pt-8 border-t border-gray-200">
+          <ShareButtons
+            url={`https://thewayofyeshuaministries.org/blog/${post.slug}/`}
+            title={post.title}
+          />
+        </div>
+
+        <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/blog"
             className="rounded-[27px] px-[24px] py-[12px] border border-[#C9A24B] text-[#C9A24B] text-[16px] font-[500] hover:bg-[#C9A24B] hover:text-black transition-colors"
