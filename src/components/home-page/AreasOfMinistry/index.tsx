@@ -30,8 +30,8 @@ const tiles: Tile[] = [
   },
   {
     href: '/automobile-program',
-    image: '/Images/yeshua/automobile-program.png',
-    alt: 'Cars donated to the ministry',
+    image: '/Images/yeshua/automobile-program-hatchback.jpg',
+    alt: 'A recipient standing beside the car she received through the Automobile Program',
     label: 'Automobile Program',
   },
   {
