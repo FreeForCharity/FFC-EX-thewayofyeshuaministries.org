@@ -29,10 +29,6 @@ const placedVehicles = [
   },
 ]
 
-// TODO(content): swap `image` below for a real program photo when the ministry
-// can provide one (a recipient receiving keys, a volunteer mechanic, a family
-// with their donated car, etc.). Using a ministry-themed placeholder until a
-// real hero photo lands.
 export default function AutomobileProgram() {
   return (
     <CausePage
@@ -98,9 +94,9 @@ export default function AutomobileProgram() {
             </h2>
             <p className="text-[16px] text-gray-700 mb-6" id="lato-font">
               We work with a range of donated vehicles — sedans, hatchbacks, SUVs, minivans, and
-              pickups, running or in need of repair. Below are a few we’ve repaired and placed with
-              families in our community. If your car isn’t shown, reach out anyway. We can usually
-              find a way to put it to use.
+              pickups, running or in need of repair. Below are a few we’ve repaired and/or placed
+              with families in our community. If your car isn’t shown, reach out anyway. We can
+              usually find a way to put it to use.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {placedVehicles.map((photo) => (
@@ -118,8 +114,8 @@ export default function AutomobileProgram() {
           </div>
         </>
       }
-      image="/Images/yeshua/ministry-6.jpg"
-      imageAlt="Hands holding an open Bible — symbolizing service and ministry to our community"
+      image={assetPath('/Images/yeshua/automobile-program-hero.jpg')}
+      imageAlt="A recipient standing beside the SUV he received through the Automobile Program"
     />
   )
 }
