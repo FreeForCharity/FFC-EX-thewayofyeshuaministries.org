@@ -27,6 +27,11 @@ const placedVehicles = [
     alt: 'A recipient standing beside the hatchback she received through the Automobile Program',
     position: 'object-center',
   },
+  {
+    src: '/Images/yeshua/automobile-program-crossover.jpg',
+    alt: 'A recipient standing beside the crossover SUV she received through the Automobile Program',
+    position: 'object-center',
+  },
 ]
 
 export default function AutomobileProgram() {
@@ -98,7 +103,7 @@ export default function AutomobileProgram() {
               with families in our community. If your car isn’t shown, reach out anyway. We can
               usually find a way to put it to use.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {placedVehicles.map((photo) => (
                 <img
                   key={photo.src}
