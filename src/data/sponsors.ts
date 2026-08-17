@@ -38,6 +38,12 @@ export const sponsors: Sponsor[] = [
     description: 'Premium handmade products for homes and businesses',
     logo: '/Images/yeshua/sponsors/don-john.png',
   },
+  {
+    name: 'Project Rebirth',
+    url: 'https://projectrebirth.org',
+    description: 'A resilience resource for all who serve community and country',
+    logo: '/Images/yeshua/sponsors/project-rebirth.png',
+  },
   // Example — copy this shape for each business that gives to the ministry:
   // {
   //   name: 'Acme Hardware',

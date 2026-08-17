@@ -40,6 +40,8 @@ const BusinessSponsors = ({ sponsors = defaultSponsors }: BusinessSponsorsProps)
                     <img
                       src={assetPath(sponsor.logo)}
                       alt={`${sponsor.name} logo`}
+                      loading="lazy"
+                      decoding="async"
                       className="h-[80px] w-auto max-w-full object-contain rounded-md mb-4"
                     />
                   )}
