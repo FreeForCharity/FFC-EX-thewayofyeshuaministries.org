@@ -14,6 +14,19 @@ test.describe('Homepage Business Sponsors section', () => {
     await expect(contact).toHaveAttribute('href', '/#contact')
   })
 
+  test('is reachable from the More dropdown in the header', async ({ page }) => {
+    await page.goto('/')
+
+    await page.getByRole('button', { name: /More/i }).click()
+    const item = page.getByRole('menuitem', { name: 'Business Sponsors' })
+    await expect(item).toBeVisible()
+    await expect(item).toHaveAttribute('href', '/#sponsors')
+
+    await item.click()
+    await expect(page).toHaveURL(/#sponsors$/)
+    await expect(page.locator('section#sponsors')).toBeInViewport()
+  })
+
   test('each listed sponsor links to their website in a new tab', async ({ page }) => {
     test.skip(sponsors.length === 0, 'No business sponsors are listed yet')
 
