@@ -38,6 +38,7 @@ const Header: React.FC = () => {
           { label: 'Sponsor a Tiny Home', path: '/sponsor-a-tiny-home' },
           { label: 'Automobile Program', path: '/automobile-program' },
           { label: 'Support This Ministry', path: '/support-this-ministry' },
+          { label: 'Business Sponsors', path: '/#sponsors' },
         ],
       },
       { label: 'Blog', path: '/blog' },

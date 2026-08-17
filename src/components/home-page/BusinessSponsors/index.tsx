@@ -40,7 +40,7 @@ const BusinessSponsors = ({ sponsors = defaultSponsors }: BusinessSponsorsProps)
                     <img
                       src={assetPath(sponsor.logo)}
                       alt={`${sponsor.name} logo`}
-                      className="h-[80px] w-auto max-w-full object-contain mb-4"
+                      className="h-[80px] w-auto max-w-full object-contain rounded-md mb-4"
                     />
                   )}
                   <p className="font-[500] text-[20px] leading-[140%]" id="lato-font">
@@ -51,7 +51,7 @@ const BusinessSponsors = ({ sponsors = defaultSponsors }: BusinessSponsorsProps)
                       {sponsor.description}
                     </p>
                   )}
-                  <span className="text-[16px] text-[#C9A24B] mt-3" id="lato-font">
+                  <span className="text-[16px] text-[#C9A24B] mt-auto pt-3" id="lato-font">
                     Visit website
                   </span>
                 </a>
