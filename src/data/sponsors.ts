@@ -25,6 +25,10 @@ export interface Sponsor {
 }
 
 export const sponsors: Sponsor[] = [
+  {
+    name: 'Don John by Victoria Charles',
+    url: 'https://donjohnbyvictoriacharles.com',
+  },
   // Example — copy this shape for each business that gives to the ministry:
   // {
   //   name: 'Acme Hardware',
