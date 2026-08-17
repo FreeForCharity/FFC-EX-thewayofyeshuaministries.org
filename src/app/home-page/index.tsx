@@ -6,6 +6,7 @@ import AreasOfMinistry from '@/components/home-page/AreasOfMinistry'
 import BlogTeaser from '@/components/home-page/BlogTeaser'
 import ComingSoon from '@/components/home-page/ComingSoon'
 import SupportMinistry from '@/components/home-page/SupportMinistry'
+import BusinessSponsors from '@/components/home-page/BusinessSponsors'
 import Contact from '@/components/home-page/Contact'
 import VerseBanner from '@/components/home-page/VerseBanner'
 
@@ -19,6 +20,7 @@ const index = () => {
       <BlogTeaser />
       <ComingSoon />
       <SupportMinistry />
+      <BusinessSponsors />
       <Contact />
       <VerseBanner />
     </div>
