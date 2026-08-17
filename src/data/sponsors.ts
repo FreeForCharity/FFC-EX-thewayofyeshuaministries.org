@@ -32,6 +32,7 @@ export const sponsors: Sponsor[] = [
   {
     name: 'Don John Style 4 Ur Home',
     url: 'https://www.donjohnstyle4urhome.com',
+    description: 'Premium handmade products for homes and businesses',
   },
   // Example — copy this shape for each business that gives to the ministry:
   // {
