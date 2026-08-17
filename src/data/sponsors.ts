@@ -28,6 +28,8 @@ export const sponsors: Sponsor[] = [
   {
     name: 'Don John by Victoria Charles',
     url: 'https://donjohnbyvictoriacharles.com',
+    description:
+      "Men's and women's handmade clothing and accessories, from the affordable to the extravagant",
     logo: '/Images/yeshua/sponsors/don-john.png',
   },
   {
