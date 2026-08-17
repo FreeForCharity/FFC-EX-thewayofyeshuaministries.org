@@ -27,6 +27,19 @@ test.describe('Homepage Business Sponsors section', () => {
     await expect(page.locator('section#sponsors')).toBeInViewport()
   })
 
+  test('is reachable from the footer Quick Links', async ({ page }) => {
+    await page.goto('/')
+
+    const link = page
+      .getByRole('contentinfo')
+      .getByRole('link', { name: 'Business Sponsors', exact: true })
+    await expect(link).toHaveAttribute('href', '/#sponsors')
+
+    await link.click()
+    await expect(page).toHaveURL(/#sponsors$/)
+    await expect(page.locator('section#sponsors')).toBeInViewport()
+  })
+
   test('each listed sponsor links to their website in a new tab', async ({ page }) => {
     test.skip(sponsors.length === 0, 'No business sponsors are listed yet')
 
