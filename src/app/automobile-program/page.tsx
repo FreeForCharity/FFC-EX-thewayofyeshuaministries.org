@@ -28,7 +28,9 @@ const placedVehicles = [
     position: 'object-center',
   },
   {
-    src: '/Images/yeshua/automobile-program-crossover.jpg',
+    // -2 suffix busts browser and CDN caches: the photo behind the original
+    // filename was swapped in place, so stale copies kept being served
+    src: '/Images/yeshua/automobile-program-crossover-2.jpg',
     alt: 'A recipient standing beside the crossover SUV she received through the Automobile Program',
     position: 'object-center',
   },
