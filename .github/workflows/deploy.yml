@@ -41,11 +41,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'pnpm'
 
       # Note: actions/configure-pages was removed because its static_site_generator: next
       # mode rewrites next.config.ts and strips properties it doesn't recognize
@@ -61,15 +64,15 @@ jobs:
           # v2: bump key prefix and include next.config.ts hash so a config
           # change (e.g. trailingSlash) cannot restore a stale cache that
           # produces the wrong static-export file layout.
-          key: ${{ runner.os }}-nextjs-v2-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('next.config.ts') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          key: ${{ runner.os }}-nextjs-v2-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('next.config.ts') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-v2-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('next.config.ts') }}-
+            ${{ runner.os }}-nextjs-v2-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('next.config.ts') }}-
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build with Next.js
-        run: npm run build
+        run: pnpm run build
         env:
           # Custom domain (staging.thewayofyeshuaministries.org via public/CNAME),
           # so no basePath — the site lives at the domain root, not under a
