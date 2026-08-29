@@ -29,24 +29,24 @@ The site documents the ministry's mission and outreach programs:
 ## Local development
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Build for production:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 Run the full check suite locally before committing:
 
 ```bash
-npm run format
-npm run lint
-npm test
-npm run build
-npm run test:e2e
+pnpm run format
+pnpm run lint
+pnpm test
+pnpm run build
+pnpm run test:e2e
 ```
 
 ## Project structure

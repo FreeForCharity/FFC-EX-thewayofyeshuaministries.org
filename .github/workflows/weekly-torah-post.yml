@@ -26,10 +26,17 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Torah portion blog post
         env:
@@ -37,7 +44,8 @@ jobs:
         run: node .github/scripts/generate-torah-post.mjs
 
       - name: Format generated file
-        run: npx prettier --write src/data/blog-posts.ts
+        # prettier is already installed as a devDependency
+        run: pnpm exec prettier --write src/data/blog-posts.ts
 
       - name: Commit and push
         run: |
