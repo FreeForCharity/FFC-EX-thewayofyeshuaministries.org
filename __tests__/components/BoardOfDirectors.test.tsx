@@ -51,6 +51,22 @@ describe('Board of Directors page', () => {
     ])
   })
 
+  it('should give every board member a role and a bio', () => {
+    // The page is public-facing: a member listed without either reads as a
+    // placeholder to a donor. Filling both is what makes the listing credible.
+    for (const member of boardMembers) {
+      expect(member.role).toBeTruthy()
+      expect(member.bio.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('should render each officer bio on the page', () => {
+    render(<BoardOfDirectors />)
+    expect(screen.getByText(/works in the medical field/i)).toBeInTheDocument()
+    expect(screen.getByText(/founder and CEO of Don John/i)).toBeInTheDocument()
+    expect(screen.getByText(/nonprofit sector for over a decade/i)).toBeInTheDocument()
+  })
+
   it('should link back to the program status list', () => {
     render(<BoardOfDirectors />)
     expect(screen.getByRole('link', { name: /program status/i })).toHaveAttribute(

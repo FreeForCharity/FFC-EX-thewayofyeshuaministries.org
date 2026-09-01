@@ -52,17 +52,26 @@ export const boardMembers: BoardMember[] = [
   {
     name: 'Alexandra Bearup',
     role: 'President',
-    bio: [],
+    bio: [
+      'Alexandra Bearup works in the medical field, caring for patients who are unable to care for themselves.',
+      'As president she works to advance the goals and vision of the ministry.',
+    ],
   },
   {
     name: 'John Cruz',
     role: 'Vice President',
-    bio: [],
+    bio: [
+      'John Cruz is the founder and CEO of Don John.',
+      'He is central to the Tiny Home Project and provides vision and spiritual support to the ministry.',
+    ],
   },
   {
     name: 'Rebekah Freeman',
     role: 'Treasurer & Secretary',
-    bio: [],
+    bio: [
+      'Rebekah Freeman has worked in the nonprofit sector for over a decade.',
+      'She keeps the ministry’s books and manages its documents and records.',
+    ],
   },
 ]
 
