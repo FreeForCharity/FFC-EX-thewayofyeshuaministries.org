@@ -28,6 +28,29 @@ describe('Board of Directors page', () => {
     }
   })
 
+  it('should show each officer with their role', () => {
+    render(<BoardOfDirectors />)
+    const officers: [string, string][] = [
+      ['Dr. Patrick Bearup', 'Founder & Director'],
+      ['Alexandra Bearup', 'President'],
+      ['John Cruz', 'Vice President'],
+      ['Rebekah Freeman', 'Treasurer & Secretary'],
+    ]
+    for (const [name, role] of officers) {
+      expect(screen.getByRole('heading', { name, level: 3 })).toBeInTheDocument()
+      expect(screen.getByText(role)).toBeInTheDocument()
+    }
+  })
+
+  it('should list the founder first, then the officers', () => {
+    expect(boardMembers.map((m) => m.name)).toEqual([
+      'Dr. Patrick Bearup',
+      'Alexandra Bearup',
+      'John Cruz',
+      'Rebekah Freeman',
+    ])
+  })
+
   it('should link back to the program status list', () => {
     render(<BoardOfDirectors />)
     expect(screen.getByRole('link', { name: /program status/i })).toHaveAttribute(

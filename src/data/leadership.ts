@@ -36,7 +36,7 @@ export const boardMembers: BoardMember[] = [
     role: 'Founder & Director',
     bio: [
       'Dr. Patrick Bearup founded The Way of Yeshua Ministries and serves as its director. He holds a doctorate in theology and religious education.',
-      'He also serves on the board of Bearup International Ministries.',
+      'He also serves as associate pastor of Bearup International Ministries and sits on its board.',
     ],
     links: [
       {
@@ -46,15 +46,18 @@ export const boardMembers: BoardMember[] = [
     ],
   },
   {
-    name: 'Rebekah Freeman',
+    name: 'Alexandra Bearup',
+    role: 'President',
     bio: [],
   },
   {
     name: 'John Cruz',
+    role: 'Vice President',
     bio: [],
   },
   {
-    name: 'Alexandra Bearup',
+    name: 'Rebekah Freeman',
+    role: 'Treasurer & Secretary',
     bio: [],
   },
 ]
