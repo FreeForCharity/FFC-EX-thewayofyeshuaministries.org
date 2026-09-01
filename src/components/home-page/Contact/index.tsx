@@ -51,6 +51,18 @@ const Contact = () => {
           <div className="flex items-start gap-3">
             <MapPin className="w-7 h-7 text-[#C9A24B] flex-shrink-0 mt-1" />
             <div>
+              <p className="font-[700]">Physical Address</p>
+              <p className="text-[17px]">
+                16400 S. Alsip Street
+                <br />
+                Tucson, AZ 85736
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <MapPin className="w-7 h-7 text-[#C9A24B] flex-shrink-0 mt-1" />
+            <div>
               <p className="font-[700]">Mailing Address</p>
               <p className="text-[17px]">
                 9802 W. Bell Road #1153
