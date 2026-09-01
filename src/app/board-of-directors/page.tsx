@@ -76,7 +76,7 @@ export default function BoardOfDirectors() {
                 {member.photo ? (
                   <img
                     src={assetPath(member.photo)}
-                    alt={`${member.name}, ${member.role}`}
+                    alt={member.role ? `${member.name}, ${member.role}` : member.name}
                     className="w-[140px] h-[140px] rounded-full object-cover border-2 border-[#C9A24B] mb-4"
                   />
                 ) : (

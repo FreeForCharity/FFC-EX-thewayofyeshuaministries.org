@@ -17,8 +17,12 @@ export interface BoardMember {
   role: string
   /** One or more short paragraphs. Keep it factual and in plain language. */
   bio: string[]
-  /** Optional headshot, relative to `public/`. Falls back to initials. */
-  photo?: string
+  /**
+   * Optional headshot, relative to `public/`. Must start with `/` -- it is
+   * passed to `assetPath()`, which only prefixes the base path and would
+   * otherwise produce a broken URL. Falls back to initials when absent.
+   */
+  photo?: `/${string}`
 }
 
 export const boardMembers: BoardMember[] = [
