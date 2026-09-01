@@ -36,6 +36,18 @@ describe('Board of Directors page', () => {
     )
   })
 
+  it('should render the founder with role, bio, and affiliated ministry link', () => {
+    render(<BoardOfDirectors />)
+    expect(
+      screen.getByRole('heading', { name: 'Dr. Patrick Bearup', level: 3 })
+    ).toBeInTheDocument()
+    expect(screen.getByText('Founder & Director')).toBeInTheDocument()
+    expect(screen.getByText(/doctorate in theology and religious education/i)).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: 'Bearup International Ministries' })
+    expect(link).toHaveAttribute('href', 'https://bearupinternationalministries.org')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
   it('should show verifiable registration details', () => {
     render(<BoardOfDirectors />)
     expect(

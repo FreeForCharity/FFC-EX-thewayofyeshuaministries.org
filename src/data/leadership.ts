@@ -23,13 +23,24 @@ export interface BoardMember {
    * otherwise produce a broken URL. Falls back to initials when absent.
    */
   photo?: `/${string}`
+  /** Optional outbound links, e.g. an affiliated ministry or organization. */
+  links?: { label: string; href: string }[]
 }
 
 export const boardMembers: BoardMember[] = [
   {
-    name: 'Patrick Bearup',
-    role: '',
-    bio: [],
+    name: 'Dr. Patrick Bearup',
+    role: 'Founder & Director',
+    bio: [
+      'Dr. Patrick Bearup founded The Way of Yeshua Ministries and serves as its director. He holds a doctorate in theology and religious education.',
+      'He also serves on the board of Bearup International Ministries.',
+    ],
+    links: [
+      {
+        label: 'Bearup International Ministries',
+        href: 'https://bearupinternationalministries.org',
+      },
+    ],
   },
   {
     name: 'Rebekah Freeman',

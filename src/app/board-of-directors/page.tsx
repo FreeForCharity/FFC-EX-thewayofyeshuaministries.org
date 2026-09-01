@@ -107,6 +107,22 @@ export default function BoardOfDirectors() {
                     ))}
                   </div>
                 )}
+                {member.links && member.links.length > 0 && (
+                  <ul className="mt-4 space-y-1 list-none p-0" id="lato-font">
+                    {member.links.map((link) => (
+                      <li key={link.href}>
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[16px] text-[#C9A24B] hover:underline"
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
