@@ -64,7 +64,19 @@ describe('Board of Directors page', () => {
     render(<BoardOfDirectors />)
     expect(screen.getByText(/works in the medical field/i)).toBeInTheDocument()
     expect(screen.getByText(/founder and CEO of Don John/i)).toBeInTheDocument()
+    expect(screen.getByText(/Don John is also a business sponsor/i)).toBeInTheDocument()
     expect(screen.getByText(/nonprofit sector for over a decade/i)).toBeInTheDocument()
+  })
+
+  it('should open external member links in a new tab but keep internal ones in place', () => {
+    render(<BoardOfDirectors />)
+    const external = screen.getByRole('link', { name: 'Bearup International Ministries' })
+    expect(external).toHaveAttribute('target', '_blank')
+    expect(external).toHaveAttribute('rel', 'noopener noreferrer')
+
+    const internal = screen.getByRole('link', { name: /under our business sponsors/i })
+    expect(internal).toHaveAttribute('href', '/#sponsors')
+    expect(internal).not.toHaveAttribute('target')
   })
 
   it('should link back to the program status list', () => {

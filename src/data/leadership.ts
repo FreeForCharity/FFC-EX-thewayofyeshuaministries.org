@@ -61,9 +61,10 @@ export const boardMembers: BoardMember[] = [
     name: 'John Cruz',
     role: 'Vice President',
     bio: [
-      'John Cruz is the founder and CEO of Don John.',
-      'He is central to the Tiny Home Project and provides vision and spiritual support to the ministry.',
+      'John Cruz is the founder and CEO of Don John, which makes handmade clothing, accessories, and products for homes and businesses.',
+      'He is central to the Tiny Home Project and provides vision and spiritual support to the ministry. Don John is also a business sponsor of The Way of Yeshua Ministries.',
     ],
+    links: [{ label: 'See Don John under our business sponsors', href: '/#sponsors' }],
   },
   {
     name: 'Rebekah Freeman',

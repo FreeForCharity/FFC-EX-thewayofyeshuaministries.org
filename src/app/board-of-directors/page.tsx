@@ -106,18 +106,32 @@ export default function BoardOfDirectors() {
                 )}
                 {member.links && member.links.length > 0 && (
                   <ul className="mt-4 space-y-1 list-none p-0" id="lato-font">
-                    {member.links.map((link) => (
-                      <li key={link.href}>
-                        <a
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[16px] text-[#C9A24B] hover:underline"
-                        >
-                          {link.label}
-                        </a>
-                      </li>
-                    ))}
+                    {member.links.map((link) => {
+                      // Only send visitors off-site in a new tab; an in-page
+                      // anchor should behave like any other link on the site.
+                      const isExternal = link.href.startsWith('http')
+                      return (
+                        <li key={link.href}>
+                          {isExternal ? (
+                            <a
+                              href={link.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[16px] text-[#C9A24B] hover:underline"
+                            >
+                              {link.label}
+                            </a>
+                          ) : (
+                            <Link
+                              href={link.href}
+                              className="text-[16px] text-[#C9A24B] hover:underline"
+                            >
+                              {link.label}
+                            </Link>
+                          )}
+                        </li>
+                      )
+                    })}
                   </ul>
                 )}
               </li>
