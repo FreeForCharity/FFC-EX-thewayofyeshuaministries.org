@@ -61,7 +61,7 @@ export const programs: Program[] = [
     name: 'Tiny Home Project',
     status: 'seeking-sponsors',
     summary:
-      'Small, dignified homes for neighbors who are unhoused. No homes have been built yet. We are seeking sponsors to fund the first units.',
+      'Small, dignified homes for neighbors who are unhoused. The land is secured and build partners are in place. No homes have been built yet -- funding is the one thing standing between this and the first unit.',
     href: '/sponsor-a-tiny-home',
   },
   {

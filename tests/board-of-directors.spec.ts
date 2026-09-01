@@ -42,6 +42,7 @@ test.describe('Program status section', () => {
 
   test('the tiny home page states plainly that no homes are built yet', async ({ page }) => {
     await page.goto('/sponsor-a-tiny-home')
-    await expect(page.locator('main')).toContainText('no tiny homes have been built yet')
+    await expect(page.locator('main')).toContainText('No tiny homes have been built yet')
+    await expect(page.locator('main')).toContainText('secured the land')
   })
 })

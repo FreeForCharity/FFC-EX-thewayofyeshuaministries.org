@@ -18,7 +18,11 @@ export interface BoardMember {
    * Omit it rather than setting an empty string when it is not yet known.
    */
   role?: string
-  /** One or more short paragraphs. Keep it factual and in plain language. */
+  /**
+   * Short paragraphs, factual and in plain language. May be empty for a
+   * member whose bio has not been supplied yet -- the page then renders the
+   * name and role alone rather than a placeholder.
+   */
   bio: string[]
   /**
    * Optional headshot, relative to `public/`. Must start with `/` -- it is

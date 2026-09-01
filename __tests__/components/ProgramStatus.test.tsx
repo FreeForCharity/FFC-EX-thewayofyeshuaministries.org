@@ -38,6 +38,7 @@ describe('ProgramStatus section', () => {
     const tinyHome = programs.find((p) => p.name === 'Tiny Home Project')
     expect(tinyHome?.status).not.toBe('serving')
     expect(tinyHome?.summary).toMatch(/no homes have been built yet/i)
+    expect(tinyHome?.summary).toMatch(/land is secured/i)
   })
 
   it('should only mark a program as serving when it has served someone', () => {
