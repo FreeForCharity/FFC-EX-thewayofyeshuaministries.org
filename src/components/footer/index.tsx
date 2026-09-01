@@ -145,6 +145,24 @@ const Footer: React.FC = () => {
             </div>
 
             <a
+              href="https://www.google.com/maps/search/?api=1&query=16400+S+Alsip+Street+Tucson+AZ+85736"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open physical address in Google Maps"
+              className="flex items-start gap-3 hover:opacity-80 transition-opacity"
+            >
+              <MapPin className="w-10 h-10 text-[#C9A24B] flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-[500] text-[22px]">Physical Address</p>
+                <p className="font-[500] text-[16px]" id="aria-font">
+                  16400 S. Alsip Street
+                  <br />
+                  Tucson, AZ 85736
+                </p>
+              </div>
+            </a>
+
+            <a
               href="https://www.google.com/maps/search/?api=1&query=9802+W+Bell+Road+%231153+Sun+City+AZ+85351"
               target="_blank"
               rel="noopener noreferrer"

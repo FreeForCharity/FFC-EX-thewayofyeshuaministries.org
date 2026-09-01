@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     'yeshua',
     'prison program',
     'Sun City AZ',
+    'Tucson AZ',
   ],
   robots: {
     index: true,

@@ -22,8 +22,12 @@ export const organization = {
    * readers are pointed at the ACC's own search to check the current status.
    */
   goodStandingAsOf: 'April 15, 2026',
-  /** Where anyone can verify the above. */
-  accVerifyUrl: 'https://ecorp.azcc.gov/EntitySearch/Index',
+  /**
+   * Where anyone can verify the above. This is the address printed on the
+   * Certificate of Good Standing itself -- use whatever the current
+   * certificate names rather than a remembered URL, which can go stale.
+   */
+  accVerifyUrl: 'https://arizonabusinesscenter.azcc.gov',
   /** IRS Tax Exempt Organization Search. */
   irsVerifyUrl: 'https://apps.irs.gov/app/eos/',
 } as const

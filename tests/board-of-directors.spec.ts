@@ -21,6 +21,18 @@ test.describe('Board of Directors page', () => {
   })
 })
 
+test.describe('Footer addresses', () => {
+  test('shows the physical address and links it to maps', async ({ page }) => {
+    await page.goto('/')
+    const footer = page.locator('footer')
+    await expect(footer).toContainText('Physical Address')
+    await expect(footer).toContainText('16400 S. Alsip Street')
+    await expect(footer).toContainText('Tucson, AZ 85736')
+    const maps = footer.locator('a[aria-label="Open physical address in Google Maps"]')
+    await expect(maps).toHaveAttribute('href', /16400\+S\+Alsip\+Street/)
+  })
+})
+
 test.describe('Program status section', () => {
   test('shows which programs are serving people and which are not', async ({ page }) => {
     await page.goto('/#programs')
