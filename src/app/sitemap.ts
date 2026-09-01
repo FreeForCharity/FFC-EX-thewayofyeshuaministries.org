@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
   const routes = [
     '/',
+    '/board-of-directors',
     '/prison-program',
     '/build-the-church',
     '/sponsor-a-tiny-home',
