@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { assetPath } from '@/lib/assetPath'
 import { boardMembers, getInitials } from '@/data/leadership'
+import { organization } from '@/data/organization'
 
 export const metadata: Metadata = {
   title: 'Board of Directors',
@@ -110,6 +111,73 @@ export default function BoardOfDirectors() {
             ))}
           </ul>
         </div>
+      </section>
+
+      {/* Accountability */}
+      <section className="w-[90%] mx-auto max-w-[900px] py-[60px]">
+        <h2 className="font-[400] text-[28px] lg:text-[34px] mb-[16px]" id="faustina-font">
+          Registration &amp; Accountability
+        </h2>
+        <p className="text-[18px] leading-[160%] text-gray-800 mb-[24px]" id="lato-font">
+          You should not have to take our word for any of this. Every fact below is a public record
+          you can look up yourself.
+        </p>
+
+        <dl className="border border-gray-200 rounded-lg divide-y divide-gray-200" id="lato-font">
+          <div className="flex flex-wrap gap-x-4 px-5 py-3">
+            <dt className="font-[600] text-[16px] text-gray-600 w-full sm:w-[210px]">Legal name</dt>
+            <dd className="text-[17px] flex-1">{organization.legalName}</dd>
+          </div>
+          <div className="flex flex-wrap gap-x-4 px-5 py-3">
+            <dt className="font-[600] text-[16px] text-gray-600 w-full sm:w-[210px]">
+              Federal tax status
+            </dt>
+            <dd className="text-[17px] flex-1">
+              501(c)(3) tax-exempt nonprofit. Donations are tax-deductible to the extent allowed by
+              law.
+            </dd>
+          </div>
+          <div className="flex flex-wrap gap-x-4 px-5 py-3">
+            <dt className="font-[600] text-[16px] text-gray-600 w-full sm:w-[210px]">
+              State registration
+            </dt>
+            <dd className="text-[17px] flex-1">
+              Arizona {organization.entityType}, authorized {organization.authorizedDate}. Arizona
+              Corporation Commission Business ID {organization.accBusinessId}.
+            </dd>
+          </div>
+          <div className="flex flex-wrap gap-x-4 px-5 py-3">
+            <dt className="font-[600] text-[16px] text-gray-600 w-full sm:w-[210px]">
+              Good standing
+            </dt>
+            <dd className="text-[17px] flex-1">
+              In good standing with the Arizona Corporation Commission as of{' '}
+              {organization.goodStandingAsOf}, with all annual reports filed and all fees paid.
+            </dd>
+          </div>
+          <div className="flex flex-wrap gap-x-4 px-5 py-3">
+            <dt className="font-[600] text-[16px] text-gray-600 w-full sm:w-[210px]">Verify</dt>
+            <dd className="text-[17px] flex-1">
+              <a
+                href={organization.accVerifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#C9A24B] hover:underline"
+              >
+                Arizona Corporation Commission entity search
+              </a>
+              {' · '}
+              <a
+                href={organization.irsVerifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#C9A24B] hover:underline"
+              >
+                IRS Tax Exempt Organization Search
+              </a>
+            </dd>
+          </div>
+        </dl>
       </section>
 
       {/* Contact */}

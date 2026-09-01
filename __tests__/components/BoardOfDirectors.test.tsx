@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import BoardOfDirectors from '../../src/app/board-of-directors/page'
 import { boardMembers, getInitials } from '../../src/data/leadership'
+import { organization } from '../../src/data/organization'
 
 expect.extend(toHaveNoViolations)
 
@@ -16,7 +17,7 @@ describe('Board of Directors page', () => {
 
   it('should identify the ministry as a 501(c)(3) in Sun City, Arizona', () => {
     render(<BoardOfDirectors />)
-    expect(screen.getByText(/501\(c\)\(3\)/)).toBeInTheDocument()
+    expect(screen.getAllByText(/501\(c\)\(3\)/).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/Sun City, Arizona/).length).toBeGreaterThan(0)
   })
 
@@ -33,6 +34,32 @@ describe('Board of Directors page', () => {
       'href',
       '/#programs'
     )
+  })
+
+  it('should show verifiable registration details', () => {
+    render(<BoardOfDirectors />)
+    expect(
+      screen.getByRole('heading', { name: /Registration & Accountability/i })
+    ).toBeInTheDocument()
+    expect(screen.getByText(organization.legalName)).toBeInTheDocument()
+    expect(screen.getByText(new RegExp(organization.accBusinessId))).toBeInTheDocument()
+  })
+
+  it('should state good standing as of a date rather than open-endedly', () => {
+    render(<BoardOfDirectors />)
+    expect(
+      screen.getByText(new RegExp(`as of\\s+${organization.goodStandingAsOf}`))
+    ).toBeInTheDocument()
+  })
+
+  it('should link out to the state and federal registries so claims can be checked', () => {
+    render(<BoardOfDirectors />)
+    expect(
+      screen.getByRole('link', { name: /Arizona Corporation Commission entity search/i })
+    ).toHaveAttribute('href', organization.accVerifyUrl)
+    expect(
+      screen.getByRole('link', { name: /IRS Tax Exempt Organization Search/i })
+    ).toHaveAttribute('href', organization.irsVerifyUrl)
   })
 
   it('should have no accessibility violations', async () => {
