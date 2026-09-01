@@ -8,6 +8,11 @@
  * delivered something to someone outside the ministry.
  */
 
+/**
+ * `serving` means the program has delivered something to a real person.
+ * `seeking-sponsors` and `in-development` both mean it has not: the former
+ * additionally tells a reader that funding is the thing holding it up.
+ */
 export type ProgramStatus = 'serving' | 'seeking-sponsors' | 'in-development'
 
 export interface Program {
@@ -28,7 +33,7 @@ export const statusLabels: Record<ProgramStatus, { label: string; className: str
     className: 'bg-[#1F6B3A] text-white',
   },
   'seeking-sponsors': {
-    label: 'Underway — seeking sponsors',
+    label: 'In development — seeking sponsors',
     className: 'bg-[#C9A24B] text-black',
   },
   'in-development': {
@@ -56,7 +61,7 @@ export const programs: Program[] = [
     name: 'Tiny Home Project',
     status: 'seeking-sponsors',
     summary:
-      'Small, dignified homes for neighbors who are unhoused. The project is underway and we are actively seeking sponsors to fund units.',
+      'Small, dignified homes for neighbors who are unhoused. No homes have been built yet. We are seeking sponsors to fund the first units.',
     href: '/sponsor-a-tiny-home',
   },
   {

@@ -34,6 +34,18 @@ describe('ProgramStatus section', () => {
     expect(pantry?.status).toBe('in-development')
   })
 
+  it('should not present the tiny home project as having housed anyone', () => {
+    const tinyHome = programs.find((p) => p.name === 'Tiny Home Project')
+    expect(tinyHome?.status).not.toBe('serving')
+    expect(tinyHome?.summary).toMatch(/no homes have been built yet/i)
+  })
+
+  it('should only mark a program as serving when it has served someone', () => {
+    // Guards the whole point of this section: exactly two programs are live.
+    expect(programs.filter((p) => p.status === 'serving')).toHaveLength(2)
+    expect(statusLabels['seeking-sponsors'].label).not.toMatch(/serving/i)
+  })
+
   it('should link to the board of directors page', () => {
     render(<ProgramStatus />)
     expect(screen.getByRole('link', { name: /board of directors/i })).toHaveAttribute(

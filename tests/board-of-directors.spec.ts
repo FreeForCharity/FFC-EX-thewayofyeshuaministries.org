@@ -33,5 +33,15 @@ test.describe('Program status section', () => {
     const pantryCard = section.locator('li').filter({ hasText: 'Food Pantry' })
     await expect(pantryCard).toContainText('In development')
     await expect(pantryCard).not.toContainText('Serving people now')
+
+    // No tiny home has been built, so the card must not read as operating.
+    const tinyHomeCard = section.locator('li').filter({ hasText: 'Tiny Home Project' })
+    await expect(tinyHomeCard).toContainText('In development')
+    await expect(tinyHomeCard).not.toContainText('Serving people now')
+  })
+
+  test('the tiny home page states plainly that no homes are built yet', async ({ page }) => {
+    await page.goto('/sponsor-a-tiny-home')
+    await expect(page.locator('main')).toContainText('no tiny homes have been built yet')
   })
 })

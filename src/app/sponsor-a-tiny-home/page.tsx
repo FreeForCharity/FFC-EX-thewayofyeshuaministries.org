@@ -21,6 +21,11 @@ export default function SponsorATinyHome() {
             </em>{' '}
             — Matthew 25:35, 40
           </p>
+          <p className="rounded-lg border border-[#C9A24B] bg-[#FBF7EF] px-5 py-4 text-[17px] text-left">
+            <strong>Where this stands today:</strong> no tiny homes have been built yet. This
+            program is in development, and sponsorships are what will fund the first units. We would
+            rather tell you that plainly than let you assume otherwise.
+          </p>
           <p>
             In our own community, neighbors are sleeping in cars, on couches that aren’t theirs, or
             out in the open. The cost of housing has outpaced what many can earn — and behind every
