@@ -16,12 +16,9 @@ export default function BoardOfDirectors() {
       {/* Page header */}
       <section className="bg-black text-white">
         <div className="w-[90%] mx-auto max-w-[900px] py-[70px] text-center">
-          <h2
-            className="text-[18px] tracking-[0.18em] uppercase text-[#C9A24B] mb-3"
-            id="lato-font"
-          >
+          <p className="text-[18px] tracking-[0.18em] uppercase text-[#C9A24B] mb-3" id="lato-font">
             About Us
-          </h2>
+          </p>
           <h1 className="font-[400] text-[36px] lg:text-[48px] leading-[110%]" id="faustina-font">
             Our Board of Directors
           </h1>
@@ -102,8 +99,8 @@ export default function BoardOfDirectors() {
                     className="text-[16px] leading-[160%] text-gray-700 mt-4 space-y-3 text-left"
                     id="lato-font"
                   >
-                    {member.bio.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
+                    {member.bio.map((paragraph, index) => (
+                      <p key={index}>{paragraph}</p>
                     ))}
                   </div>
                 )}

@@ -74,6 +74,14 @@ describe('Board of Directors page', () => {
     ).toHaveAttribute('href', organization.irsVerifyUrl)
   })
 
+  it('should open with the h1, with no heading above it in the outline', () => {
+    const { container } = render(<BoardOfDirectors />)
+    const headings = Array.from(container.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+    expect(headings.length).toBeGreaterThan(1)
+    expect(headings[0]!.tagName).toBe('H1')
+    expect(container.querySelectorAll('h1')).toHaveLength(1)
+  })
+
   it('should have no accessibility violations', async () => {
     const { container } = render(<BoardOfDirectors />)
     const results = await axe(container)

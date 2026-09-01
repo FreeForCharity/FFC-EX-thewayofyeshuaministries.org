@@ -13,8 +13,11 @@
 export interface BoardMember {
   /** Full name as it should appear publicly. */
   name: string
-  /** Role on the board or in the ministry, e.g. 'Founder & President'. */
-  role: string
+  /**
+   * Role on the board or in the ministry, e.g. 'Founder & President'.
+   * Omit it rather than setting an empty string when it is not yet known.
+   */
+  role?: string
   /** One or more short paragraphs. Keep it factual and in plain language. */
   bio: string[]
   /**
@@ -44,17 +47,14 @@ export const boardMembers: BoardMember[] = [
   },
   {
     name: 'Rebekah Freeman',
-    role: '',
     bio: [],
   },
   {
     name: 'John Cruz',
-    role: '',
     bio: [],
   },
   {
     name: 'Alexandra Bearup',
-    role: '',
     bio: [],
   },
 ]
