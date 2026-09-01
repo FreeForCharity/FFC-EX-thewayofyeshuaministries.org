@@ -34,6 +34,7 @@ const Header: React.FC = () => {
       {
         label: 'More',
         children: [
+          { label: 'Board of Directors', path: '/board-of-directors' },
           { label: 'Build the Church', path: '/build-the-church' },
           { label: 'Sponsor a Tiny Home', path: '/sponsor-a-tiny-home' },
           { label: 'Automobile Program', path: '/automobile-program' },
