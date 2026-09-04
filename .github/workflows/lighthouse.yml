@@ -45,7 +45,9 @@ jobs:
       - name: Build site
         run: pnpm run build
         env:
-          NEXT_PUBLIC_BASE_PATH: /FFC_Single_Page_Template
+          # Match deploy.yml: the site is published at the domain
+          # root, so an unset basePath is what Lighthouse must audit.
+          NEXT_PUBLIC_BASE_PATH: ''
 
       - name: Run Lighthouse CI
         # @lhci/cli is already installed as a devDependency
