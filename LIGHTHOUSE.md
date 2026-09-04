@@ -140,9 +140,7 @@ The Lighthouse CI configuration is in `lighthouserc.json`:
   "ci": {
     "collect": {
       "staticDistDir": "./out",
-      "url": [
-        "http://localhost/index.html"
-      ],
+      "url": ["http://localhost/index.html"],
       "numberOfRuns": 3
     }
   }
