@@ -45,8 +45,10 @@ jobs:
       - name: Build site
         run: pnpm run build
         env:
-          # Match deploy.yml: the site is published at the domain
-          # root, so an unset basePath is what Lighthouse must audit.
+          # Match deploy.yml, which also builds with an EMPTY basePath:
+          # the site is published at the domain root, so Lighthouse has
+          # to audit it that way or every asset URL 404s. Keep this line
+          # in step with deploy.yml rather than deleting it.
           NEXT_PUBLIC_BASE_PATH: ''
 
       - name: Run Lighthouse CI
