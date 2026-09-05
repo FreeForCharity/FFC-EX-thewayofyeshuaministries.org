@@ -8,7 +8,7 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
-    slug: 'parashat-ki-teitzei',
+    slug: 'parashat-ki-teitzei-sep-2026',
     title: 'Parashat Ki Teitzei: When You Go Out to Battle',
     date: '2026-09-05',
     excerpt:
