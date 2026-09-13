@@ -172,9 +172,18 @@ jobs:
           # unreadable file would block every other recording indefinitely.
           produced=false
           failed=()
+          staging="$RUNNER_TEMP/new-transcripts"
+          mkdir -p "$staging"
           for audio in "${targets[@]}"; do
+            stem="$(basename "${audio%.*}")"
             echo "::group::$audio"
             if python3 .github/scripts/transcribe-sermon.py "$audio"; then
+              # Only what this run wrote goes on to be committed. Handing over
+              # the whole directory would carry a copy of every other
+              # transcript as it looked when this job started, and a
+              # correction someone made during the fifteen minutes since would
+              # be committed straight back to its old state.
+              cp "sermons/transcripts/${stem}.md" "$staging/"
               produced=true
             else
               failed+=("$audio")
@@ -199,7 +208,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: transcripts
-          path: sermons/transcripts
+          path: ${{ runner.temp }}/new-transcripts
 
   # The short job, and the only one holding a token that can write. It runs
   # git and nothing else: no repository scripts, no third-party packages.
@@ -234,7 +243,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: transcripts
-          path: sermons/transcripts
+          path: ${{ runner.temp }}/new-transcripts
+
+      - name: Put them with the others
+        # Copied in one by one rather than unpacked over the directory, so
+        # this run adds what it made and touches nothing else.
+        run: |
+          set -euo pipefail
+          mkdir -p sermons/transcripts
+          cp "$RUNNER_TEMP"/new-transcripts/*.md sermons/transcripts/
 
       - name: Commit the transcripts
         run: |
