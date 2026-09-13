@@ -137,11 +137,26 @@ jobs:
           if [ -n "$REQUESTED_FILE" ]; then
             targets=("$REQUESTED_FILE")
           else
-            # Every recording that has no transcript yet.
+            # Every recording that has no transcript yet. The formats listed
+            # here are the ones the script accepts; keep the two in step.
             shopt -s nullglob
+            declare -A claimed_by=()
             for audio in sermons/audio/*.{mp3,m4a,wav,mp4,aac,ogg,flac}; do
               stem="$(basename "${audio%.*}")"
-              [ -f "sermons/transcripts/${stem}.md" ] || targets+=("$audio")
+              if [ -f "sermons/transcripts/${stem}.md" ]; then
+                continue
+              fi
+              # The transcript is named after the recording, so the same
+              # sermon kept in two formats -- sermon.mp3 and sermon.wav --
+              # wants the same file. Take the first and say which was left,
+              # rather than letting the second fail against the transcript the
+              # first just wrote.
+              if [ -n "${claimed_by[$stem]:-}" ]; then
+                echo "::warning::Skipping $audio: ${claimed_by[$stem]} already becomes sermons/transcripts/${stem}.md"
+                continue
+              fi
+              claimed_by[$stem]="$audio"
+              targets+=("$audio")
             done
           fi
 

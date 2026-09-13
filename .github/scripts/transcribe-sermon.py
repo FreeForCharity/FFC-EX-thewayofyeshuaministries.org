@@ -30,6 +30,12 @@ from pathlib import Path
 
 MODEL_SIZE = os.environ.get("WHISPER_MODEL", "small.en")
 
+# Where recordings live and where their transcripts go. Kept in step with the
+# formats the workflow looks for.
+AUDIO_DIR = Path("sermons/audio")
+TRANSCRIPT_DIR = Path("sermons/transcripts")
+AUDIO_SUFFIXES = {".mp3", ".m4a", ".wav", ".mp4", ".aac", ".ogg", ".flac"}
+
 # Longest silence, in seconds, that still belongs to the same paragraph. Speech
 # recognition returns a stream of short segments; grouping them on the pauses a
 # preacher actually takes gives something closer to readable prose.
@@ -134,7 +140,26 @@ def main() -> int:
         print(f"::error::No such audio file: {source}", file=sys.stderr)
         return 1
 
-    destination = Path("sermons/transcripts") / f"{source.stem}.md"
+    # The destination is derived from the name alone, so a source from
+    # anywhere else would quietly claim some recording's transcript. Both
+    # paths are relative to the repository root, which is where this is meant
+    # to be run from.
+    if source.suffix.lower() not in AUDIO_SUFFIXES:
+        print(
+            f"::error::{source} is not a recording. Supported: "
+            + ", ".join(sorted(AUDIO_SUFFIXES)),
+            file=sys.stderr,
+        )
+        return 1
+    if source.resolve().parent != AUDIO_DIR.resolve():
+        print(
+            f"::error::Recordings belong in {AUDIO_DIR.as_posix()}/, and {source} "
+            "is somewhere else. Run this from the repository root.",
+            file=sys.stderr,
+        )
+        return 1
+
+    destination = TRANSCRIPT_DIR / f"{source.stem}.md"
     if destination.exists() and os.environ.get("ALLOW_OVERWRITE") != "true":
         # Whoever ran this again almost certainly did not mean to throw away
         # the corrections and headings someone put into the existing file by
