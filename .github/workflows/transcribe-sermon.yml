@@ -81,6 +81,7 @@ jobs:
             echo "No new transcripts."
           else
             git commit -m "chore: draft transcripts for new sermon recordings"
-            git push
+            # Named explicitly so this works on a branch as well as on main.
+            git push origin "HEAD:${{ github.ref_name }}"
             echo "✓ Draft transcripts committed. They need a read before anything is published."
           fi
