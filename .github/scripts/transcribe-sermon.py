@@ -23,6 +23,7 @@ to replace one on purpose.
 
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 import sys
@@ -113,10 +114,26 @@ def to_paragraphs(segments) -> list[str]:
     return paragraphs
 
 
+def digest_of(path: Path) -> str:
+    """The recording's checksum, recorded in the transcript.
+
+    A transcript outlives the recording it was made from, and a recording can
+    be replaced -- including while this is running, which would leave a
+    transcript of bytes nobody has any more. Writing the checksum down means
+    `sha256sum` answers whether the two still belong together.
+    """
+    digest = hashlib.sha256()
+    with path.open("rb") as recording:
+        for block in iter(lambda: recording.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
 BANNER = """<!--
   DRAFT TRANSCRIPT -- not published, and not quotable as it stands.
 
-  Produced by .github/scripts/transcribe-sermon.py from {source}.
+  Produced by .github/scripts/transcribe-sermon.py from {source}
+  (sha256 {digest}).
   Model: {model}.
 
   Before any of this reaches the site it needs a person to:
@@ -189,7 +206,9 @@ def main() -> int:
     destination.parent.mkdir(parents=True, exist_ok=True)
     minutes = int(info.duration // 60)
     destination.write_text(
-        BANNER.format(source=source.as_posix(), model=MODEL_SIZE)
+        BANNER.format(
+            source=source.as_posix(), digest=digest_of(source), model=MODEL_SIZE
+        )
         + f"\n# {source.stem.replace('-', ' ').title()}\n\n"
         + f"_Draft transcript of {minutes} minutes of audio. Needs review._\n\n"
         + "\n\n".join(paragraphs)

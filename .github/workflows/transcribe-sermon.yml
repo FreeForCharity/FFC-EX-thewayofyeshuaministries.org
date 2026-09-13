@@ -139,7 +139,11 @@ jobs:
           else
             # Every recording that has no transcript yet. The formats listed
             # here are the ones the script accepts; keep the two in step.
-            shopt -s nullglob
+            #
+            # nocaseglob because the script compares the suffix in lower case:
+            # without it a recording saved as sermon.MP3 would start this
+            # workflow and then never appear in the list it builds.
+            shopt -s nullglob nocaseglob
             declare -A claimed_by=()
             for audio in sermons/audio/*.{mp3,m4a,wav,mp4,aac,ogg,flac}; do
               stem="$(basename "${audio%.*}")"
@@ -246,12 +250,48 @@ jobs:
           path: ${{ runner.temp }}/new-transcripts
 
       - name: Put them with the others
-        # Copied in one by one rather than unpacked over the directory, so
-        # this run adds what it made and touches nothing else.
+        env:
+          # Read here rather than interpolated into the script, as everywhere
+          # else in this workflow.
+          ALLOW_OVERWRITE: ${{ inputs.overwrite }}
         run: |
           set -euo pipefail
+          shopt -s nullglob nocaseglob
+
           mkdir -p sermons/transcripts
-          cp "$RUNNER_TEMP"/new-transcripts/*.md sermons/transcripts/
+          for transcript in "$RUNNER_TEMP"/new-transcripts/*.md; do
+            name="$(basename "$transcript")"
+            stem="${name%.md}"
+
+            # What arrives in the artifact was made by the job that runs the
+            # speech model and its dependencies, which this job deliberately
+            # does not trust. It may hand over a transcript for a recording;
+            # it may not hand over anything else. Checked against the audio in
+            # this job's own checkout rather than against anything the other
+            # job said.
+            matched=false
+            for audio in sermons/audio/*; do
+              if [ "$(basename "${audio%.*}")" = "$stem" ]; then
+                matched=true
+                break
+              fi
+            done
+            if [ "$matched" != true ]; then
+              echo "::warning::Ignoring ${name}: no recording in sermons/audio/ answers to that name."
+              continue
+            fi
+
+            # The transcript did not exist when the long job checked, but the
+            # branch has moved since. Someone may have added or corrected this
+            # very file in the meantime, and their copy is the one worth
+            # having -- unless replacing it is what was asked for.
+            if [ -e "sermons/transcripts/${name}" ] && [ "${ALLOW_OVERWRITE:-}" != "true" ]; then
+              echo "::warning::Keeping the existing sermons/transcripts/${name}: it appeared while this run was transcribing."
+              continue
+            fi
+
+            cp "$transcript" "sermons/transcripts/${name}"
+          done
 
       - name: Commit the transcripts
         run: |
