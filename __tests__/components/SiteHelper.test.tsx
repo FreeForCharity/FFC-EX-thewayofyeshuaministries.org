@@ -85,6 +85,39 @@ describe('SiteHelper', () => {
     ).toHaveAttribute('href', 'mailto:Info@thewayofyeshuaministries.org')
   })
 
+  it('offers a person, not a link, for a question about faith', () => {
+    render(<SiteHelper />)
+    const panel = openHelper()
+    ask('pray for my marriage')
+
+    // The donation page used to win this on the word "pray" alone.
+    expect(within(panel).queryByRole('link', { name: /Support This Ministry/i })).toBeNull()
+    expect(within(panel).getByText(/answer this one in person/i)).toBeInTheDocument()
+    expect(within(panel).getByRole('link', { name: '(520) 302-4034' })).toBeInTheDocument()
+    expect(within(panel).getByRole('link', { name: /weekly teachings/i })).toHaveAttribute(
+      'href',
+      '/blog'
+    )
+  })
+
+  it('shows the invitation alongside pages when a faith question also matches one', () => {
+    render(<SiteHelper />)
+    const panel = openHelper()
+    ask('who is Yeshua')
+
+    expect(within(panel).getByRole('link', { name: /Our Mission/i })).toBeInTheDocument()
+    expect(within(panel).getByText(/answer this one in person/i)).toBeInTheDocument()
+  })
+
+  it('keeps the plain wording for an ordinary question that matches nothing', () => {
+    render(<SiteHelper />)
+    const panel = openHelper()
+    ask('xyzzy quantum submarine')
+
+    expect(within(panel).queryByText(/answer this one in person/i)).toBeNull()
+    expect(within(panel).getByText(/Nothing on the site matches that yet/i)).toBeInTheDocument()
+  })
+
   it('announces how many links were found', () => {
     render(<SiteHelper />)
     openHelper()

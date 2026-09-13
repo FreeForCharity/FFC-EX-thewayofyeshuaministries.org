@@ -72,6 +72,11 @@ const STOP_WORDS = new Set([
   'him',
   'how',
   'i',
+  // "get" is a filler verb in almost every question ("how do I get ...") and
+  // was matching page titles on its own, e.g. sending "how do I get saved" to
+  // a Shavuot get-together.
+  'get',
+  'getting',
   'if',
   'in',
   'into',
@@ -141,8 +146,15 @@ const MIN_PREFIX_LENGTH = 4
 /** Matching the whole question as a phrase is a strong signal. */
 const PHRASE_BONUS = { title: 8, keywords: 5 } as const
 
-/** Below this, a match is a coincidence rather than an answer. */
-const MIN_SCORE = 1.5
+/**
+ * Below this, a match is a coincidence rather than an answer.
+ *
+ * Set above the weight of a single keyword hit on its own so that one generic
+ * word shared with a page is not enough: "pray for my marriage" used to reach
+ * the donation page on the strength of the word "pray" alone, which is a worse
+ * answer than none.
+ */
+const MIN_SCORE = 3
 
 /** Results this much weaker than the best one are noise, so they are dropped. */
 const RELATIVE_CUTOFF = 0.25
@@ -272,8 +284,9 @@ function scoreEntry(tokens: string[], entry: SiteIndexEntry): number {
   if (matchedCount === 0) return 0
 
   // Favor entries that answer more of the question over ones that match a
-  // single word emphatically.
-  return score * (0.5 + (0.5 * matchedCount) / tokens.length)
+  // single word emphatically. The penalty is steep on purpose: covering one
+  // word of a five-word question is usually a coincidence.
+  return score * (0.25 + (0.75 * matchedCount) / tokens.length)
 }
 
 /**
@@ -302,4 +315,106 @@ export function searchSite(
     .filter(({ score }) => score >= cutoff)
     .slice(0, limit)
     .map(({ entry }) => entry)
+}
+
+/**
+ * Words that mark a question as one for a person rather than a page.
+ *
+ * A search box cannot answer "why does God allow suffering" or "pray for my
+ * marriage", and a link that pretends otherwise is worse than silence. When a
+ * question contains any of these, the helper offers the ministry alongside
+ * whatever pages it found.
+ *
+ * Add words freely -- a false positive only adds an invitation to reach out,
+ * which is never the wrong thing to offer.
+ */
+const PASTORAL_WORDS = new Set([
+  'addicted',
+  'addiction',
+  'afraid',
+  'angry',
+  'anxiety',
+  'anxious',
+  'baptism',
+  'baptized',
+  'believe',
+  'bible',
+  'bless',
+  'blessed',
+  'blessing',
+  'christ',
+  'comfort',
+  'covenant',
+  'death',
+  'depressed',
+  'depression',
+  'devil',
+  'died',
+  'divorce',
+  'doubt',
+  'dying',
+  'eternal',
+  'evil',
+  'faith',
+  'fear',
+  'forgive',
+  'forgiven',
+  'forgiveness',
+  'god',
+  'gospel',
+  'grace',
+  'grief',
+  'grieving',
+  'guilt',
+  'heal',
+  'healed',
+  'healing',
+  'heaven',
+  'hell',
+  'holy',
+  'hopeless',
+  'hurting',
+  'jesus',
+  'lonely',
+  'lord',
+  'marriage',
+  'mercy',
+  'messiah',
+  'mourning',
+  'praise',
+  'pray',
+  'prayer',
+  'praying',
+  'prophecy',
+  'repent',
+  'resurrection',
+  'righteous',
+  'sabbath',
+  'salvation',
+  'satan',
+  'saved',
+  'scripture',
+  'shabbat',
+  'shame',
+  'sin',
+  'soul',
+  'spirit',
+  'struggle',
+  'struggling',
+  'suffer',
+  'suffering',
+  'tempted',
+  'temptation',
+  'torah',
+  'worship',
+  'yeshua',
+])
+
+/**
+ * True when a question is asking about faith, struggle or prayer rather than
+ * asking to be taken somewhere. Stop words are kept here on purpose: "God" and
+ * "sin" carry the signal wherever they sit in the sentence.
+ */
+export function isPastoralQuestion(query: string): boolean {
+  return rawWords(query).some((word) => PASTORAL_WORDS.has(word) || PASTORAL_WORDS.has(stem(word)))
 }

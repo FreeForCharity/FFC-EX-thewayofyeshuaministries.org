@@ -11,17 +11,39 @@
  * When nothing matches, the helper hands over a phone number and an email
  * address rather than guessing -- a real person is a better answer than a
  * wrong link.
+ *
+ * Questions about faith, struggle or prayer get that invitation whether or not
+ * pages were found. A search box has no business answering "why does God allow
+ * suffering", and the ministry would rather be asked directly.
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { MessageCircleQuestionMark, Search, X } from 'lucide-react'
 import { getSiteIndex, suggestedQuestions, contactFallback } from '@/data/site-index'
-import { searchSite, type SiteIndexEntry } from '@/lib/siteSearch'
+import { searchSite, isPastoralQuestion, type SiteIndexEntry } from '@/lib/siteSearch'
 
 const PANEL_ID = 'site-helper-panel'
 const TITLE_ID = 'site-helper-title'
 const INPUT_ID = 'site-helper-input'
+
+/** Phone and email, shared by the two fallbacks below. */
+function ContactLinks() {
+  return (
+    <>
+      <a href={contactFallback.phoneHref} className="text-[#8A7331] underline hover:no-underline">
+        {contactFallback.phone}
+      </a>{' '}
+      or{' '}
+      <a
+        href={contactFallback.emailHref}
+        className="text-[#8A7331] underline hover:no-underline break-all"
+      >
+        {contactFallback.email}
+      </a>
+    </>
+  )
+}
 
 /** One answer: the link, what is on it, and where it sits on the site. */
 function ResultLink({ entry, onNavigate }: { entry: SiteIndexEntry; onNavigate: () => void }) {
@@ -72,6 +94,10 @@ const SiteHelper: React.FC = () => {
   const index = useMemo(() => getSiteIndex(), [])
   const results = useMemo(() => searchSite(query, index), [query, index])
   const hasQuery = query.trim().length > 0
+  const isPastoral = hasQuery && isPastoralQuestion(query)
+  // The teachings are the one page worth offering somebody with a question of
+  // faith, so the invitation links to it.
+  const blogHref = useMemo(() => index.find((entry) => entry.id === 'blog')?.href, [index])
 
   const close = useCallback(() => {
     setIsOpen(false)
@@ -110,7 +136,8 @@ const SiteHelper: React.FC = () => {
     ? ''
     : results.length === 0
       ? 'No pages matched. Contact details are shown instead.'
-      : `${results.length} ${results.length === 1 ? 'page' : 'pages'} found.`
+      : `${results.length} ${results.length === 1 ? 'page' : 'pages'} found.` +
+        (isPastoral ? ' An invitation to contact the ministry is shown below them.' : '')
 
   return (
     <div className="font-sans">
@@ -197,28 +224,46 @@ const SiteHelper: React.FC = () => {
               </ul>
             )}
 
-            {hasQuery && results.length === 0 && (
+            {/*
+              A question of faith is for a person, not a search box. This shows
+              whether or not pages were found -- the links may be useful, but
+              they are not the answer.
+            */}
+            {isPastoral && (
+              <div
+                className={`text-[14px] leading-[160%] text-gray-700 rounded-md border border-[#E5DFD3] bg-[#FDFBF6] px-3 py-3 ${
+                  results.length > 0 ? 'mt-3' : ''
+                }`}
+              >
+                <p className="font-[600] text-black mb-2">Let us answer this one in person</p>
+                <p className="mb-2">
+                  Questions about faith deserve more than a link. We would love to study this with
+                  you — reach us at <ContactLinks />.
+                </p>
+                {blogHref && (
+                  <p>
+                    You are also welcome to read our{' '}
+                    <Link
+                      href={blogHref}
+                      onClick={() => setIsOpen(false)}
+                      className="text-[#8A7331] underline hover:no-underline"
+                    >
+                      weekly teachings
+                    </Link>
+                    .
+                  </p>
+                )}
+              </div>
+            )}
+
+            {hasQuery && results.length === 0 && !isPastoral && (
               <div className="text-[14px] leading-[160%] text-gray-700">
                 <p className="mb-3">
                   Nothing on the site matches that yet — but we would rather answer you directly
                   than send you somewhere unhelpful.
                 </p>
                 <p>
-                  Call{' '}
-                  <a
-                    href={contactFallback.phoneHref}
-                    className="text-[#8A7331] underline hover:no-underline"
-                  >
-                    {contactFallback.phone}
-                  </a>
-                  , email{' '}
-                  <a
-                    href={contactFallback.emailHref}
-                    className="text-[#8A7331] underline hover:no-underline break-all"
-                  >
-                    {contactFallback.email}
-                  </a>
-                  , or try different words.
+                  Reach us at <ContactLinks />, or try different words.
                 </p>
               </div>
             )}
