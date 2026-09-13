@@ -15,7 +15,10 @@ with a banner saying plainly that a person still has to read it.
 Usage:
     python3 .github/scripts/transcribe-sermon.py sermons/audio/my-sermon.mp3
 
-Writes `sermons/transcripts/my-sermon.md`.
+Writes `sermons/transcripts/my-sermon.md`, and refuses if that file already
+exists -- a transcript someone has read and corrected is worth more than the
+recording, and there is no getting that editing back. Set ALLOW_OVERWRITE=true
+to replace one on purpose.
 """
 
 from __future__ import annotations
@@ -131,6 +134,20 @@ def main() -> int:
         print(f"::error::No such audio file: {source}", file=sys.stderr)
         return 1
 
+    destination = Path("sermons/transcripts") / f"{source.stem}.md"
+    if destination.exists() and os.environ.get("ALLOW_OVERWRITE") != "true":
+        # Whoever ran this again almost certainly did not mean to throw away
+        # the corrections and headings someone put into the existing file by
+        # hand -- that editing is most of the work, and it cannot be recovered
+        # from the recording.
+        print(
+            f"::error::{destination} already exists. Transcribing again would "
+            "overwrite it, losing any corrections made by hand. Re-run with "
+            "the 'overwrite' input set to true if that is really what you want.",
+            file=sys.stderr,
+        )
+        return 1
+
     from faster_whisper import WhisperModel
 
     print(f"Loading {MODEL_SIZE} ...", file=sys.stderr)
@@ -144,7 +161,6 @@ def main() -> int:
         print("::error::No speech was recognized in this file.", file=sys.stderr)
         return 1
 
-    destination = Path("sermons/transcripts") / f"{source.stem}.md"
     destination.parent.mkdir(parents=True, exist_ok=True)
     minutes = int(info.duration // 60)
     destination.write_text(

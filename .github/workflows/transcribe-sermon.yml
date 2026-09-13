@@ -14,7 +14,8 @@ on:
       - 'sermons/audio/**'
       # A fix to the pipeline should retry the recordings it failed on, rather
       # than sitting idle until the next recording happens to arrive. Safe to
-      # re-run: anything already transcribed is skipped.
+      # re-run: this path transcribes only recordings that have no transcript
+      # yet, and the script refuses to overwrite one in any case.
       - '.github/workflows/transcribe-sermon.yml'
       - '.github/scripts/transcribe-sermon.py'
   # Or run it by hand against one file from the Actions tab.
@@ -24,6 +25,15 @@ on:
         description: 'Path to one audio file (default: every untranscribed file)'
         type: string
         default: ''
+      overwrite:
+        # Naming a file by hand is the one path that can reach a recording
+        # already transcribed, and a transcript that has been read and
+        # corrected is worth far more than the recording it came from -- that
+        # editing is most of the work and cannot be redone by the machine. So
+        # replacing one has to be asked for on purpose.
+        description: 'Replace an existing transcript, discarding any hand corrections in it'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -77,6 +87,9 @@ jobs:
           # whoever runs the workflow, so it is exactly the value not to
           # interpolate.
           REQUESTED_FILE: ${{ inputs.file }}
+          # Empty on a push, so the script's refusal to overwrite stands
+          # unless someone dispatches the workflow and ticks the box.
+          ALLOW_OVERWRITE: ${{ inputs.overwrite }}
         run: |
           set -euo pipefail
 
