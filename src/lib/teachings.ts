@@ -1,43 +1,24 @@
 /**
- * The ministry's own teaching, cut into quotable pieces.
+ * Cutting the ministry's blog into quotable pieces.
  *
  * The helper answers a question of faith by showing what the ministry has
  * already written about it, in its own words, with a link to the full post.
  * Nothing here is generated or paraphrased -- a quote is either the author's
  * sentence or it is not shown.
  *
- * **This module is loaded on demand.** It pulls in every blog post, which is
- * the largest thing on the site by some way, so the helper imports it only
- * when a visitor actually opens the panel. Importing it from anywhere that
- * runs at page load would put the whole blog back into every page's JavaScript.
+ * **This runs at build time, never in the browser.** It reads every post,
+ * drafts included, and `src/app/teachings.json/route.ts` publishes only the
+ * finished result. Importing this from a client component would ship the whole
+ * blog -- unpublished posts among it -- to every visitor.
  */
 
 import type { SiteIndexEntry, Teaching } from '@/lib/siteSearch'
-import {
-  blogPosts,
-  getPublishedPosts,
-  getCategory,
-  formatDate,
-  type BlogPost,
-} from '@/data/blog-posts'
+import { getCategory, formatDate, type BlogPost } from '@/data/blog-posts'
 
-/**
- * The posts that actually have pages in this build.
- *
- * `getPublishedPosts()` compares against "today", which is the right question
- * on the server but the wrong one here: this module runs in the visitor's
- * browser, where today can be later than the day the site was built. Blog
- * routes are generated at build time and `dynamicParams` is false, so a post
- * whose date has arrived since the last deploy has no page to link to -- the
- * weekly rebuild is what brings it into existence.
- *
- * Comparing against the build date instead means the helper offers exactly the
- * posts `generateStaticParams` emitted, and never a link that 404s. Falls back
- * to today when the variable is absent, as it is under Jest.
- */
-function postsWithPages(): BlogPost[] {
-  const buildDate = process.env.NEXT_PUBLIC_BUILD_DATE
-  return buildDate ? blogPosts.filter((post) => post.date <= buildDate) : getPublishedPosts()
+/** Everything the helper needs about the blog, ready to search. */
+export interface TeachingPayload {
+  entries: SiteIndexEntry[]
+  teachings: Teaching[]
 }
 
 /** The named entities the blog actually uses, in rough order of frequency. */
@@ -58,7 +39,7 @@ const ENTITIES: Record<string, string> = {
 }
 
 /** Turn one stored paragraph of blog HTML into readable plain text. */
-function toPlainText(html: string): string {
+export function toPlainText(html: string): string {
   return html
     .replace(/<br\s*\/?>/gi, ' ')
     .replace(/<[^>]+>/g, '')
@@ -85,14 +66,24 @@ function leadingHeading(html: string): string | undefined {
 const MIN_TEACHING_LENGTH = 100
 
 /**
- * Every post opens and closes with the same greeting. They are blessings
- * rather than teaching, and repeating them 36 times would also flatten the
+ * The greetings every post opens and closes with. They are blessings rather
+ * than teaching, and repeating them across 36 posts would also flatten the
  * word statistics the matching depends on.
  *
- * Matched without their punctuation: the sign-off is usually "Shabbat Shalom."
- * but runs to "Shabbat Shalom and Chanukah Sameach!" on the feast posts.
+ * Taken from the corpus rather than guessed at: the openings run "Shalom and
+ * blessings", "Shalom, beloved" and "Blessings and Shalom", and the closings
+ * from a plain "Shabbat Shalom." through "Shabbat Shalom and Chanukah
+ * Sameach!" to a bare "Chag Shavuot Sameach!" on the feast posts.
+ *
+ * Deliberately anchored and narrow: "Blessings to everyone. Today I want to
+ * talk about ..." opens a real teaching and must not be caught.
  */
-const BOILERPLATE_PREFIXES = [/^Shalom and blessings/, /^Shabbat Shalom\b/]
+const BOILERPLATE_PREFIXES = [
+  /^Shalom\b/,
+  /^Shabbat Shalom\b/,
+  /^Blessings and Shalom\b/,
+  /^Chag [A-Za-z]+ Sameach/,
+]
 
 function isQuotable(html: string, text: string): boolean {
   // The contact block at the foot of every post.
@@ -120,18 +111,17 @@ function teachingsFromPost(post: BlogPost): Teaching[] {
     })
 }
 
-/** Every quotable paragraph the ministry has published. */
-export function getTeachings(): Teaching[] {
-  return postsWithPages().flatMap(teachingsFromPost)
+/** Every quotable paragraph in the given posts. */
+export function extractTeachings(posts: BlogPost[]): Teaching[] {
+  return posts.flatMap(teachingsFromPost)
 }
 
 /**
- * Blog posts as destinations the helper can link to, same shape as the pages
- * in `site-index.ts`. Kept here rather than there so that nothing at page load
- * has a reason to import the posts.
+ * The given posts as destinations the helper can link to, the same shape as
+ * the pages in `site-index.ts`.
  */
-export function getBlogEntries(): SiteIndexEntry[] {
-  return postsWithPages().map((post) => ({
+export function toBlogEntries(posts: BlogPost[]): SiteIndexEntry[] {
+  return posts.map((post) => ({
     id: `blog-${post.slug}`,
     title: post.title,
     href: `/blog/${post.slug}`,
@@ -139,4 +129,9 @@ export function getBlogEntries(): SiteIndexEntry[] {
     summary: post.excerpt,
     keywords: [getCategory(post.slug), 'blog', 'teaching', 'post'],
   }))
+}
+
+/** Both halves of what the helper needs, from one pass over the posts. */
+export function buildTeachingPayload(posts: BlogPost[]): TeachingPayload {
+  return { entries: toBlogEntries(posts), teachings: extractTeachings(posts) }
 }

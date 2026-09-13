@@ -2,14 +2,33 @@ import React from 'react'
 import { render, screen, fireEvent, within, waitFor, act } from '@testing-library/react'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import SiteHelper from '../../src/components/site-helper'
+import { buildTeachingPayload } from '../../src/lib/teachings'
+import { getPublishedPosts } from '../../src/data/blog-posts'
 
 expect.extend(toHaveNoViolations)
 
+/*
+ * The helper fetches its corpus from /teachings.json, which the build emits.
+ * Serve the real payload here so the tests exercise the real teachings rather
+ * than a fixture that could drift away from them.
+ */
+const payload = buildTeachingPayload(getPublishedPosts())
+
+beforeEach(() => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({ ok: true, json: () => Promise.resolve(payload) })
+  ) as unknown as typeof fetch
+})
+
+afterEach(() => {
+  jest.restoreAllMocks()
+})
+
 /**
- * Open the helper and hand back its panel, with the blog posts loaded.
+ * Open the helper and hand back its panel, with the teachings loaded.
  *
- * Opening the panel kicks off the dynamic import of the teachings, so every
- * test waits for it here rather than racing it.
+ * Opening the panel kicks off the fetch of the corpus, so every test waits for
+ * it here rather than racing it.
  */
 async function openHelper() {
   fireEvent.click(screen.getByRole('button', { name: /ask a question/i }))
@@ -185,6 +204,17 @@ describe('SiteHelper', () => {
     await waitFor(() => {
       expect(within(panel).getByRole('link', { name: /Automobile Program/i })).toBeInTheDocument()
     })
+    expect(within(panel).queryByText(/From our teachings/i)).toBeNull()
+  })
+
+  it('still searches the pages when the teachings cannot be fetched', async () => {
+    // Offline on a first visit. The helper must degrade, not break.
+    global.fetch = jest.fn(() => Promise.reject(new Error('offline'))) as unknown as typeof fetch
+    render(<SiteHelper />)
+    const panel = await openHelper()
+    ask('how do I donate a car')
+
+    expect(within(panel).getByRole('link', { name: /Automobile Program/i })).toBeInTheDocument()
     expect(within(panel).queryByText(/From our teachings/i)).toBeNull()
   })
 

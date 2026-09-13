@@ -1,8 +1,9 @@
 import { searchTeachings } from '../../src/lib/siteSearch'
-import { getTeachings, getBlogEntries } from '../../src/data/teachings'
-import { blogPosts } from '../../src/data/blog-posts'
+import { extractTeachings, toBlogEntries, buildTeachingPayload } from '../../src/lib/teachings'
+import { blogPosts, getPublishedPosts } from '../../src/data/blog-posts'
 
-const teachings = getTeachings()
+const published = getPublishedPosts()
+const teachings = extractTeachings(published)
 
 /**
  * Strip HTML and entities from a stored paragraph.
@@ -62,14 +63,44 @@ describe('the teaching corpus', () => {
     }
   })
 
-  it('leaves out the greeting and sign-off every post repeats', () => {
+  it('leaves out every form of the greeting and sign-off', () => {
     for (const teaching of teachings) {
-      expect(teaching.text).not.toMatch(/^Shalom and blessings/)
-      // Not just "Shabbat Shalom." — the feast posts close with "Shabbat
-      // Shalom and Chanukah Sameach!", which is a blessing, not a teaching.
+      // Openings: "Shalom and blessings, beloved." and "Shalom, beloved."
+      expect(teaching.text).not.toMatch(/^Shalom\b/)
+      expect(teaching.text).not.toMatch(/^Blessings and Shalom\b/)
+      // Closings: "Shabbat Shalom." through "Shabbat Shalom and Chanukah
+      // Sameach!", and a bare "Chag Shavuot Sameach!" on the feast posts.
       expect(teaching.text).not.toMatch(/^Shabbat Shalom\b/)
+      expect(teaching.text).not.toMatch(/^Chag [A-Za-z]+ Sameach/)
       expect(teaching.heading ?? '').not.toMatch(/^Shabbat Shalom\b/)
     }
+  })
+
+  it('keeps a teaching that merely opens with the word "Blessings"', () => {
+    /*
+     * The greeting filter is anchored and narrow on purpose. "Blessings to
+     * everyone. Today I want to talk about ..." opens a real teaching in the
+     * corpus and must not be swept up with the blessings that are not.
+     *
+     * Checked against a paragraph written here rather than that one, which is
+     * too short to be quoted anyway: this is about the prefix rule, not the
+     * length rule.
+     */
+    const [teaching] = extractTeachings([
+      {
+        slug: 'test-post',
+        title: 'A Teaching',
+        date: '2020-01-01',
+        excerpt: 'x',
+        body: [
+          'Blessings to everyone. Today I want to talk about what it means to work out ' +
+            'our faith, and why the Scriptures hold obedience and grace together rather ' +
+            'than setting them against one another.',
+        ],
+      },
+    ])
+    expect(teaching).toBeDefined()
+    expect(teaching.text).toMatch(/^Blessings to everyone/)
   })
 
   it('reads a heading that runs straight on into its text, with no line break', () => {
@@ -85,28 +116,43 @@ describe('the teaching corpus', () => {
     expect((roshHashanah?.text ?? '').length).toBeGreaterThan(0)
   })
 
-  it('offers only posts that have a page in this build', () => {
-    // Blog routes are generated at build time with dynamicParams: false, so a
-    // post the helper offers but the build did not emit would 404.
-    const buildDate = process.env.NEXT_PUBLIC_BUILD_DATE
-    if (buildDate) {
-      for (const teaching of teachings) {
-        const post = blogPosts.find((candidate) => candidate.slug === teaching.slug)
-        expect((post as (typeof blogPosts)[number]).date <= buildDate).toBe(true)
-      }
-    }
-    // Whatever the cutoff, a future-dated draft is never offered.
+  it('offers only posts that have a page, never a future-dated draft', () => {
+    /*
+     * Blog routes are generated at build time with dynamicParams: false, so a
+     * post the helper offers but the build did not emit would 404. The corpus
+     * is built from the same getPublishedPosts() call generateStaticParams
+     * makes, which is what keeps the two in step.
+     */
     const offered = new Set(teachings.map((teaching) => teaching.slug))
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Phoenix' })
-    for (const post of blogPosts.filter((candidate) => candidate.date > today)) {
-      expect(offered.has(post.slug)).toBe(false)
+    const drafts = blogPosts.filter((post) => post.date > today)
+
+    expect(drafts.length).toBeGreaterThan(0) // guard: the corpus really has drafts
+    for (const draft of drafts) {
+      expect(offered.has(draft.slug)).toBe(false)
     }
+  })
+
+  it('excludes any post dated after the cutoff it is given', () => {
+    // Pin the behaviour directly rather than relying on today's date: build a
+    // corpus from a cutoff that deliberately drops the most recent post.
+    const byDate = [...published].sort((a, b) => a.date.localeCompare(b.date))
+    const dropped = byDate[byDate.length - 1]
+    const kept = byDate.filter((post) => post.date < dropped.date)
+
+    const payload = buildTeachingPayload(kept)
+    const slugs = new Set(payload.teachings.map((teaching) => teaching.slug))
+    const entrySlugs = new Set(payload.entries.map((entry) => entry.href.replace('/blog/', '')))
+
+    expect(slugs.has(dropped.slug)).toBe(false)
+    expect(entrySlugs.has(dropped.slug)).toBe(false)
+    expect(entrySlugs.has(byDate[0].slug)).toBe(true)
   })
 
   it('gives every teaching a unique id and a post to link to', () => {
     const ids = teachings.map((teaching) => teaching.id)
     expect(new Set(ids).size).toBe(ids.length)
-    const slugs = new Set(getBlogEntries().map((entry) => entry.href.replace('/blog/', '')))
+    const slugs = new Set(toBlogEntries(published).map((entry) => entry.href.replace('/blog/', '')))
     for (const teaching of teachings) {
       expect(slugs.has(teaching.slug)).toBe(true)
       expect(teaching.postTitle.length).toBeGreaterThan(0)
@@ -173,6 +219,14 @@ describe('searchTeachings', () => {
       expect(searchTeachings(question, teachings)).toEqual([])
     }
   )
+
+  it('stays quiet for a question with no subject', () => {
+    // "what is" is all stop words. It would otherwise match the thirty
+    // paragraphs headed "What Is the Spirit Saying This Week?".
+    expect(searchTeachings('what is', teachings)).toEqual([])
+    expect(searchTeachings('who are you', teachings)).toEqual([])
+    expect(searchTeachings('is it', teachings)).toEqual([])
+  })
 
   it('does not quote on a common word like "God" alone', () => {
     // Half the paragraphs mention God; that is not evidence about which one.

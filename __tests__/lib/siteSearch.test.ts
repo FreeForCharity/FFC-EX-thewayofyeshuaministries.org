@@ -5,11 +5,12 @@ import {
   type SiteIndexEntry,
 } from '../../src/lib/siteSearch'
 import { pageIndex, suggestedQuestions } from '../../src/data/site-index'
-import { getBlogEntries } from '../../src/data/teachings'
+import { toBlogEntries } from '../../src/lib/teachings'
+import { getPublishedPosts } from '../../src/data/blog-posts'
 
 // The component composes these two the same way: pages are available at once,
 // blog posts arrive when the panel loads them.
-const index = [...pageIndex, ...getBlogEntries()]
+const index = [...pageIndex, ...toBlogEntries(getPublishedPosts())]
 
 /** The id of the best answer for a question, or undefined when there is none. */
 function topMatch(question: string): string | undefined {

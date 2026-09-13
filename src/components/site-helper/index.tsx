@@ -21,12 +21,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { MessageCircleQuestionMark, Search, X } from 'lucide-react'
 import { pageIndex, suggestedQuestions, contactFallback } from '@/data/site-index'
+import { loadTeachings, type TeachingPayload } from '@/lib/loadTeachings'
 import {
   searchSite,
   searchTeachings,
   isPastoralQuestion,
   type SiteIndexEntry,
-  type Teaching,
   type TeachingQuote,
 } from '@/lib/siteSearch'
 
@@ -132,24 +132,21 @@ const SiteHelper: React.FC = () => {
 
   /*
    * The blog is by far the largest thing on the site, and this component sits
-   * in the root layout, so its posts are fetched only once someone actually
-   * opens the panel. Until then the helper searches the pages alone, which is
-   * everything a visitor typing "donate" needs.
+   * in the root layout, so the teachings are fetched only once someone
+   * actually opens the panel. Until then the helper searches the pages alone,
+   * which is everything a visitor typing "donate" needs.
    */
-  const [blog, setBlog] = useState<{ entries: SiteIndexEntry[]; teachings: Teaching[] } | null>(
-    null
-  )
+  const [blog, setBlog] = useState<TeachingPayload | null>(null)
 
   useEffect(() => {
     if (!isOpen || blog) return
     let cancelled = false
-    import('@/data/teachings')
-      .then(({ getBlogEntries, getTeachings }) => {
-        if (!cancelled) setBlog({ entries: getBlogEntries(), teachings: getTeachings() })
-      })
-      .catch(() => {
-        // The pages remain searchable; there is nothing useful to say here.
-      })
+    loadTeachings().then((payload) => {
+      // Null when the corpus cannot be fetched -- offline on a first visit,
+      // say. The pages stay searchable, so there is nothing to tell the
+      // visitor about it.
+      if (payload && !cancelled) setBlog(payload)
+    })
     return () => {
       cancelled = true
     }

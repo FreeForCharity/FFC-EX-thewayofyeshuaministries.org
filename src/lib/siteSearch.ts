@@ -575,6 +575,15 @@ export function searchTeachings(
   // quotes are collected one at a time.
   if (tokens.length === 0 || limit <= 0) return []
 
+  /*
+   * `tokenize` falls back to the raw words when a question is nothing but
+   * stop words, which is right for the pages -- "who are you" should still
+   * reach the mission. It is wrong here: a question with no subject has no
+   * teaching to quote, and "what is" would otherwise match the thirty
+   * paragraphs headed "What Is the Spirit Saying This Week?".
+   */
+  if (!rawWords(query).some((word) => !STOP_WORDS.has(word))) return []
+
   const { documents, weights } = getCorpus(teachings)
 
   const scored = teachings
