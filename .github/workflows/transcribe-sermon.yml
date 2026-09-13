@@ -35,8 +35,9 @@ on:
         type: boolean
         default: false
 
-permissions:
-  contents: write
+# Nothing is granted here. The two jobs below want very different things, and
+# only the short one that writes a commit needs to be able to write.
+permissions: {}
 
 # One transcription at a time per branch.
 #
@@ -49,15 +50,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # The long job, and the one that runs code this repository did not write:
+  # a few hundred megabytes of speech model, pulled from PyPI and from the
+  # model host. It gets no write access and no credentials on disk, so a bad
+  # release of any of that can spoil a transcript -- which a person reads
+  # anyway -- but cannot reach the repository.
   transcribe:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     # Speech recognition is slow: roughly a third of real time on a runner, so
     # a 45-minute sermon takes about 15 minutes.
     timeout-minutes: 60
+    outputs:
+      # Whether this run actually wrote a transcript. Most runs do not: a fix
+      # to the workflow itself starts one, and every recording already has its
+      # transcript.
+      produced: ${{ steps.transcribe.outputs.produced }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # actions/checkout leaves the job's token in .git/config by default,
+          # where everything that runs afterwards can read it. Nothing in this
+          # job pushes, so it does not need one.
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -76,16 +94,16 @@ jobs:
         run: pip install --quiet faster-whisper==1.2.1 requests
 
       - name: Transcribe
+        id: transcribe
         env:
           WHISPER_MODEL: small.en
           # Passed as an environment variable, never written into the script.
           #
           # A GitHub Actions expression is substituted into the shell source
           # before the shell parses it, so a value containing $(...) or
-          # backticks would execute as commands -- with this job's
-          # `contents: write` token available. This input is free text from
-          # whoever runs the workflow, so it is exactly the value not to
-          # interpolate.
+          # backticks would execute as commands on this runner. This input is
+          # free text from whoever runs the workflow, so it is exactly the
+          # value not to interpolate.
           REQUESTED_FILE: ${{ inputs.file }}
           # Empty on a push, so the script's refusal to overwrite stands
           # unless someone dispatches the workflow and ticks the box.
@@ -118,6 +136,37 @@ jobs:
             python3 .github/scripts/transcribe-sermon.py "$audio"
             echo "::endgroup::"
           done
+
+          echo "produced=true" >> "$GITHUB_OUTPUT"
+
+      - name: Hand the transcripts to the job that can commit
+        if: steps.transcribe.outputs.produced == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: transcripts
+          path: sermons/transcripts
+
+  # The short job, and the only one holding a token that can write. It runs
+  # git and nothing else: no repository scripts, no third-party packages.
+  commit:
+    needs: transcribe
+    # Skipped entirely when the run transcribed nothing, which is the common
+    # case: there is then no artifact to fetch and nothing to write.
+    if: needs.transcribe.outputs.produced == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Collect the transcripts
+        uses: actions/download-artifact@v4
+        with:
+          name: transcripts
+          path: sermons/transcripts
 
       - name: Commit the transcripts
         run: |
