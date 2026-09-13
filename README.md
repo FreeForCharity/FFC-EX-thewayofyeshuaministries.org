@@ -17,6 +17,7 @@ The site documents the ministry's mission and outreach programs:
 - **Automobile Donation Program** — vehicle repair and donation to people who need a car
 - **Support This Ministry** — general giving page
 - **Contact** — phone, email, mailing address, hours, contact form
+- **Ask a question** — a helper on every page that turns a plain-language question into links to the pages that answer it (see [Site helper](#site-helper))
 
 ## Tech stack
 
@@ -72,10 +73,38 @@ src/
 │   ├── cause-page/             # Shared subpage template
 │   ├── cookie-consent/         # GDPR cookie banner
 │   ├── google-tag-manager/     # Analytics
+│   ├── site-helper/            # "Ask a question" helper
 │   └── ui/                     # Generic UI primitives
-└── lib/                        # Helpers (fonts, basePath)
+├── data/                       # Content modules (programs, blog posts, site index, ...)
+└── lib/                        # Helpers (fonts, basePath, site search)
 public/Images/yeshua/           # Ministry images captured from live site
 ```
+
+## Site helper
+
+Every page carries an **Ask a question** button. A visitor types what they are
+looking for — "how do I donate a car", "what is your phone number" — and gets
+back links to the pages that answer it. When nothing matches, the helper offers
+the ministry's phone number and email rather than guessing.
+
+It runs entirely in the visitor's browser. There is no AI service behind it, no
+API key, and no cost: the site is a static export, so the question never leaves
+the visitor's device and nothing is logged.
+
+Two files keep it accurate:
+
+| File                     | What it holds                                            |
+| ------------------------ | -------------------------------------------------------- |
+| `src/data/site-index.ts` | Every destination the helper can offer, and its keywords |
+| `src/lib/siteSearch.ts`  | The matching itself — scoring, ranking, and cut-offs     |
+
+**When you add a page, add it to `site-index.ts`** — a route that is not listed
+there cannot be found by anyone asking for it. Blog posts are pulled in
+automatically, and program descriptions are read from `src/data/programs.ts`.
+
+**When a real question finds the wrong page**, add the words the visitor
+actually typed to that entry's `keywords`, then add the question to
+`__tests__/lib/siteSearch.test.ts` so it stays answered.
 
 ## Hosting & contributors
 

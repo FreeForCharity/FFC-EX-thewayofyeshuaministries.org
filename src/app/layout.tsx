@@ -3,6 +3,7 @@ import './globals.css'
 import Header from './../components/header'
 import Footer from './../components/footer'
 import CookieConsent from './../components/cookie-consent'
+import SiteHelper from './../components/site-helper'
 import GoogleTagManager, { GoogleTagManagerNoScript } from './../components/google-tag-manager'
 import ServiceWorkerRegistration from './../components/ServiceWorkerRegistration'
 import {
@@ -137,6 +138,7 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
+        <SiteHelper />
         <CookieConsent />
         {/* <PopupsRootClient /> */}
         {/* </PopupProvider> */}
