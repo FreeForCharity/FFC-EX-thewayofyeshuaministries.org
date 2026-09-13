@@ -98,6 +98,23 @@ test.describe('Site helper', () => {
     ).toBeVisible()
   })
 
+  test('offers a person rather than a page for a question about faith', async ({ page }) => {
+    await page.goto('/')
+    await openHelper(page)
+    await ask(page, 'pray for my marriage')
+
+    // A search box has no business answering this, and the donation page — which
+    // used to win it on the word "pray" — is the wrong place to send someone.
+    await expect(panel(page).getByRole('link', { name: /Support This Ministry/ })).toBeHidden()
+    await expect(panel(page).getByText(/answer this one in person/i)).toBeVisible()
+    await expect(panel(page).getByRole('link', { name: '(520) 302-4034' })).toBeVisible()
+
+    await panel(page)
+      .getByRole('link', { name: /weekly teachings/i })
+      .click()
+    await expect(page).toHaveURL(/\/blog\/?$/)
+  })
+
   test('closes with the Escape key', async ({ page }) => {
     await page.goto('/')
     await openHelper(page)

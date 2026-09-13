@@ -1,4 +1,9 @@
-import { searchSite, tokenize, type SiteIndexEntry } from '../../src/lib/siteSearch'
+import {
+  searchSite,
+  tokenize,
+  isPastoralQuestion,
+  type SiteIndexEntry,
+} from '../../src/lib/siteSearch'
 import { getSiteIndex, suggestedQuestions } from '../../src/data/site-index'
 
 const index = getSiteIndex()
@@ -68,6 +73,69 @@ describe('searchSite', () => {
 
   it('returns nothing rather than a bad guess when nothing matches', () => {
     expect(searchSite('xyzzy quantum submarine', index)).toEqual([])
+  })
+
+  // Each of these once produced a confidently wrong link: one common word
+  // shared with a page was enough to make it look like an answer. Silence is
+  // the right result -- the helper offers a person instead.
+  it.each([
+    ['pray for my marriage', 'the donation page, on the word "pray"'],
+    ['is it a sin to work on Saturday', 'the photo gallery, on the word "work"'],
+    ['how do I get saved', 'a get-together blog post, on the word "get"'],
+    ['how do I forgive someone who hurt me', 'the contact section, on the word "someone"'],
+  ])('does not answer "%s" with %s', (question) => {
+    expect(searchSite(question, index)).toEqual([])
+  })
+
+  it('still answers the navigation questions it is for', () => {
+    // The higher bar must not cost the helper its actual job.
+    for (const question of [
+      'donate',
+      'prison',
+      'tiny home',
+      'board of directors',
+      'cookie policy',
+      'business sponsors',
+      'blog',
+    ]) {
+      expect(searchSite(question, index).length).toBeGreaterThan(0)
+    }
+  })
+})
+
+describe('isPastoralQuestion', () => {
+  it.each([
+    'why does God allow suffering',
+    'pray for my marriage',
+    'I am struggling with depression',
+    'what does the Bible say about the Sabbath',
+    'who is Yeshua',
+    'how do I forgive someone who hurt me',
+    'my father died last month',
+  ])('recognizes "%s" as a question for a person', (question) => {
+    expect(isPastoralQuestion(question)).toBe(true)
+  })
+
+  it.each([
+    'how do I donate a car',
+    'what is your phone number',
+    'where are you located',
+    'who is on the board',
+    'do you use cookies',
+  ])('leaves "%s" as an ordinary navigation question', (question) => {
+    expect(isPastoralQuestion(question)).toBe(false)
+  })
+
+  it('ignores capitalization and punctuation', () => {
+    expect(isPastoralQuestion('Pray for me?')).toBe(true)
+  })
+
+  it('matches plurals of its words', () => {
+    expect(isPastoralQuestion('please say some prayers')).toBe(true)
+  })
+
+  it('is false for an empty question', () => {
+    expect(isPastoralQuestion('')).toBe(false)
   })
 
   it('never returns more than the requested number of links', () => {
