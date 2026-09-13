@@ -28,6 +28,16 @@ on:
 permissions:
   contents: write
 
+# One transcription at a time per branch.
+#
+# Rebasing before the push is not enough on its own: two runs can both rebase
+# and then race, and the one that loses takes its transcript down with its
+# runner after fifteen minutes of work. Queued rather than cancelled, because
+# the second run usually has a different recording to get through.
+concurrency:
+  group: transcribe-sermon-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   transcribe:
     runs-on: ubuntu-latest
@@ -69,25 +79,28 @@ jobs:
           REQUESTED_FILE: ${{ inputs.file }}
         run: |
           set -euo pipefail
-          requested="$REQUESTED_FILE"
-          if [ -n "$requested" ]; then
-            targets="$requested"
+
+          # An array, not a string: "Sermon on the Mount.mp3" is a perfectly
+          # ordinary name for a recording, and a space in it would otherwise
+          # split into several paths that do not exist.
+          targets=()
+          if [ -n "$REQUESTED_FILE" ]; then
+            targets=("$REQUESTED_FILE")
           else
             # Every recording that has no transcript yet.
-            targets=""
             shopt -s nullglob
             for audio in sermons/audio/*.{mp3,m4a,wav,mp4,aac,ogg,flac}; do
               stem="$(basename "${audio%.*}")"
-              [ -f "sermons/transcripts/${stem}.md" ] || targets="$targets $audio"
+              [ -f "sermons/transcripts/${stem}.md" ] || targets+=("$audio")
             done
           fi
 
-          if [ -z "$(echo "$targets" | tr -d '[:space:]')" ]; then
+          if [ ${#targets[@]} -eq 0 ]; then
             echo "Nothing to transcribe — every recording already has a transcript."
             exit 0
           fi
 
-          for audio in $targets; do
+          for audio in "${targets[@]}"; do
             echo "::group::$audio"
             python3 .github/scripts/transcribe-sermon.py "$audio"
             echo "::endgroup::"
