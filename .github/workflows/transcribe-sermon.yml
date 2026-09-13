@@ -1,0 +1,86 @@
+name: Transcribe Sermon
+
+# Turns a sermon recording into a draft transcript a person can edit.
+#
+# Runs here rather than on a laptop because the speech model is a few hundred
+# megabytes and the work is CPU-bound: drop the audio in, come back to a
+# transcript. Nothing it produces is published -- see the banner the script
+# writes at the top of every file.
+
+on:
+  # Drop an audio file in sermons/audio/ and push: the transcript follows.
+  push:
+    paths:
+      - 'sermons/audio/**'
+  # Or run it by hand against one file from the Actions tab.
+  workflow_dispatch:
+    inputs:
+      file:
+        description: 'Path to one audio file (default: every untranscribed file)'
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  transcribe:
+    runs-on: ubuntu-latest
+    # Speech recognition is slow: roughly a third of real time on a runner, so
+    # a 45-minute sermon takes about 15 minutes.
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install faster-whisper
+        # Pinned so a transcript can always be reproduced from the same words.
+        run: pip install --quiet faster-whisper==1.1.1
+
+      - name: Transcribe
+        env:
+          WHISPER_MODEL: small.en
+        run: |
+          set -euo pipefail
+          requested="${{ inputs.file }}"
+          if [ -n "$requested" ]; then
+            targets="$requested"
+          else
+            # Every recording that has no transcript yet.
+            targets=""
+            shopt -s nullglob
+            for audio in sermons/audio/*.{mp3,m4a,wav,mp4,aac,ogg,flac}; do
+              stem="$(basename "${audio%.*}")"
+              [ -f "sermons/transcripts/${stem}.md" ] || targets="$targets $audio"
+            done
+          fi
+
+          if [ -z "$(echo "$targets" | tr -d '[:space:]')" ]; then
+            echo "Nothing to transcribe — every recording already has a transcript."
+            exit 0
+          fi
+
+          for audio in $targets; do
+            echo "::group::$audio"
+            python3 .github/scripts/transcribe-sermon.py "$audio"
+            echo "::endgroup::"
+          done
+
+      - name: Commit the transcripts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sermons/transcripts
+          if git diff --staged --quiet; then
+            echo "No new transcripts."
+          else
+            git commit -m "chore: draft transcripts for new sermon recordings"
+            git push
+            echo "✓ Draft transcripts committed. They need a read before anything is published."
+          fi
