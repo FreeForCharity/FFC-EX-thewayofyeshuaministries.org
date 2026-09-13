@@ -12,6 +12,11 @@ on:
   push:
     paths:
       - 'sermons/audio/**'
+      # A fix to the pipeline should retry the recordings it failed on, rather
+      # than sitting idle until the next recording happens to arrive. Safe to
+      # re-run: anything already transcribed is skipped.
+      - '.github/workflows/transcribe-sermon.yml'
+      - '.github/scripts/transcribe-sermon.py'
   # Or run it by hand against one file from the Actions tab.
   workflow_dispatch:
     inputs:
