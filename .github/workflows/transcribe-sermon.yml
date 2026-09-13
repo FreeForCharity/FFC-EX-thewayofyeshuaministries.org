@@ -43,8 +43,16 @@ permissions: {}
 #
 # Rebasing before the push is not enough on its own: two runs can both rebase
 # and then race, and the one that loses takes its transcript down with its
-# runner after fifteen minutes of work. Queued rather than cancelled, because
-# the second run usually has a different recording to get through.
+# runner after fifteen minutes of work.
+#
+# `cancel-in-progress: false` keeps one run waiting rather than cancelling the
+# one working, but GitHub holds only a single pending run per group: a third
+# request evicts the one waiting. For a push that comes out right anyway --
+# the next run reads the branch tip and transcribes whatever still has no
+# transcript, which includes anything an evicted run would have done. For a
+# manual run naming one file it does not: dispatch it again. Giving each
+# recording its own group would let runs push over each other instead, which
+# is the failure this group exists to prevent.
 concurrency:
   group: transcribe-sermon-${{ github.ref }}
   cancel-in-progress: false
@@ -111,6 +119,17 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Work from the branch tip, not from the commit that triggered this
+          # run.
+          #
+          # Runs are serialized, so a run queued behind a fifteen-minute one
+          # starts from a checkout taken before that run committed its
+          # transcript. It would then transcribe the same recording again and
+          # collide with it on the way back in. No credentials needed: the
+          # repository is public, and this job deliberately holds none.
+          git fetch --quiet origin "$GITHUB_REF_NAME"
+          git reset --quiet --hard FETCH_HEAD
+
           # An array, not a string: "Sermon on the Mount.mp3" is a perfectly
           # ordinary name for a recording, and a space in it would otherwise
           # split into several paths that do not exist.
@@ -131,16 +150,37 @@ jobs:
             exit 0
           fi
 
+          # Each recording stands on its own. Stopping the loop at the first
+          # failure would throw away the transcripts already made in this run
+          # -- they are committed by a later job -- and the next run would
+          # start from the same list and fail in the same place, so one
+          # unreadable file would block every other recording indefinitely.
+          produced=false
+          failed=()
           for audio in "${targets[@]}"; do
             echo "::group::$audio"
-            python3 .github/scripts/transcribe-sermon.py "$audio"
+            if python3 .github/scripts/transcribe-sermon.py "$audio"; then
+              produced=true
+            else
+              failed+=("$audio")
+            fi
             echo "::endgroup::"
           done
 
-          echo "produced=true" >> "$GITHUB_OUTPUT"
+          if [ "$produced" = true ]; then
+            echo "produced=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Reported after the loop, so the whole run is red and visible while
+          # the transcripts that did work still reach the branch.
+          if [ ${#failed[@]} -gt 0 ]; then
+            echo "::error::Could not transcribe: ${failed[*]}"
+            exit 1
+          fi
 
       - name: Hand the transcripts to the job that can commit
-        if: steps.transcribe.outputs.produced == 'true'
+        # Runs even when a later recording failed: see the loop above.
+        if: ${{ !cancelled() && steps.transcribe.outputs.produced == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: transcripts
@@ -151,8 +191,10 @@ jobs:
   commit:
     needs: transcribe
     # Skipped entirely when the run transcribed nothing, which is the common
-    # case: there is then no artifact to fetch and nothing to write.
-    if: needs.transcribe.outputs.produced == 'true'
+    # case: there is then no artifact to fetch and nothing to write. Not
+    # skipped merely because one recording of several failed -- the ones that
+    # worked are worth keeping, and the run stays red either way.
+    if: ${{ !cancelled() && needs.transcribe.outputs.produced == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -161,6 +203,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Move to the branch tip
+        # For the same reason the transcribe job does it: this checkout is the
+        # commit that triggered the run, and the branch may have moved on
+        # during the many minutes of transcription. Done before the artifact
+        # is unpacked, so the transcripts land on top of whatever is current
+        # rather than being reset away with it.
+        run: |
+          set -euo pipefail
+          git fetch --quiet origin "$GITHUB_REF_NAME"
+          git reset --quiet --hard FETCH_HEAD
 
       - name: Collect the transcripts
         uses: actions/download-artifact@v4
