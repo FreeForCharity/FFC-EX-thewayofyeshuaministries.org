@@ -58,9 +58,18 @@ jobs:
       - name: Transcribe
         env:
           WHISPER_MODEL: small.en
+          # Passed as an environment variable, never written into the script.
+          #
+          # A GitHub Actions expression is substituted into the shell source
+          # before the shell parses it, so a value containing $(...) or
+          # backticks would execute as commands -- with this job's
+          # `contents: write` token available. This input is free text from
+          # whoever runs the workflow, so it is exactly the value not to
+          # interpolate.
+          REQUESTED_FILE: ${{ inputs.file }}
         run: |
           set -euo pipefail
-          requested="${{ inputs.file }}"
+          requested="$REQUESTED_FILE"
           if [ -n "$requested" ]; then
             targets="$requested"
           else
@@ -93,7 +102,11 @@ jobs:
             echo "No new transcripts."
           else
             git commit -m "chore: draft transcripts for new sermon recordings"
-            # Named explicitly so this works on a branch as well as on main.
-            git push origin "HEAD:${{ github.ref_name }}"
+            # Named explicitly so this works on a branch as well as on main,
+            # and read from the runner's own environment rather than
+            # interpolated: a branch name is attacker-chosen text, and an
+            # Actions expression lands in the script before the shell parses
+            # it.
+            git push origin "HEAD:$GITHUB_REF_NAME"
             echo "✓ Draft transcripts committed. They need a read before anything is published."
           fi
