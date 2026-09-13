@@ -85,15 +85,32 @@ const BOILERPLATE_PREFIXES = [
   /^Chag [A-Za-z]+ Sameach/,
 ]
 
+/** The phone-and-email block that closes every post. */
+const CONTACT_BLOCK = /mailto:|tel:/i
+
 function isQuotable(html: string, text: string): boolean {
-  // The contact block at the foot of every post.
-  if (/mailto:|tel:/i.test(html)) return false
+  if (CONTACT_BLOCK.test(html)) return false
   if (text.length < MIN_TEACHING_LENGTH) return false
   return !BOILERPLATE_PREFIXES.some((prefix) => prefix.test(text))
 }
 
 function teachingsFromPost(post: BlogPost): Teaching[] {
-  return post.body
+  /*
+   * Nothing after the contact block is teaching.
+   *
+   * Dropping the contact paragraph alone was not enough: the Rosh Hashanah
+   * post closes with a blessing *after* it ("May the sound of the trumpet stir
+   * us all to readiness"), long enough to clear the length rule and worded
+   * unlike the other sign-offs, so it was being quoted as though it were
+   * teaching. Cutting the body at the contact block covers every such tail
+   * without having to guess at its wording.
+   *
+   * Slicing from the start keeps each paragraph's position, and so its id.
+   */
+  const contactAt = post.body.findIndex((paragraph) => CONTACT_BLOCK.test(paragraph))
+  const body = contactAt === -1 ? post.body : post.body.slice(0, contactAt)
+
+  return body
     .map((paragraph, position) => ({ paragraph, position }))
     .filter(({ paragraph }) => isQuotable(paragraph, toPlainText(paragraph)))
     .map(({ paragraph, position }) => {

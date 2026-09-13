@@ -63,6 +63,35 @@ describe('the teaching corpus', () => {
     }
   })
 
+  it('leaves out a blessing that follows the contact block', () => {
+    // The Rosh Hashanah post closes with "May the sound of the trumpet stir us
+    // all to readiness" *after* its contact block: long enough to clear the
+    // length rule, and worded unlike the other sign-offs.
+    expect(teachings.some((teaching) => /May the sound of the trumpet/.test(teaching.text))).toBe(
+      false
+    )
+  })
+
+  it('stops at the contact block wherever it falls in a post', () => {
+    const [before, ...rest] = extractTeachings([
+      {
+        slug: 'test-post',
+        title: 'A Teaching',
+        date: '2020-01-01',
+        excerpt: 'x',
+        body: [
+          'A teaching paragraph long enough to be quoted, about the ways the Scriptures ' +
+            'hold together the promise and the command, and what that asks of us.',
+          '&nbsp;&nbsp;&bull; Phone: <a href="tel:5203024034">(520) 302-4034</a>',
+          'A closing blessing that follows the contact block and is comfortably longer ' +
+            'than the hundred characters the length rule asks for.',
+        ],
+      },
+    ])
+    expect(before.text).toMatch(/^A teaching paragraph/)
+    expect(rest).toHaveLength(0)
+  })
+
   it('leaves out every form of the greeting and sign-off', () => {
     for (const teaching of teachings) {
       // Openings: "Shalom and blessings, beloved." and "Shalom, beloved."
@@ -123,13 +152,18 @@ describe('the teaching corpus', () => {
      * is built from the same getPublishedPosts() call generateStaticParams
      * makes, which is what keeps the two in step.
      */
-    const offered = new Set(teachings.map((teaching) => teaching.slug))
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Phoenix' })
-    const drafts = blogPosts.filter((post) => post.date > today)
 
-    expect(drafts.length).toBeGreaterThan(0) // guard: the corpus really has drafts
-    for (const draft of drafts) {
-      expect(offered.has(draft.slug)).toBe(false)
+    /*
+     * Stated as a property of what is offered rather than as "the drafts are
+     * absent". There are 15 scheduled posts today, but the last publishes on
+     * 2026-12-25, and a test that required unpublished posts to exist would
+     * start failing on a weekly build after that with nothing actually wrong.
+     */
+    expect(teachings.length).toBeGreaterThan(0)
+    for (const teaching of teachings) {
+      const post = blogPosts.find((candidate) => candidate.slug === teaching.slug)
+      expect((post as (typeof blogPosts)[number]).date <= today).toBe(true)
     }
   })
 
