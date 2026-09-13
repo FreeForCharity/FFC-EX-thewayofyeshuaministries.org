@@ -1,7 +1,8 @@
 <!--
   DRAFT TRANSCRIPT -- not published, and not quotable as it stands.
 
-  Produced by .github/scripts/transcribe-sermon.py from sermons/audio/church2-part1.mp3.
+  Produced by .github/scripts/transcribe-sermon.py from sermons/audio/church2-part1.mp3
+  (sha256 e53fbd69c9680e263fd2cab5008b1e141d72b3a3ae498f31b6949742f06dd2df).
   Model: small.en.
 
   Before any of this reaches the site it needs a person to:

@@ -213,6 +213,10 @@ jobs:
         with:
           name: transcripts
           path: ${{ runner.temp }}/new-transcripts
+          # Re-running the job after a failure would otherwise stop here: an
+          # artifact name can only be claimed once in a run, and the fresh
+          # output would never reach the job that commits.
+          overwrite: true
 
   # The short job, and the only one holding a token that can write. It runs
   # git and nothing else: no repository scripts, no third-party packages.
@@ -232,24 +236,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Move to the branch tip
-        # For the same reason the transcribe job does it: this checkout is the
-        # commit that triggered the run, and the branch may have moved on
-        # during the many minutes of transcription. Done before the artifact
-        # is unpacked, so the transcripts land on top of whatever is current
-        # rather than being reset away with it.
-        run: |
-          set -euo pipefail
-          git fetch --quiet origin "$GITHUB_REF_NAME"
-          git reset --quiet --hard FETCH_HEAD
-
       - name: Collect the transcripts
         uses: actions/download-artifact@v4
         with:
           name: transcripts
           path: ${{ runner.temp }}/new-transcripts
 
-      - name: Put them with the others
+      - name: Commit the transcripts
         env:
           # Read here rather than interpolated into the script, as everywhere
           # else in this workflow.
@@ -258,74 +251,78 @@ jobs:
           set -euo pipefail
           shopt -s nullglob nocaseglob
 
-          mkdir -p sermons/transcripts
-          for transcript in "$RUNNER_TEMP"/new-transcripts/*.md; do
-            name="$(basename "$transcript")"
-            stem="${name%.md}"
-
-            # What arrives in the artifact was made by the job that runs the
-            # speech model and its dependencies, which this job deliberately
-            # does not trust. It may hand over a transcript for a recording;
-            # it may not hand over anything else. Checked against the audio in
-            # this job's own checkout rather than against anything the other
-            # job said.
-            matched=false
-            for audio in sermons/audio/*; do
-              if [ "$(basename "${audio%.*}")" = "$stem" ]; then
-                matched=true
-                break
-              fi
-            done
-            if [ "$matched" != true ]; then
-              echo "::warning::Ignoring ${name}: no recording in sermons/audio/ answers to that name."
-              continue
-            fi
-
-            # The transcript did not exist when the long job checked, but the
-            # branch has moved since. Someone may have added or corrected this
-            # very file in the meantime, and their copy is the one worth
-            # having -- unless replacing it is what was asked for.
-            if [ -e "sermons/transcripts/${name}" ] && [ "${ALLOW_OVERWRITE:-}" != "true" ]; then
-              echo "::warning::Keeping the existing sermons/transcripts/${name}: it appeared while this run was transcribing."
-              continue
-            fi
-
-            cp "$transcript" "sermons/transcripts/${name}"
-          done
-
-      - name: Commit the transcripts
-        run: |
-          set -euo pipefail
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sermons/transcripts
-          if git diff --staged --quiet; then
-            echo "No new transcripts."
-            exit 0
-          fi
 
-          git commit -m "chore: draft transcripts for new sermon recordings"
-
-          # Transcribing takes many minutes, and anything pushed to the branch
-          # meanwhile leaves this job behind: the push is rejected and the
-          # transcript dies with the runner, after all the work of making it.
-          # Rebasing first narrows that to the seconds between the rebase and
-          # the push -- still a window, and not one that heals: a push that
-          # touches none of this workflow's trigger paths starts no new run, so
-          # nothing would come back for the transcript. So rebase, push, and if
-          # someone got in first, do it again.
+          # Each attempt is built from the branch as it stands, rather than
+          # committing once and rebasing that commit forward.
+          #
+          # Transcribing takes many minutes and the branch moves meanwhile, so
+          # something has to reconcile the two. A rebase is the wrong thing to
+          # reconcile them with: it can stop on a conflict over a transcript
+          # someone edited in the meantime, which leaves the run wedged
+          # mid-rebase and is not this job's argument to settle anyway.
+          # Starting over from the current tip settles it by construction --
+          # whatever is on the branch is kept, and only what is genuinely
+          # missing is added.
           #
           # The branch is read from the runner's own environment rather than
           # interpolated: a branch name is attacker-chosen text, and an Actions
           # expression lands in the script before the shell parses it.
           for attempt in 1 2 3; do
-            git pull --rebase origin "$GITHUB_REF_NAME"
+            git fetch --quiet origin "$GITHUB_REF_NAME"
+            git reset --quiet --hard FETCH_HEAD
+
+            mkdir -p sermons/transcripts
+            for transcript in "$RUNNER_TEMP"/new-transcripts/*.md; do
+              name="$(basename "$transcript")"
+              stem="${name%.md}"
+
+              # What arrives in the artifact was made by the job that runs the
+              # speech model and its dependencies, which this job deliberately
+              # does not trust. It may hand over a transcript for a recording;
+              # it may not hand over anything else. Checked against the audio
+              # in this job's own checkout -- and against the same suffixes
+              # the rest of the pipeline treats as recordings, so that a note
+              # or a stray file left in the directory cannot lend its name to
+              # something invented.
+              matched=false
+              for audio in sermons/audio/*.{mp3,m4a,wav,mp4,aac,ogg,flac}; do
+                if [ "$(basename "${audio%.*}")" = "$stem" ]; then
+                  matched=true
+                  break
+                fi
+              done
+              if [ "$matched" != true ]; then
+                echo "::warning::Ignoring ${name}: no recording in sermons/audio/ answers to that name."
+                continue
+              fi
+
+              # The transcript did not exist when the long job checked, but
+              # the branch has moved since. Someone may have added or
+              # corrected this very file in the meantime, and their copy is
+              # the one worth having -- unless replacing it is what was asked
+              # for.
+              if [ -e "sermons/transcripts/${name}" ] && [ "${ALLOW_OVERWRITE:-}" != "true" ]; then
+                echo "::warning::Keeping the copy of ${name} already on ${GITHUB_REF_NAME} rather than replacing it with this run's draft."
+                continue
+              fi
+
+              cp "$transcript" "sermons/transcripts/${name}"
+            done
+
+            git add sermons/transcripts
+            if git diff --staged --quiet; then
+              echo "Nothing to add: what this run made is already on ${GITHUB_REF_NAME}."
+              exit 0
+            fi
+
+            git commit -m "chore: draft transcripts for new sermon recordings"
             if git push origin "HEAD:$GITHUB_REF_NAME"; then
               echo "✓ Draft transcripts committed. They need a read before anything is published."
               exit 0
             fi
-            echo "::warning::Push rejected on attempt ${attempt}: something landed on ${GITHUB_REF_NAME} first. Rebasing and trying again."
+            echo "::warning::Push rejected on attempt ${attempt}: something landed on ${GITHUB_REF_NAME} first. Starting again from the new tip."
           done
 
           echo "::error::Could not push the transcripts after 3 attempts. They are kept in this run's 'transcripts' artifact."

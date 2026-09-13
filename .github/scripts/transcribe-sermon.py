@@ -190,6 +190,13 @@ def main() -> int:
         )
         return 1
 
+    # Taken before a single word is recognized, so it is the checksum of the
+    # bytes this transcript is actually of. Taken afterwards it would describe
+    # whatever the file had become in the intervening quarter of an hour, and
+    # a provenance record that can quietly be about a different recording is
+    # worse than none.
+    digest = digest_of(source)
+
     from faster_whisper import WhisperModel
 
     print(f"Loading {MODEL_SIZE} ...", file=sys.stderr)
@@ -205,16 +212,22 @@ def main() -> int:
 
     destination.parent.mkdir(parents=True, exist_ok=True)
     minutes = int(info.duration // 60)
-    destination.write_text(
-        BANNER.format(
-            source=source.as_posix(), digest=digest_of(source), model=MODEL_SIZE
-        )
+    transcript = (
+        BANNER.format(source=source.as_posix(), digest=digest, model=MODEL_SIZE)
         + f"\n# {source.stem.replace('-', ' ').title()}\n\n"
         + f"_Draft transcript of {minutes} minutes of audio. Needs review._\n\n"
         + "\n\n".join(paragraphs)
-        + "\n",
-        encoding="utf-8",
+        + "\n"
     )
+
+    # Written beside the destination and moved into place, so the transcript
+    # either exists in full or does not exist at all. Writing to the
+    # destination directly would truncate it first, and a runner cancelled in
+    # that moment would leave half a transcript that every later run skips as
+    # already done and the overwrite guard then refuses to replace.
+    partial = destination.with_name(f".{destination.name}.partial")
+    partial.write_text(transcript, encoding="utf-8")
+    partial.replace(destination)
 
     words = sum(len(p.split()) for p in paragraphs)
     print(f"Wrote {destination} -- {len(paragraphs)} paragraphs, ~{words} words.")
