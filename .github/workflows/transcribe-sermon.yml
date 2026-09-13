@@ -102,6 +102,11 @@ jobs:
             echo "No new transcripts."
           else
             git commit -m "chore: draft transcripts for new sermon recordings"
+            # Transcribing takes many minutes, and anything pushed to the
+            # branch meanwhile leaves this job behind: the push is then
+            # rejected and the transcript dies with the runner, after all the
+            # work of producing it. Rebase onto whatever landed instead.
+            git pull --rebase origin "$GITHUB_REF_NAME"
             # Named explicitly so this works on a branch as well as on main,
             # and read from the runner's own environment rather than
             # interpolated: a branch name is attacker-chosen text, and an
