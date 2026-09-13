@@ -33,8 +33,34 @@ export interface SiteIndexEntry {
   external?: boolean
 }
 
+/** One quotable paragraph of the ministry's published teaching. */
+export interface Teaching {
+  /** Stable identifier: the post's slug and the paragraph's position in it. */
+  id: string
+  /** Slug of the post it comes from, for the link. */
+  slug: string
+  /** Title of the post it comes from, shown as the attribution. */
+  postTitle: string
+  /** Human-readable publication date of that post. */
+  postDate: string
+  /** The paragraph's own section heading, where it has one. */
+  heading?: string
+  /** The paragraph as plain text, heading removed. */
+  text: string
+}
+
+/** A teaching worth showing, and the part of it worth showing. */
+export interface TeachingQuote {
+  teaching: Teaching
+  /** The sentences that actually answer the question. */
+  snippet: string
+}
+
 /** Most results to return for one question. */
 export const MAX_RESULTS = 5
+
+/** Most teaching quotes to show. Two is plenty to read inside a panel. */
+export const MAX_QUOTES = 2
 
 /**
  * Function words carry no signal about which page someone wants. They are
@@ -93,8 +119,16 @@ const STOP_WORDS = new Set([
   'our',
   'out',
   'please',
+  // Question scaffolding: "what does the Bible say about ...". Left in, "say"
+  // matched a heading ("When God Says No") and quoted a teaching on something
+  // else entirely.
+  'said',
+  'say',
+  'says',
   'she',
   'should',
+  'tell',
+  'tells',
   'so',
   'some',
   'such',
@@ -417,4 +451,192 @@ const PASTORAL_WORDS = new Set([
  */
 export function isPastoralQuestion(query: string): boolean {
   return rawWords(query).some((word) => PASTORAL_WORDS.has(word) || PASTORAL_WORDS.has(stem(word)))
+}
+
+/* -------------------------------------------------------------------------
+ * Quoting the ministry's own teaching
+ *
+ * Matching a question against 24,000 words of prose is a different problem
+ * from matching it against a page title. Every paragraph contains "God" and
+ * "the Lord", so a word is only evidence to the extent that it is rare: the
+ * scoring below weights each word by how few paragraphs contain it, which is
+ * what separates "forgiveness" from "the".
+ * ---------------------------------------------------------------------- */
+
+/** A word in the heading is worth this much more than one in the body. */
+const HEADING_MULTIPLIER = 3
+
+/**
+ * A word is distinctive when it appears in few enough paragraphs to say
+ * something about which one is wanted. At this weight a word is in under about
+ * a fifth of the corpus: "forgive" and "tzitzit" clear it, "God" and "Lord" --
+ * which appear in half the paragraphs -- do not.
+ */
+const DISTINCTIVE_WEIGHT = 1.5
+
+/** Tuned against the real posts: below this the quote is off-topic. */
+const MIN_TEACHING_SCORE = 2
+
+/** Longest snippet to show, in characters, before trailing off. */
+const MAX_SNIPPET_LENGTH = 320
+
+/** The searchable form of one teaching, plus the corpus statistics. */
+interface TeachingCorpus {
+  /** Per teaching: its heading words and body words, stemmed. */
+  documents: { headingWords: Set<string>; textWords: Set<string> }[]
+  /** How much a given word counts, by how rare it is across the corpus. */
+  weights: Map<string, number>
+}
+
+const corpusCache = new WeakMap<Teaching[], TeachingCorpus>()
+
+function getCorpus(teachings: Teaching[]): TeachingCorpus {
+  const cached = corpusCache.get(teachings)
+  if (cached) return cached
+
+  const documents = teachings.map((teaching) => ({
+    headingWords: new Set(words(teaching.heading ?? '')),
+    textWords: new Set(words(teaching.text)),
+  }))
+
+  // Document frequency: how many paragraphs use each word at all.
+  const frequency = new Map<string, number>()
+  for (const doc of documents) {
+    for (const word of new Set([...doc.headingWords, ...doc.textWords])) {
+      frequency.set(word, (frequency.get(word) ?? 0) + 1)
+    }
+  }
+
+  const total = documents.length || 1
+  const weights = new Map<string, number>()
+  for (const [word, count] of frequency) {
+    // A word in nearly every paragraph approaches zero; a rare one scores high.
+    weights.set(word, Math.log(total / count))
+  }
+
+  const corpus = { documents, weights }
+  corpusCache.set(teachings, corpus)
+  return corpus
+}
+
+/** Split prose into sentences, keeping closing quotation marks attached. */
+function sentences(text: string): string[] {
+  return text.split(/(?<=[.!?][”"’']?)\s+/).filter((sentence) => sentence.trim().length > 0)
+}
+
+/**
+ * The part of a paragraph that actually answers the question: the
+ * best-matching sentence, plus the next one where that leaves too little to
+ * read. A snippet that starts mid-paragraph is marked with an ellipsis so it
+ * is never mistaken for the start of the teaching.
+ */
+function bestSnippet(text: string, tokens: string[]): string {
+  const parts = sentences(text)
+  if (parts.length === 0) return text
+
+  let bestIndex = 0
+  let bestHits = -1
+  parts.forEach((sentence, index) => {
+    const sentenceWords = new Set(words(sentence))
+    const hits = tokens.filter((token) => sentenceWords.has(token)).length
+    // Ties go to the earlier sentence, which reads more naturally.
+    if (hits > bestHits) {
+      bestHits = hits
+      bestIndex = index
+    }
+  })
+
+  let snippet = parts[bestIndex]
+  let next = bestIndex + 1
+  while (snippet.length < MAX_SNIPPET_LENGTH / 2 && next < parts.length) {
+    snippet = `${snippet} ${parts[next]}`
+    next += 1
+  }
+  if (snippet.length > MAX_SNIPPET_LENGTH) {
+    snippet = `${snippet.slice(0, MAX_SNIPPET_LENGTH).trimEnd()}…`
+  }
+  return bestIndex > 0 ? `…${snippet}` : snippet
+}
+
+/**
+ * Find the ministry's own words on a subject.
+ *
+ * Returns at most one quote per post, best first, and nothing at all when the
+ * question is not something the blog has addressed -- an off-topic quote put
+ * in the ministry's mouth is exactly what this must not do.
+ */
+export function searchTeachings(
+  query: string,
+  teachings: Teaching[],
+  limit: number = MAX_QUOTES
+): TeachingQuote[] {
+  const tokens = tokenize(query)
+  // `searchSite` gets this from slice(); do it explicitly here, where the
+  // quotes are collected one at a time.
+  if (tokens.length === 0 || limit <= 0) return []
+
+  /*
+   * `tokenize` falls back to the raw words when a question is nothing but
+   * stop words, which is right for the pages -- "who are you" should still
+   * reach the mission. It is wrong here: a question with no subject has no
+   * teaching to quote, and "what is" would otherwise match the thirty
+   * paragraphs headed "What Is the Spirit Saying This Week?".
+   */
+  if (!rawWords(query).some((word) => !STOP_WORDS.has(word))) return []
+
+  const { documents, weights } = getCorpus(teachings)
+
+  const scored = teachings
+    .map((teaching, index) => {
+      const doc = documents[index]
+      let score = 0
+      let matched = 0
+      let inHeading = false
+      let distinctive = 0
+
+      for (const token of tokens) {
+        const weight = weights.get(token)
+        if (weight === undefined) continue
+        const heading = doc.headingWords.has(token)
+        if (!heading && !doc.textWords.has(token)) continue
+
+        score += heading ? weight * HEADING_MULTIPLIER : weight
+        matched += 1
+        if (heading) inHeading = true
+        if (weight >= DISTINCTIVE_WEIGHT) distinctive += 1
+      }
+
+      /*
+       * What makes a paragraph worth quoting, learned from the real posts:
+       *
+       * - The question's word is in the paragraph's own heading. Headings are
+       *   short and deliberate, so a word there is what the paragraph is about.
+       * - Or two distinctive words turn up in the body, which a passing
+       *   mention will not manage.
+       * - Or the whole question is one distinctive word, where a body match is
+       *   all the evidence there is to have.
+       *
+       * One rare word buried in a long paragraph is not enough on its own:
+       * that is how "how do I donate a car" reached a teaching about raising
+       * children.
+       */
+      const worthQuoting =
+        inHeading || distinctive >= 2 || (tokens.length === 1 && distinctive === 1)
+      if (!worthQuoting) return { teaching, score: 0 }
+
+      return { teaching, score: score * (0.5 + (0.5 * matched) / tokens.length) }
+    })
+    .filter(({ score }) => score >= MIN_TEACHING_SCORE)
+    .sort((a, b) => b.score - a.score)
+
+  // One quote per post: two paragraphs of the same teaching is repetitive.
+  const seen = new Set<string>()
+  const chosen: TeachingQuote[] = []
+  for (const { teaching } of scored) {
+    if (seen.has(teaching.slug)) continue
+    seen.add(teaching.slug)
+    chosen.push({ teaching, snippet: bestSnippet(teaching.text, tokens) })
+    if (chosen.length === limit) break
+  }
+  return chosen
 }

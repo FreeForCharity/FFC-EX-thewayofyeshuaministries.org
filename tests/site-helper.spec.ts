@@ -115,6 +115,33 @@ test.describe('Site helper', () => {
     await expect(page).toHaveURL(/\/blog\/?$/)
   })
 
+  test('quotes the ministry’s own teaching, attributed and linked', async ({ page }) => {
+    await page.goto('/')
+    await openHelper(page)
+    await ask(page, 'what is the meaning of tzitzit')
+
+    const quote = panel(page).locator('figure').first()
+    await expect(quote).toBeVisible()
+    await expect(quote.locator('blockquote')).toContainText(/tzitzit/i)
+
+    // The quote names the teaching it came from and links to the whole thing.
+    const source = quote.getByRole('link')
+    await expect(source).toBeVisible()
+    await source.click()
+    await expect(page).toHaveURL(/\/blog\/[^/]+\/?$/)
+    // The words shown in the panel are really on the page they came from.
+    await expect(page.getByRole('main')).toContainText(/tzitzit/i)
+  })
+
+  test('does not quote a teaching for an ordinary navigation question', async ({ page }) => {
+    await page.goto('/')
+    await openHelper(page)
+    await ask(page, 'how do I donate a car')
+
+    await expect(panel(page).getByRole('link', { name: /Automobile Program/ })).toBeVisible()
+    await expect(panel(page).getByText('From our teachings')).toBeHidden()
+  })
+
   test('closes with the Escape key', async ({ page }) => {
     await page.goto('/')
     await openHelper(page)

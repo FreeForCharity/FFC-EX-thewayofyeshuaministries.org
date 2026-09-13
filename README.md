@@ -91,16 +91,31 @@ It runs entirely in the visitor's browser. There is no AI service behind it, no
 API key, and no cost: the site is a static export, so the question never leaves
 the visitor's device and nothing is logged.
 
-Two files keep it accurate:
+Where the blog has covered a subject, the helper also quotes it — the
+ministry's own paragraph, with a link to the full teaching. Nothing is
+generated or paraphrased: the words shown are the words that were written.
+Questions about faith always get an invitation to contact the ministry
+directly, whether or not anything matched.
 
-| File                     | What it holds                                            |
-| ------------------------ | -------------------------------------------------------- |
-| `src/data/site-index.ts` | Every destination the helper can offer, and its keywords |
-| `src/lib/siteSearch.ts`  | The matching itself — scoring, ranking, and cut-offs     |
+Four files keep it accurate:
+
+| File                              | What it holds                                          |
+| --------------------------------- | ------------------------------------------------------ |
+| `src/data/site-index.ts`          | Every page the helper can offer, and its keywords      |
+| `src/lib/siteSearch.ts`           | The matching itself — scoring, ranking, and cut-offs   |
+| `src/lib/teachings.ts`            | Cutting the blog into quotable paragraphs — build only |
+| `src/app/teachings.json/route.ts` | Publishes the result as a static file                  |
 
 **When you add a page, add it to `site-index.ts`** — a route that is not listed
 there cannot be found by anyone asking for it. Blog posts are pulled in
 automatically, and program descriptions are read from `src/data/programs.ts`.
+
+**Never import the blog posts from a client component.** The teachings reach
+the browser as `/teachings.json`, built alongside `robots.txt` and
+`sitemap.xml` and fetched only when a visitor opens the panel. That keeps two
+promises: unpublished drafts stay out of the browser entirely, and the blog —
+the largest thing on the site — is not loaded on pages nobody searched from.
+Importing `src/data/blog-posts.ts` into client code breaks both at once.
 
 **When a real question finds the wrong page**, add the words the visitor
 actually typed to that entry's `keywords`, then add the question to

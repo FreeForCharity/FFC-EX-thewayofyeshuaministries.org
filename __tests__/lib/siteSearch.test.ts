@@ -4,9 +4,13 @@ import {
   isPastoralQuestion,
   type SiteIndexEntry,
 } from '../../src/lib/siteSearch'
-import { getSiteIndex, suggestedQuestions } from '../../src/data/site-index'
+import { pageIndex, suggestedQuestions } from '../../src/data/site-index'
+import { toBlogEntries } from '../../src/lib/teachings'
+import { getPublishedPosts } from '../../src/data/blog-posts'
 
-const index = getSiteIndex()
+// The component composes these two the same way: pages are available at once,
+// blog posts arrive when the panel loads them.
+const index = [...pageIndex, ...toBlogEntries(getPublishedPosts())]
 
 /** The id of the best answer for a question, or undefined when there is none. */
 function topMatch(question: string): string | undefined {
@@ -101,43 +105,6 @@ describe('searchSite', () => {
       expect(searchSite(question, index).length).toBeGreaterThan(0)
     }
   })
-})
-
-describe('isPastoralQuestion', () => {
-  it.each([
-    'why does God allow suffering',
-    'pray for my marriage',
-    'I am struggling with depression',
-    'what does the Bible say about the Sabbath',
-    'who is Yeshua',
-    'how do I forgive someone who hurt me',
-    'my father died last month',
-  ])('recognizes "%s" as a question for a person', (question) => {
-    expect(isPastoralQuestion(question)).toBe(true)
-  })
-
-  it.each([
-    'how do I donate a car',
-    'what is your phone number',
-    'where are you located',
-    'who is on the board',
-    'do you use cookies',
-  ])('leaves "%s" as an ordinary navigation question', (question) => {
-    expect(isPastoralQuestion(question)).toBe(false)
-  })
-
-  it('ignores capitalization and punctuation', () => {
-    expect(isPastoralQuestion('Pray for me?')).toBe(true)
-  })
-
-  it('matches plurals of its words', () => {
-    expect(isPastoralQuestion('please say some prayers')).toBe(true)
-  })
-
-  it('is false for an empty question', () => {
-    expect(isPastoralQuestion('')).toBe(false)
-  })
-
   it('never returns more than the requested number of links', () => {
     expect(searchSite('ministry', index, 3).length).toBeLessThanOrEqual(3)
   })
@@ -198,5 +165,41 @@ describe('isPastoralQuestion', () => {
   it('gives every entry a unique id', () => {
     const ids = index.map((entry) => entry.id)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+})
+
+describe('isPastoralQuestion', () => {
+  it.each([
+    'why does God allow suffering',
+    'pray for my marriage',
+    'I am struggling with depression',
+    'what does the Bible say about the Sabbath',
+    'who is Yeshua',
+    'how do I forgive someone who hurt me',
+    'my father died last month',
+  ])('recognizes "%s" as a question for a person', (question) => {
+    expect(isPastoralQuestion(question)).toBe(true)
+  })
+
+  it.each([
+    'how do I donate a car',
+    'what is your phone number',
+    'where are you located',
+    'who is on the board',
+    'do you use cookies',
+  ])('leaves "%s" as an ordinary navigation question', (question) => {
+    expect(isPastoralQuestion(question)).toBe(false)
+  })
+
+  it('ignores capitalization and punctuation', () => {
+    expect(isPastoralQuestion('Pray for me?')).toBe(true)
+  })
+
+  it('matches plurals of its words', () => {
+    expect(isPastoralQuestion('please say some prayers')).toBe(true)
+  })
+
+  it('is false for an empty question', () => {
+    expect(isPastoralQuestion('')).toBe(false)
   })
 })
