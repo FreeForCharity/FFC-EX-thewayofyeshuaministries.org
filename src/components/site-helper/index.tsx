@@ -20,12 +20,20 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { MessageCircleQuestionMark, Search, X } from 'lucide-react'
-import { getSiteIndex, suggestedQuestions, contactFallback } from '@/data/site-index'
-import { searchSite, isPastoralQuestion, type SiteIndexEntry } from '@/lib/siteSearch'
+import { pageIndex, suggestedQuestions, contactFallback } from '@/data/site-index'
+import {
+  searchSite,
+  searchTeachings,
+  isPastoralQuestion,
+  type SiteIndexEntry,
+  type Teaching,
+  type TeachingQuote,
+} from '@/lib/siteSearch'
 
 const PANEL_ID = 'site-helper-panel'
 const TITLE_ID = 'site-helper-title'
 const INPUT_ID = 'site-helper-input'
+const QUOTES_ID = 'site-helper-quotes'
 
 /** Phone and email, shared by the two fallbacks below. */
 function ContactLinks() {
@@ -84,6 +92,35 @@ function ResultLink({ entry, onNavigate }: { entry: SiteIndexEntry; onNavigate: 
   )
 }
 
+/**
+ * The ministry's own words on the subject, quoted rather than summarized, and
+ * always attributed to the teaching they come from.
+ */
+function Quote({ quote, onNavigate }: { quote: TeachingQuote; onNavigate: () => void }) {
+  const { teaching, snippet } = quote
+  return (
+    <figure className="m-0 rounded-md border border-[#E5DFD3] bg-[#FDFBF6] px-3 py-3">
+      {teaching.heading && (
+        <p className="font-[600] text-[14px] text-black mb-1">{teaching.heading}</p>
+      )}
+      <blockquote className="m-0 border-l-2 border-[#C9A24B] pl-3 text-[13px] leading-[165%] text-gray-700">
+        {snippet}
+      </blockquote>
+      <figcaption className="text-[12px] text-gray-500 mt-2">
+        From{' '}
+        <Link
+          href={`/blog/${teaching.slug}`}
+          onClick={onNavigate}
+          className="text-[#8A7331] underline hover:no-underline"
+        >
+          {teaching.postTitle}
+        </Link>{' '}
+        · {teaching.postDate}
+      </figcaption>
+    </figure>
+  )
+}
+
 const SiteHelper: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -91,13 +128,42 @@ const SiteHelper: React.FC = () => {
   const launcherRef = useRef<HTMLButtonElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const index = useMemo(() => getSiteIndex(), [])
+  /*
+   * The blog is by far the largest thing on the site, and this component sits
+   * in the root layout, so its posts are fetched only once someone actually
+   * opens the panel. Until then the helper searches the pages alone, which is
+   * everything a visitor typing "donate" needs.
+   */
+  const [blog, setBlog] = useState<{ entries: SiteIndexEntry[]; teachings: Teaching[] } | null>(
+    null
+  )
+
+  useEffect(() => {
+    if (!isOpen || blog) return
+    let cancelled = false
+    import('@/data/teachings')
+      .then(({ getBlogEntries, getTeachings }) => {
+        if (!cancelled) setBlog({ entries: getBlogEntries(), teachings: getTeachings() })
+      })
+      .catch(() => {
+        // The pages remain searchable; there is nothing useful to say here.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [isOpen, blog])
+
+  const index = useMemo(() => [...pageIndex, ...(blog?.entries ?? [])], [blog])
   const results = useMemo(() => searchSite(query, index), [query, index])
+  const quotes: TeachingQuote[] = useMemo(
+    () => (blog ? searchTeachings(query, blog.teachings) : []),
+    [query, blog]
+  )
   const hasQuery = query.trim().length > 0
   const isPastoral = hasQuery && isPastoralQuestion(query)
   // The teachings are the one page worth offering somebody with a question of
   // faith, so the invitation links to it.
-  const blogHref = useMemo(() => index.find((entry) => entry.id === 'blog')?.href, [index])
+  const blogHref = useMemo(() => pageIndex.find((entry) => entry.id === 'blog')?.href, [])
 
   const close = useCallback(() => {
     setIsOpen(false)
@@ -132,11 +198,17 @@ const SiteHelper: React.FC = () => {
     if (isOpen) inputRef.current?.focus()
   }, [isOpen])
 
+  const quoteSummary =
+    quotes.length === 0
+      ? ''
+      : ` ${quotes.length} ${quotes.length === 1 ? 'passage' : 'passages'} from the ministry's teachings.`
+
   const resultSummary = !hasQuery
     ? ''
-    : results.length === 0
+    : results.length === 0 && quotes.length === 0
       ? 'No pages matched. Contact details are shown instead.'
       : `${results.length} ${results.length === 1 ? 'page' : 'pages'} found.` +
+        quoteSummary +
         (isPastoral ? ' An invitation to contact the ministry is shown below them.' : '')
 
   return (
@@ -225,6 +297,29 @@ const SiteHelper: React.FC = () => {
             )}
 
             {/*
+              What the ministry has already written on the subject, in its own
+              words. Shown below the page links because someone looking for the
+              donation page wants the link first.
+            */}
+            {quotes.length > 0 && (
+              <section className={results.length > 0 ? 'mt-4' : ''} aria-labelledby={QUOTES_ID}>
+                <h3
+                  id={QUOTES_ID}
+                  className="text-[11px] uppercase tracking-[0.08em] text-[#8A7331] mb-2"
+                >
+                  From our teachings
+                </h3>
+                <ul className="space-y-2">
+                  {quotes.map((quote) => (
+                    <li key={quote.teaching.id}>
+                      <Quote quote={quote} onNavigate={() => setIsOpen(false)} />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/*
               A question of faith is for a person, not a search box. This shows
               whether or not pages were found -- the links may be useful, but
               they are not the answer.
@@ -232,7 +327,7 @@ const SiteHelper: React.FC = () => {
             {isPastoral && (
               <div
                 className={`text-[14px] leading-[160%] text-gray-700 rounded-md border border-[#E5DFD3] bg-[#FDFBF6] px-3 py-3 ${
-                  results.length > 0 ? 'mt-3' : ''
+                  results.length > 0 || quotes.length > 0 ? 'mt-4' : ''
                 }`}
               >
                 <p className="font-[600] text-black mb-2">Let us answer this one in person</p>
@@ -256,7 +351,7 @@ const SiteHelper: React.FC = () => {
               </div>
             )}
 
-            {hasQuery && results.length === 0 && !isPastoral && (
+            {hasQuery && results.length === 0 && quotes.length === 0 && !isPastoral && (
               <div className="text-[14px] leading-[160%] text-gray-700">
                 <p className="mb-3">
                   Nothing on the site matches that yet — but we would rather answer you directly

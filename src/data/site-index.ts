@@ -14,11 +14,15 @@
  *    add "old cars" to the Automobile Program entry.
  *
  * Program summaries are read from `programs.ts` so the helper never contradicts
- * the status shown on the home page. Blog posts are pulled in automatically.
+ * the status shown on the home page.
+ *
+ * Blog posts are *not* here. They live in `teachings.ts`, which the helper
+ * loads on demand -- the posts are the largest thing on the site, and this
+ * module is reachable from every page. Keep it that way: importing the posts
+ * from here puts the whole blog into every page's JavaScript.
  */
 
 import type { SiteIndexEntry } from '@/lib/siteSearch'
-import { getPublishedPosts, getCategory } from '@/data/blog-posts'
 import { programs } from '@/data/programs'
 
 /**
@@ -29,8 +33,11 @@ function programSummary(href: string, fallback: string): string {
   return programs.find((program) => program.href === href)?.summary ?? fallback
 }
 
-/** Pages, home page sections, and the two off-site links visitors ask for. */
-const staticEntries: SiteIndexEntry[] = [
+/**
+ * Pages, home page sections, and the two off-site links visitors ask for.
+ * Searchable immediately, without waiting for anything to load.
+ */
+export const pageIndex: SiteIndexEntry[] = [
   {
     id: 'prison-program',
     title: 'Prison Outreach Program',
@@ -392,26 +399,6 @@ const staticEntries: SiteIndexEntry[] = [
     keywords: ['terms', 'conditions', 'legal', 'disclaimer', 'copyright'],
   },
 ]
-
-/**
- * Blog posts, added automatically so a new teaching is findable the moment it
- * is published. Drafts dated in the future are excluded, same as the blog index.
- */
-function blogEntries(): SiteIndexEntry[] {
-  return getPublishedPosts().map((post) => ({
-    id: `blog-${post.slug}`,
-    title: post.title,
-    href: `/blog/${post.slug}`,
-    section: getCategory(post.slug),
-    summary: post.excerpt,
-    keywords: [getCategory(post.slug), 'blog', 'teaching', 'post'],
-  }))
-}
-
-/** Everything the helper can search, pages first. */
-export function getSiteIndex(): SiteIndexEntry[] {
-  return [...staticEntries, ...blogEntries()]
-}
 
 /**
  * Shown before a visitor has typed anything -- real questions people ask, so

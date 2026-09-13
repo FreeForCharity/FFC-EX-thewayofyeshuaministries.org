@@ -91,16 +91,27 @@ It runs entirely in the visitor's browser. There is no AI service behind it, no
 API key, and no cost: the site is a static export, so the question never leaves
 the visitor's device and nothing is logged.
 
-Two files keep it accurate:
+Where the blog has covered a subject, the helper also quotes it — the
+ministry's own paragraph, with a link to the full teaching. Nothing is
+generated or paraphrased: the words shown are the words that were written.
+Questions about faith always get an invitation to contact the ministry
+directly, whether or not anything matched.
 
-| File                     | What it holds                                            |
-| ------------------------ | -------------------------------------------------------- |
-| `src/data/site-index.ts` | Every destination the helper can offer, and its keywords |
-| `src/lib/siteSearch.ts`  | The matching itself — scoring, ranking, and cut-offs     |
+Three files keep it accurate:
+
+| File                     | What it holds                                                 |
+| ------------------------ | ------------------------------------------------------------- |
+| `src/data/site-index.ts` | Every page the helper can offer, and its keywords             |
+| `src/data/teachings.ts`  | The blog, cut into quotable paragraphs — **loaded on demand** |
+| `src/lib/siteSearch.ts`  | The matching itself — scoring, ranking, and cut-offs          |
 
 **When you add a page, add it to `site-index.ts`** — a route that is not listed
 there cannot be found by anyone asking for it. Blog posts are pulled in
 automatically, and program descriptions are read from `src/data/programs.ts`.
+
+**Do not import `teachings.ts` from anywhere that runs at page load.** It pulls
+in every blog post, which is the largest thing on the site; the helper imports
+it only once a visitor opens the panel, so the other pages never carry it.
 
 **When a real question finds the wrong page**, add the words the visitor
 actually typed to that entry's `keywords`, then add the question to
