@@ -85,34 +85,44 @@ const BOILERPLATE_PREFIXES = [
   /^Chag [A-Za-z]+ Sameach/,
 ]
 
-/** The phone-and-email block that closes every post. */
+/** The phone-and-email block that closes most posts. */
 const CONTACT_BLOCK = /mailto:|tel:/i
 
-function isQuotable(html: string, text: string): boolean {
+/**
+ * A blessing is a sign-off only once the contact details have been given.
+ *
+ * "May the sound of the trumpet stir us all to readiness" closes the Rosh
+ * Hashanah post after its contact block, and is not teaching. The same opening
+ * earlier in a post usually is, so the rule is applied by position rather than
+ * to the whole corpus.
+ */
+const CLOSING_PREFIXES = [...BOILERPLATE_PREFIXES, /^May\b/]
+
+function isQuotable(html: string, text: string, afterContact: boolean): boolean {
   if (CONTACT_BLOCK.test(html)) return false
   if (text.length < MIN_TEACHING_LENGTH) return false
-  return !BOILERPLATE_PREFIXES.some((prefix) => prefix.test(text))
+  const prefixes = afterContact ? CLOSING_PREFIXES : BOILERPLATE_PREFIXES
+  return !prefixes.some((prefix) => prefix.test(text))
 }
 
 function teachingsFromPost(post: BlogPost): Teaching[] {
   /*
-   * Nothing after the contact block is teaching.
+   * Where the contact block falls, so a closing blessing after it can be told
+   * from teaching.
    *
-   * Dropping the contact paragraph alone was not enough: the Rosh Hashanah
-   * post closes with a blessing *after* it ("May the sound of the trumpet stir
-   * us all to readiness"), long enough to clear the length rule and worded
-   * unlike the other sign-offs, so it was being quoted as though it were
-   * teaching. Cutting the body at the contact block covers every such tail
-   * without having to guess at its wording.
-   *
-   * Slicing from the start keeps each paragraph's position, and so its id.
+   * Not every post puts its contact details last: the Shavuot invitation has
+   * two substantive paragraphs after them -- a welcome and a Scripture quote
+   * from Leviticus -- which are as quotable as anything else it says. Cutting
+   * the body at the contact block would silently lose both, so the position
+   * narrows which prefixes count as a sign-off rather than ending extraction.
    */
   const contactAt = post.body.findIndex((paragraph) => CONTACT_BLOCK.test(paragraph))
-  const body = contactAt === -1 ? post.body : post.body.slice(0, contactAt)
 
-  return body
+  return post.body
     .map((paragraph, position) => ({ paragraph, position }))
-    .filter(({ paragraph }) => isQuotable(paragraph, toPlainText(paragraph)))
+    .filter(({ paragraph, position }) =>
+      isQuotable(paragraph, toPlainText(paragraph), contactAt !== -1 && position > contactAt)
+    )
     .map(({ paragraph, position }) => {
       const heading = leadingHeading(paragraph)
       const full = toPlainText(paragraph)

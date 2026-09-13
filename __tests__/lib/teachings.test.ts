@@ -72,24 +72,42 @@ describe('the teaching corpus', () => {
     )
   })
 
-  it('stops at the contact block wherever it falls in a post', () => {
-    const [before, ...rest] = extractTeachings([
+  it('keeps substantive paragraphs that follow a contact block', () => {
+    /*
+     * Not every post puts its contact details last. The Shavuot invitation has
+     * a welcome and a Leviticus quote after its contact block, both as
+     * quotable as anything else it says; only the "Chag Shavuot Sameach!"
+     * blessing at the very end is a sign-off.
+     */
+    const shavuot = teachings.filter((teaching) => teaching.slug === 'shavuot-get-together')
+    expect(shavuot.some((t) => /^Whether you have walked with Yeshua/.test(t.text))).toBe(true)
+    expect(shavuot.some((t) => /seven full weeks/.test(t.text))).toBe(true)
+    expect(shavuot.some((t) => /^Chag Shavuot Sameach/.test(t.text))).toBe(false)
+  })
+
+  it('tells a closing blessing from teaching by where it sits', () => {
+    const texts = extractTeachings([
       {
         slug: 'test-post',
         title: 'A Teaching',
         date: '2020-01-01',
         excerpt: 'x',
         body: [
-          'A teaching paragraph long enough to be quoted, about the ways the Scriptures ' +
-            'hold together the promise and the command, and what that asks of us.',
+          'May we consider, before anything else, that the Scriptures hold together the ' +
+            'promise and the command, and what that asks of those who would follow.',
           '&nbsp;&nbsp;&bull; Phone: <a href="tel:5203024034">(520) 302-4034</a>',
-          'A closing blessing that follows the contact block and is comfortably longer ' +
-            'than the hundred characters the length rule asks for.',
+          'A welcome that follows the contact block and is comfortably longer than the ' +
+            'hundred characters the length rule asks for, and is not a blessing at all.',
+          'May the Lord bless you and keep you through this season, and may His face ' +
+            'shine upon you and upon all who are dear to you, now and always.',
         ],
       },
-    ])
-    expect(before.text).toMatch(/^A teaching paragraph/)
-    expect(rest).toHaveLength(0)
+    ]).map((teaching) => teaching.text)
+
+    // "May ..." before the contact block is teaching; after it, a sign-off.
+    expect(texts.some((text) => /^May we consider/.test(text))).toBe(true)
+    expect(texts.some((text) => /^A welcome that follows/.test(text))).toBe(true)
+    expect(texts.some((text) => /^May the Lord bless you/.test(text))).toBe(false)
   })
 
   it('leaves out every form of the greeting and sign-off', () => {
