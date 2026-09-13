@@ -41,7 +41,14 @@ jobs:
 
       - name: Install faster-whisper
         # Pinned so a transcript can always be reproduced from the same words.
-        run: pip install --quiet faster-whisper==1.1.1
+        #
+        # `requests` is installed alongside it deliberately: faster-whisper
+        # imports it without declaring it as a dependency, which failed this
+        # workflow on a clean runner even though it worked where `requests`
+        # happened to be present already. 1.1.1 imported it at module load;
+        # 1.2.1 does not, but it is still reachable from the model download, so
+        # the guard stays.
+        run: pip install --quiet faster-whisper==1.2.1 requests
 
       - name: Transcribe
         env:
