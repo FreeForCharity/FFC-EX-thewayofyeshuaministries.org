@@ -63,6 +63,53 @@ describe('the teaching corpus', () => {
     }
   })
 
+  it('leaves out a blessing that follows the contact block', () => {
+    // The Rosh Hashanah post closes with "May the sound of the trumpet stir us
+    // all to readiness" *after* its contact block: long enough to clear the
+    // length rule, and worded unlike the other sign-offs.
+    expect(teachings.some((teaching) => /May the sound of the trumpet/.test(teaching.text))).toBe(
+      false
+    )
+  })
+
+  it('keeps substantive paragraphs that follow a contact block', () => {
+    /*
+     * Not every post puts its contact details last. The Shavuot invitation has
+     * a welcome and a Leviticus quote after its contact block, both as
+     * quotable as anything else it says; only the "Chag Shavuot Sameach!"
+     * blessing at the very end is a sign-off.
+     */
+    const shavuot = teachings.filter((teaching) => teaching.slug === 'shavuot-get-together')
+    expect(shavuot.some((t) => /^Whether you have walked with Yeshua/.test(t.text))).toBe(true)
+    expect(shavuot.some((t) => /seven full weeks/.test(t.text))).toBe(true)
+    expect(shavuot.some((t) => /^Chag Shavuot Sameach/.test(t.text))).toBe(false)
+  })
+
+  it('tells a closing blessing from teaching by where it sits', () => {
+    const texts = extractTeachings([
+      {
+        slug: 'test-post',
+        title: 'A Teaching',
+        date: '2020-01-01',
+        excerpt: 'x',
+        body: [
+          'May we consider, before anything else, that the Scriptures hold together the ' +
+            'promise and the command, and what that asks of those who would follow.',
+          '&nbsp;&nbsp;&bull; Phone: <a href="tel:5203024034">(520) 302-4034</a>',
+          'A welcome that follows the contact block and is comfortably longer than the ' +
+            'hundred characters the length rule asks for, and is not a blessing at all.',
+          'May the Lord bless you and keep you through this season, and may His face ' +
+            'shine upon you and upon all who are dear to you, now and always.',
+        ],
+      },
+    ]).map((teaching) => teaching.text)
+
+    // "May ..." before the contact block is teaching; after it, a sign-off.
+    expect(texts.some((text) => /^May we consider/.test(text))).toBe(true)
+    expect(texts.some((text) => /^A welcome that follows/.test(text))).toBe(true)
+    expect(texts.some((text) => /^May the Lord bless you/.test(text))).toBe(false)
+  })
+
   it('leaves out every form of the greeting and sign-off', () => {
     for (const teaching of teachings) {
       // Openings: "Shalom and blessings, beloved." and "Shalom, beloved."
@@ -123,13 +170,18 @@ describe('the teaching corpus', () => {
      * is built from the same getPublishedPosts() call generateStaticParams
      * makes, which is what keeps the two in step.
      */
-    const offered = new Set(teachings.map((teaching) => teaching.slug))
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Phoenix' })
-    const drafts = blogPosts.filter((post) => post.date > today)
 
-    expect(drafts.length).toBeGreaterThan(0) // guard: the corpus really has drafts
-    for (const draft of drafts) {
-      expect(offered.has(draft.slug)).toBe(false)
+    /*
+     * Stated as a property of what is offered rather than as "the drafts are
+     * absent". There are 15 scheduled posts today, but the last publishes on
+     * 2026-12-25, and a test that required unpublished posts to exist would
+     * start failing on a weekly build after that with nothing actually wrong.
+     */
+    expect(teachings.length).toBeGreaterThan(0)
+    for (const teaching of teachings) {
+      const post = blogPosts.find((candidate) => candidate.slug === teaching.slug)
+      expect((post as (typeof blogPosts)[number]).date <= today).toBe(true)
     }
   })
 

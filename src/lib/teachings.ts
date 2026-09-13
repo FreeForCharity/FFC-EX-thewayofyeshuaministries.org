@@ -85,17 +85,44 @@ const BOILERPLATE_PREFIXES = [
   /^Chag [A-Za-z]+ Sameach/,
 ]
 
-function isQuotable(html: string, text: string): boolean {
-  // The contact block at the foot of every post.
-  if (/mailto:|tel:/i.test(html)) return false
+/** The phone-and-email block that closes most posts. */
+const CONTACT_BLOCK = /mailto:|tel:/i
+
+/**
+ * A blessing is a sign-off only once the contact details have been given.
+ *
+ * "May the sound of the trumpet stir us all to readiness" closes the Rosh
+ * Hashanah post after its contact block, and is not teaching. The same opening
+ * earlier in a post usually is, so the rule is applied by position rather than
+ * to the whole corpus.
+ */
+const CLOSING_PREFIXES = [...BOILERPLATE_PREFIXES, /^May\b/]
+
+function isQuotable(html: string, text: string, afterContact: boolean): boolean {
+  if (CONTACT_BLOCK.test(html)) return false
   if (text.length < MIN_TEACHING_LENGTH) return false
-  return !BOILERPLATE_PREFIXES.some((prefix) => prefix.test(text))
+  const prefixes = afterContact ? CLOSING_PREFIXES : BOILERPLATE_PREFIXES
+  return !prefixes.some((prefix) => prefix.test(text))
 }
 
 function teachingsFromPost(post: BlogPost): Teaching[] {
+  /*
+   * Where the contact block falls, so a closing blessing after it can be told
+   * from teaching.
+   *
+   * Not every post puts its contact details last: the Shavuot invitation has
+   * two substantive paragraphs after them -- a welcome and a Scripture quote
+   * from Leviticus -- which are as quotable as anything else it says. Cutting
+   * the body at the contact block would silently lose both, so the position
+   * narrows which prefixes count as a sign-off rather than ending extraction.
+   */
+  const contactAt = post.body.findIndex((paragraph) => CONTACT_BLOCK.test(paragraph))
+
   return post.body
     .map((paragraph, position) => ({ paragraph, position }))
-    .filter(({ paragraph }) => isQuotable(paragraph, toPlainText(paragraph)))
+    .filter(({ paragraph, position }) =>
+      isQuotable(paragraph, toPlainText(paragraph), contactAt !== -1 && position > contactAt)
+    )
     .map(({ paragraph, position }) => {
       const heading = leadingHeading(paragraph)
       const full = toPlainText(paragraph)
