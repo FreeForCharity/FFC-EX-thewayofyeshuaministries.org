@@ -13,7 +13,32 @@
  */
 
 import type { SiteIndexEntry, Teaching } from '@/lib/siteSearch'
-import { getPublishedPosts, getCategory, formatDate, type BlogPost } from '@/data/blog-posts'
+import {
+  blogPosts,
+  getPublishedPosts,
+  getCategory,
+  formatDate,
+  type BlogPost,
+} from '@/data/blog-posts'
+
+/**
+ * The posts that actually have pages in this build.
+ *
+ * `getPublishedPosts()` compares against "today", which is the right question
+ * on the server but the wrong one here: this module runs in the visitor's
+ * browser, where today can be later than the day the site was built. Blog
+ * routes are generated at build time and `dynamicParams` is false, so a post
+ * whose date has arrived since the last deploy has no page to link to -- the
+ * weekly rebuild is what brings it into existence.
+ *
+ * Comparing against the build date instead means the helper offers exactly the
+ * posts `generateStaticParams` emitted, and never a link that 404s. Falls back
+ * to today when the variable is absent, as it is under Jest.
+ */
+function postsWithPages(): BlogPost[] {
+  const buildDate = process.env.NEXT_PUBLIC_BUILD_DATE
+  return buildDate ? blogPosts.filter((post) => post.date <= buildDate) : getPublishedPosts()
+}
 
 /** The named entities the blog actually uses, in rough order of frequency. */
 const ENTITIES: Record<string, string> = {
@@ -46,9 +71,13 @@ function toPlainText(html: string): string {
  * The bold run a paragraph opens with, which the blog uses as a section
  * heading ("The Touch That Heals: Tzitzit on the Fringe"). Undefined for the
  * paragraphs written as continuous prose.
+ *
+ * Most headings are followed by a line break, but a dozen -- the Rosh Hashanah
+ * how-to among them -- simply run on into the text. Both forms count: every
+ * bold run that opens a paragraph in this blog is a heading.
  */
 function leadingHeading(html: string): string | undefined {
-  const match = /^<strong>(.+?)<\/strong>\s*(?:<br\s*\/?>)/i.exec(html)
+  const match = /^<strong>(.+?)<\/strong>(?:\s*<br\s*\/?>|\s)/i.exec(html)
   return match ? toPlainText(match[1]) : undefined
 }
 
@@ -56,17 +85,20 @@ function leadingHeading(html: string): string | undefined {
 const MIN_TEACHING_LENGTH = 100
 
 /**
- * Every post opens and closes with the same two sentences. They are greetings
+ * Every post opens and closes with the same greeting. They are blessings
  * rather than teaching, and repeating them 36 times would also flatten the
  * word statistics the matching depends on.
+ *
+ * Matched without their punctuation: the sign-off is usually "Shabbat Shalom."
+ * but runs to "Shabbat Shalom and Chanukah Sameach!" on the feast posts.
  */
-const BOILERPLATE_PREFIXES = ['Shalom and blessings', 'Shabbat Shalom.']
+const BOILERPLATE_PREFIXES = [/^Shalom and blessings/, /^Shabbat Shalom\b/]
 
 function isQuotable(html: string, text: string): boolean {
   // The contact block at the foot of every post.
   if (/mailto:|tel:/i.test(html)) return false
   if (text.length < MIN_TEACHING_LENGTH) return false
-  return !BOILERPLATE_PREFIXES.some((prefix) => text.startsWith(prefix))
+  return !BOILERPLATE_PREFIXES.some((prefix) => prefix.test(text))
 }
 
 function teachingsFromPost(post: BlogPost): Teaching[] {
@@ -90,7 +122,7 @@ function teachingsFromPost(post: BlogPost): Teaching[] {
 
 /** Every quotable paragraph the ministry has published. */
 export function getTeachings(): Teaching[] {
-  return getPublishedPosts().flatMap(teachingsFromPost)
+  return postsWithPages().flatMap(teachingsFromPost)
 }
 
 /**
@@ -99,7 +131,7 @@ export function getTeachings(): Teaching[] {
  * has a reason to import the posts.
  */
 export function getBlogEntries(): SiteIndexEntry[] {
-  return getPublishedPosts().map((post) => ({
+  return postsWithPages().map((post) => ({
     id: `blog-${post.slug}`,
     title: post.title,
     href: `/blog/${post.slug}`,

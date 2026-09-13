@@ -100,8 +100,10 @@ function Quote({ quote, onNavigate }: { quote: TeachingQuote; onNavigate: () => 
   const { teaching, snippet } = quote
   return (
     <figure className="m-0 rounded-md border border-[#E5DFD3] bg-[#FDFBF6] px-3 py-3">
+      {/* A heading visually, so a heading to a screen reader too, nested under
+          the section's own h3. */}
       {teaching.heading && (
-        <p className="font-[600] text-[14px] text-black mb-1">{teaching.heading}</p>
+        <h4 className="font-[600] text-[14px] text-black mb-1">{teaching.heading}</h4>
       )}
       <blockquote className="m-0 border-l-2 border-[#C9A24B] pl-3 text-[13px] leading-[165%] text-gray-700">
         {snippet}

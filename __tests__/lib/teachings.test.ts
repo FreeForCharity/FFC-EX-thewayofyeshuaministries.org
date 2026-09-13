@@ -1,7 +1,37 @@
 import { searchTeachings } from '../../src/lib/siteSearch'
 import { getTeachings, getBlogEntries } from '../../src/data/teachings'
+import { blogPosts } from '../../src/data/blog-posts'
 
 const teachings = getTeachings()
+
+/**
+ * Strip HTML and entities from a stored paragraph.
+ *
+ * Deliberately written here rather than imported from `teachings.ts`: this is
+ * the check that a quote really is the author's sentence, so it has to start
+ * from the raw post and not from the output of the code under test.
+ */
+function plain(html: string): string {
+  return (
+    html
+      .replace(/<br\s*\/?>/gi, ' ')
+      // Inline tags close up: "<em>tzitzit</em>:" is "tzitzit:", not "tzitzit :".
+      .replace(/<[^>]+>/g, '')
+      .replace(/&mdash;/g, '—')
+      .replace(/&ndash;/g, '–')
+      .replace(/&ldquo;/g, '“')
+      .replace(/&rdquo;/g, '”')
+      .replace(/&lsquo;/g, '‘')
+      .replace(/&rsquo;/g, '’')
+      .replace(/&hellip;/g, '…')
+      .replace(/&bull;/g, '•')
+      .replace(/&eacute;/g, 'é')
+      .replace(/&amp;/g, '&')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+  )
+}
 
 /** Headings of the teachings quoted for a question. */
 function quotedHeadings(question: string): (string | undefined)[] {
@@ -34,8 +64,42 @@ describe('the teaching corpus', () => {
 
   it('leaves out the greeting and sign-off every post repeats', () => {
     for (const teaching of teachings) {
-      expect(teaching.text.startsWith('Shalom and blessings')).toBe(false)
-      expect(teaching.text.startsWith('Shabbat Shalom.')).toBe(false)
+      expect(teaching.text).not.toMatch(/^Shalom and blessings/)
+      // Not just "Shabbat Shalom." — the feast posts close with "Shabbat
+      // Shalom and Chanukah Sameach!", which is a blessing, not a teaching.
+      expect(teaching.text).not.toMatch(/^Shabbat Shalom\b/)
+      expect(teaching.heading ?? '').not.toMatch(/^Shabbat Shalom\b/)
+    }
+  })
+
+  it('reads a heading that runs straight on into its text, with no line break', () => {
+    // The Rosh Hashanah how-to writes "<strong>What is Rosh Hashanah?</strong> "
+    // with a space where the other posts put a <br />.
+    const headings = teachings.map((teaching) => teaching.heading)
+    expect(headings).toContain('What is Rosh Hashanah?')
+    expect(headings).toContain('How to celebrate Rosh Hashanah at home.')
+
+    const roshHashanah = teachings.find((t) => t.heading === 'What is Rosh Hashanah?')
+    // The heading must not also be sitting at the front of the body text.
+    expect(roshHashanah?.text).not.toMatch(/^What is Rosh Hashanah\?/)
+    expect((roshHashanah?.text ?? '').length).toBeGreaterThan(0)
+  })
+
+  it('offers only posts that have a page in this build', () => {
+    // Blog routes are generated at build time with dynamicParams: false, so a
+    // post the helper offers but the build did not emit would 404.
+    const buildDate = process.env.NEXT_PUBLIC_BUILD_DATE
+    if (buildDate) {
+      for (const teaching of teachings) {
+        const post = blogPosts.find((candidate) => candidate.slug === teaching.slug)
+        expect((post as (typeof blogPosts)[number]).date <= buildDate).toBe(true)
+      }
+    }
+    // Whatever the cutoff, a future-dated draft is never offered.
+    const offered = new Set(teachings.map((teaching) => teaching.slug))
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Phoenix' })
+    for (const post of blogPosts.filter((candidate) => candidate.date > today)) {
+      expect(offered.has(post.slug)).toBe(false)
     }
   })
 
@@ -71,14 +135,29 @@ describe('searchTeachings', () => {
     expect(quotes[0].snippet).toMatch(/prodigal/i)
   })
 
-  // The point of the whole feature: the words shown are the ministry's own.
-  it('quotes text that appears verbatim in the teaching it came from', () => {
-    for (const question of ['who is Yeshua', 'what is Passover', 'tzitzit']) {
+  /*
+   * The point of the whole feature: the words shown are the ministry's own.
+   *
+   * Checked against the raw post rather than against `teaching.text`, which
+   * comes out of the same extraction this is meant to be testing. Going back
+   * to `blogPosts` also proves the quote is attributed to the post it actually
+   * came from, not merely to some post.
+   */
+  it('quotes text that appears verbatim in the post it is attributed to', () => {
+    let checked = 0
+    for (const question of ['who is Yeshua', 'what is Passover', 'tzitzit', 'the prodigal son']) {
       for (const { teaching, snippet } of searchTeachings(question, teachings)) {
+        const post = blogPosts.find((candidate) => candidate.slug === teaching.slug)
+        expect(post).toBeDefined()
+
+        const source = (post as (typeof blogPosts)[number]).body.map(plain).join(' ')
         const verbatim = snippet.replace(/^…/, '').replace(/…$/, '')
-        expect(teaching.text).toContain(verbatim)
+        expect(source).toContain(verbatim)
+        checked += 1
       }
     }
+    // A guard against the loop silently finding nothing to check.
+    expect(checked).toBeGreaterThan(3)
   })
 
   it('stays quiet on a subject the blog has not covered', () => {
@@ -98,6 +177,11 @@ describe('searchTeachings', () => {
   it('does not quote on a common word like "God" alone', () => {
     // Half the paragraphs mention God; that is not evidence about which one.
     expect(searchTeachings('God', teachings)).toEqual([])
+  })
+
+  it('returns nothing when asked for no quotes', () => {
+    expect(searchTeachings('tzitzit', teachings, 0)).toEqual([])
+    expect(searchTeachings('tzitzit', teachings, -1)).toEqual([])
   })
 
   it('shows at most one quote per post, and no more than asked for', () => {

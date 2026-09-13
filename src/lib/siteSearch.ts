@@ -571,7 +571,9 @@ export function searchTeachings(
   limit: number = MAX_QUOTES
 ): TeachingQuote[] {
   const tokens = tokenize(query)
-  if (tokens.length === 0) return []
+  // `searchSite` gets this from slice(); do it explicitly here, where the
+  // quotes are collected one at a time.
+  if (tokens.length === 0 || limit <= 0) return []
 
   const { documents, weights } = getCorpus(teachings)
 

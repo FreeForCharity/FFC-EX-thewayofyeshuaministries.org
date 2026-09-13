@@ -2,6 +2,20 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   output: 'export',
+  env: {
+    /*
+     * The date this build ran, in the ministry's timezone.
+     *
+     * Blog routes are generated at build time from the posts published then
+     * (`generateStaticParams` with `dynamicParams: false`), so a post whose
+     * date arrives before the next deploy has no page. The site helper runs in
+     * the visitor's browser, where "today" can be later than that, so it uses
+     * this to offer only the posts that really have pages.
+     */
+    NEXT_PUBLIC_BUILD_DATE: new Date().toLocaleDateString('en-CA', {
+      timeZone: 'America/Phoenix',
+    }),
+  },
   // Emit /path/index.html for every route so URLs with and without a trailing
   // slash both resolve on GitHub Pages (which would otherwise 404 /path/).
   trailingSlash: true,
