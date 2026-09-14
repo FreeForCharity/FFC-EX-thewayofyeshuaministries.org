@@ -47,7 +47,3 @@ next-env.d.ts
 # Decap CMS uploads
 /public/uploads
 *.bak
-
-# Python bytecode from the sermon transcription script
-__pycache__/
-*.pyc
