@@ -85,7 +85,7 @@ export default function AppInstallButton() {
       {/* iOS instructions tooltip */}
       {isIOS && showIOSHint && (
         <div
-          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-[240px] bg-black/90 text-white text-[13px] rounded-lg px-4 py-3 shadow-xl z-50"
+          className="absolute bottom-full right-0 mb-3 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-[13px] rounded-lg px-4 py-3 shadow-xl z-50"
           role="tooltip"
         >
           <p className="font-[600] mb-1">Add to Home Screen</p>
@@ -93,7 +93,7 @@ export default function AppInstallButton() {
             Tap the <strong className="text-white">Share</strong> button in Safari, then tap{' '}
             <strong className="text-white">&ldquo;Add to Home Screen&rdquo;</strong>.
           </p>
-          <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-black/90" />
+          <div className="absolute top-full right-10 border-8 border-transparent border-t-black" />
         </div>
       )}
     </div>
