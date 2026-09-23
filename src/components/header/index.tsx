@@ -63,6 +63,11 @@ const Header: React.FC = () => {
       window.matchMedia('(display-mode: standalone)').matches ||
         (navigator as unknown as { standalone?: boolean }).standalone === true
     )
+    // Pick up a prompt captured before React mounted
+    const early = (window as unknown as Record<string, unknown>).__beforeInstallPrompt as
+      Event | undefined
+    if (early) setDeferredPrompt(early)
+
     const handler = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e)

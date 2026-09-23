@@ -131,6 +131,7 @@ const STOP_WORDS = new Set([
   'tells',
   'so',
   'some',
+  'someone',
   'such',
   'than',
   'that',
@@ -337,9 +338,21 @@ export function searchSite(
   const tokens = tokenize(query)
   if (tokens.length === 0) return []
 
+  // When every query token is a pastoral/spiritual word the visitor needs
+  // guidance, not a coincidental link. A keyword match still counts — keywords
+  // are chosen deliberately ("yeshua" on Our Mission), so they represent real
+  // navigation intent even for spiritual terms. A title-only hit ("saved" in
+  // a blog post heading) is a false positive and is filtered out.
+  const allPastoral = tokens.length > 0 && tokens.every((token) => PASTORAL_WORDS.has(token))
+
   const scored = entries
     .map((entry) => ({ entry, score: scoreEntry(tokens, entry) }))
     .filter(({ score }) => score >= MIN_SCORE)
+    .filter(({ entry }) => {
+      if (!allPastoral) return true
+      const fields = getEntryWords(entry)
+      return tokens.some((token) => fields.keywords.includes(token))
+    })
     .sort((a, b) => b.score - a.score || a.entry.title.localeCompare(b.entry.title))
 
   if (scored.length === 0) return []

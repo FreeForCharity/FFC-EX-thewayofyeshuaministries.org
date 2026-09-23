@@ -6,6 +6,7 @@ import CookieConsent from './../components/cookie-consent'
 import SiteHelper from './../components/site-helper'
 import GoogleTagManager, { GoogleTagManagerNoScript } from './../components/google-tag-manager'
 import ServiceWorkerRegistration from './../components/ServiceWorkerRegistration'
+import InstallBanner from './../components/InstallBanner'
 import {
   openSans,
   lato,
@@ -112,6 +113,13 @@ export default function RootLayout({
 
         <GoogleTagManager />
 
+        {/* Capture beforeinstallprompt before React mounts so the InstallBanner can use it */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__beforeInstallPrompt=e;});`,
+          }}
+        />
+
         {/* PWA / Apple smart-banner meta tags */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,6 +148,7 @@ export default function RootLayout({
         <Footer />
         <SiteHelper />
         <CookieConsent />
+        <InstallBanner />
         {/* <PopupsRootClient /> */}
         {/* </PopupProvider> */}
       </body>
