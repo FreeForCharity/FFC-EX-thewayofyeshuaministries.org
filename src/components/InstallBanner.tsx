@@ -113,7 +113,7 @@ export default function InstallBanner() {
           exit={{ y: 80, opacity: 0 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
           className="fixed bottom-0 left-0 right-0 z-[200] bg-black border-t border-[#C9A24B]/50 px-4 py-3 flex items-center gap-3 shadow-2xl"
-          role="banner"
+          role="region"
           aria-label="Install app prompt"
         >
           <img

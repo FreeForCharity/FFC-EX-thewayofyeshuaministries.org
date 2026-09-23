@@ -78,6 +78,7 @@ export default function AppInstallButton() {
         className="rounded-[27px] px-[30px] py-[15px] bg-white/20 border-2 border-white/60 text-white text-[18px] font-[600] hover:bg-white/30 transition-colors backdrop-blur-sm"
         id="lato-font"
         aria-expanded={isIOS ? showIOSHint : undefined}
+        aria-describedby={isIOS && showIOSHint ? 'ios-install-hint' : undefined}
       >
         📲 Install App
       </button>
@@ -86,6 +87,7 @@ export default function AppInstallButton() {
       {isIOS && showIOSHint && (
         <div
           className="absolute bottom-full right-0 mb-3 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-[13px] rounded-lg px-4 py-3 shadow-xl z-50"
+          id="ios-install-hint"
           role="tooltip"
         >
           <p className="font-[600] mb-1">Add to Home Screen</p>
