@@ -1,4 +1,4 @@
-const CACHE = 'yeshua-ministries-v1'
+const CACHE = 'yeshua-ministries-v2'
 
 const PRECACHE = ['/', '/blog/', '/support-this-ministry/', '/offline/']
 

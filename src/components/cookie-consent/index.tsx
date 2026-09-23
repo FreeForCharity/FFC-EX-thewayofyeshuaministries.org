@@ -298,6 +298,7 @@ export default function CookieConsent() {
     applyConsent(allAccepted, savedPreferencesBackup)
     setSavedPreferencesBackup(allAccepted)
     setShowBanner(false)
+    window.dispatchEvent(new CustomEvent('cookie-consent-saved'))
   }
 
   const handleDeclineAll = () => {
@@ -321,6 +322,7 @@ export default function CookieConsent() {
     applyConsent(onlyNecessary, savedPreferencesBackup)
     setSavedPreferencesBackup(onlyNecessary)
     setShowBanner(false)
+    window.dispatchEvent(new CustomEvent('cookie-consent-saved'))
   }
 
   const handleSavePreferences = () => {
@@ -333,6 +335,7 @@ export default function CookieConsent() {
     applyConsent(preferences, savedPreferencesBackup)
     setSavedPreferencesBackup(preferences)
     setShowBanner(false)
+    window.dispatchEvent(new CustomEvent('cookie-consent-saved'))
     setShowPreferences(false)
   }
 

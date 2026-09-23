@@ -54,15 +54,28 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Clear prompt when another component consumed the single-use install event
   useEffect(() => {
+    const onConsumed = () => setDeferredPrompt(null)
+    window.addEventListener('pwa-prompt-consumed', onConsumed)
+    return () => window.removeEventListener('pwa-prompt-consumed', onConsumed)
+  }, [])
+
+  useEffect(() => {
+    const ua = navigator.userAgent
     setIsIOS(
-      /iPhone|iPad|iPod/.test(navigator.userAgent) &&
+      (/iPhone|iPad|iPod/.test(ua) || (ua.includes('Mac') && navigator.maxTouchPoints > 1)) &&
         !(window as unknown as Record<string, unknown>).MSStream
     )
     setIsInstalled(
       window.matchMedia('(display-mode: standalone)').matches ||
         (navigator as unknown as { standalone?: boolean }).standalone === true
     )
+    // Pick up a prompt captured before React mounted
+    const early = (window as unknown as Record<string, unknown>).__beforeInstallPrompt as
+      Event | undefined
+    if (early) setDeferredPrompt(early)
+
     const handler = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e)
@@ -78,6 +91,8 @@ const Header: React.FC = () => {
       userChoice: Promise<{ outcome: string }>
     }
     prompt.prompt()
+    ;(window as unknown as Record<string, unknown>).__beforeInstallPrompt = null
+    window.dispatchEvent(new CustomEvent('pwa-prompt-consumed'))
     const { outcome } = await prompt.userChoice
     if (outcome === 'accepted') {
       setDeferredPrompt(null)
