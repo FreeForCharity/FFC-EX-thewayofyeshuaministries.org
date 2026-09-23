@@ -8,6 +8,16 @@ export default function AppInstallButton() {
   const [showIOSHint, setShowIOSHint] = useState(false)
   const [prompt, setPrompt] = useState<Event | null>(null)
 
+  // Hide when another component consumed the single-use install prompt
+  useEffect(() => {
+    const onConsumed = () => {
+      setPrompt(null)
+      setShow(false)
+    }
+    window.addEventListener('pwa-prompt-consumed', onConsumed)
+    return () => window.removeEventListener('pwa-prompt-consumed', onConsumed)
+  }, [])
+
   useEffect(() => {
     const ua = navigator.userAgent
     const ios =
@@ -53,6 +63,8 @@ export default function AppInstallButton() {
       userChoice: Promise<{ outcome: string }>
     }
     p.prompt()
+    ;(window as unknown as Record<string, unknown>).__beforeInstallPrompt = null
+    window.dispatchEvent(new CustomEvent('pwa-prompt-consumed'))
     const { outcome } = await p.userChoice
     if (outcome === 'accepted') setShow(false)
   }

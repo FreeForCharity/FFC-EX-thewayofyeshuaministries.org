@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RxCross2 } from 'react-icons/rx'
+import { assetPath } from '@/lib/assetPath'
 
 const DISMISS_KEY = 'installBannerDismissed'
 const DISMISS_DAYS = 7
@@ -11,6 +12,16 @@ export default function InstallBanner() {
   const [show, setShow] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
   const [prompt, setPrompt] = useState<Event | null>(null)
+
+  // Hide when another component consumed the single-use install prompt
+  useEffect(() => {
+    const onConsumed = () => {
+      setPrompt(null)
+      setShow(false)
+    }
+    window.addEventListener('pwa-prompt-consumed', onConsumed)
+    return () => window.removeEventListener('pwa-prompt-consumed', onConsumed)
+  }, [])
 
   useEffect(() => {
     try {
@@ -59,6 +70,8 @@ export default function InstallBanner() {
       userChoice: Promise<{ outcome: string }>
     }
     p.prompt()
+    ;(window as unknown as Record<string, unknown>).__beforeInstallPrompt = null
+    window.dispatchEvent(new CustomEvent('pwa-prompt-consumed'))
     const { outcome } = await p.userChoice
     if (outcome === 'accepted') setShow(false)
   }
@@ -83,7 +96,7 @@ export default function InstallBanner() {
           aria-label="Install app prompt"
         >
           <img
-            src="/Images/yeshua/logo.jpg"
+            src={assetPath('/Images/yeshua/logo.jpg')}
             alt=""
             aria-hidden="true"
             className="h-10 w-10 rounded-full border border-[#C9A24B] flex-shrink-0 object-cover"

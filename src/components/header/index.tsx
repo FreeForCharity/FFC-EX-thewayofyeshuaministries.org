@@ -54,6 +54,13 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Clear prompt when another component consumed the single-use install event
+  useEffect(() => {
+    const onConsumed = () => setDeferredPrompt(null)
+    window.addEventListener('pwa-prompt-consumed', onConsumed)
+    return () => window.removeEventListener('pwa-prompt-consumed', onConsumed)
+  }, [])
+
   useEffect(() => {
     const ua = navigator.userAgent
     setIsIOS(
@@ -84,6 +91,8 @@ const Header: React.FC = () => {
       userChoice: Promise<{ outcome: string }>
     }
     prompt.prompt()
+    ;(window as unknown as Record<string, unknown>).__beforeInstallPrompt = null
+    window.dispatchEvent(new CustomEvent('pwa-prompt-consumed'))
     const { outcome } = await prompt.userChoice
     if (outcome === 'accepted') {
       setDeferredPrompt(null)
