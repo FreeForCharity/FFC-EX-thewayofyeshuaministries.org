@@ -39,28 +39,42 @@ export default function InstallBanner() {
 
     if (standalone) return
 
-    if (ios) {
-      setIsIOS(true)
-      setShow(true)
-      return
-    }
-
-    // Check for a prompt captured before React mounted
-    const early = (window as unknown as Record<string, unknown>).__beforeInstallPrompt as
-      Event | undefined
-    if (early) {
-      setPrompt(early)
-      setShow(true)
-      return
-    }
-
     const handler = (e: Event) => {
       e.preventDefault()
       setPrompt(e)
       setShow(true)
     }
-    window.addEventListener('beforeinstallprompt', handler)
-    return () => window.removeEventListener('beforeinstallprompt', handler)
+
+    const activate = () => {
+      if (ios) {
+        setIsIOS(true)
+        setShow(true)
+        return
+      }
+      // Check for a prompt captured before React mounted
+      const early = (window as unknown as Record<string, unknown>).__beforeInstallPrompt as
+        Event | undefined
+      if (early) {
+        setPrompt(early)
+        setShow(true)
+        return
+      }
+      window.addEventListener('beforeinstallprompt', handler)
+    }
+
+    // Wait for the cookie banner to be answered so the two bars don't overlap
+    let hasConsent = true
+    try {
+      hasConsent = localStorage.getItem('cookie-consent') !== null
+    } catch {}
+
+    if (hasConsent) activate()
+    else window.addEventListener('cookie-consent-saved', activate, { once: true })
+
+    return () => {
+      window.removeEventListener('cookie-consent-saved', activate)
+      window.removeEventListener('beforeinstallprompt', handler)
+    }
   }, [])
 
   const handleInstall = async () => {
