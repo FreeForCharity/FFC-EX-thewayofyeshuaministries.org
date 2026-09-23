@@ -63,9 +63,16 @@ export default function InstallBanner() {
     }
 
     // Wait for the cookie banner to be answered so the two bars don't overlap
-    let hasConsent = true
+    // Mirrors CookieConsent's validation so we never show while its banner is up
+    let hasConsent = false
     try {
-      hasConsent = localStorage.getItem('cookie-consent') !== null
+      const saved = JSON.parse(localStorage.getItem('cookie-consent') ?? 'null')
+      hasConsent =
+        typeof saved === 'object' &&
+        saved !== null &&
+        typeof saved.necessary === 'boolean' &&
+        typeof saved.analytics === 'boolean' &&
+        typeof saved.marketing === 'boolean'
     } catch {}
 
     if (hasConsent) activate()
