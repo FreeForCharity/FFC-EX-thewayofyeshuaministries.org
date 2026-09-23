@@ -20,7 +20,8 @@ export default function InstallBanner() {
 
     const ua = navigator.userAgent
     const ios =
-      /iPhone|iPad|iPod/.test(ua) && !(window as unknown as Record<string, unknown>).MSStream
+      (/iPhone|iPad|iPod/.test(ua) || (ua.includes('Mac') && navigator.maxTouchPoints > 1)) &&
+      !(window as unknown as Record<string, unknown>).MSStream
     const standalone =
       window.matchMedia('(display-mode: standalone)').matches ||
       (navigator as unknown as { standalone?: boolean }).standalone === true

@@ -55,8 +55,9 @@ const Header: React.FC = () => {
   }, [])
 
   useEffect(() => {
+    const ua = navigator.userAgent
     setIsIOS(
-      /iPhone|iPad|iPod/.test(navigator.userAgent) &&
+      (/iPhone|iPad|iPod/.test(ua) || (ua.includes('Mac') && navigator.maxTouchPoints > 1)) &&
         !(window as unknown as Record<string, unknown>).MSStream
     )
     setIsInstalled(
