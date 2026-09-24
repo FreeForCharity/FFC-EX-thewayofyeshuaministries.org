@@ -80,10 +80,10 @@ describe('SiteHelper', () => {
   it('fills the box when a suggested question is clicked', async () => {
     render(<SiteHelper />)
     const panel = await openHelper()
-    fireEvent.click(within(panel).getByRole('button', { name: 'Who runs this ministry?' }))
+    fireEvent.click(within(panel).getByRole('button', { name: 'How can I help build the church?' }))
 
-    expect(screen.getByLabelText(/your question/i)).toHaveValue('Who runs this ministry?')
-    expect(within(panel).getByRole('link', { name: /Board of Directors/i })).toBeInTheDocument()
+    expect(screen.getByLabelText(/your question/i)).toHaveValue('How can I help build the church?')
+    expect(within(panel).getByRole('link', { name: /Build the Church/i })).toBeInTheDocument()
   })
 
   it('opens off-site links in a new tab, safely', async () => {

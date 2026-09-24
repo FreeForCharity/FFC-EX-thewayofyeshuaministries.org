@@ -10,14 +10,11 @@ test.describe('Board of Directors page', () => {
     await expect(page.locator('main')).toContainText('Sun City, Arizona')
   })
 
-  test('is reachable from the footer quick links', async ({ page }) => {
+  test('is not linked from the footer quick links', async ({ page }) => {
     await page.goto('/')
-    const footerLink = page
-      .locator('footer')
-      .getByRole('link', { name: 'Board of Directors', exact: true })
-    await expect(footerLink).toBeVisible()
-    await footerLink.click()
-    await expect(page).toHaveURL(/\/board-of-directors\/?$/)
+    await expect(
+      page.locator('footer').getByRole('link', { name: 'Board of Directors', exact: true })
+    ).toHaveCount(0)
   })
 })
 
