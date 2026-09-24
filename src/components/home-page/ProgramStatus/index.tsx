@@ -54,11 +54,7 @@ const ProgramStatus = () => {
         </ul>
 
         <p className="text-[16px] text-gray-600 text-center mt-[30px]" id="lato-font">
-          Led by our{' '}
-          <Link href="/board-of-directors" className="text-[#C9A24B] hover:underline">
-            board of directors
-          </Link>
-          . The Way of Yeshua Ministries Inc. is a registered 501(c)(3) nonprofit in Sun City,
+          The Way of Yeshua Ministries Inc. is a registered 501(c)(3) nonprofit in Sun City,
           Arizona.
         </p>
       </div>
