@@ -1,9 +1,12 @@
 name: Weekly Torah Portion Blog Post
 
 on:
-  schedule:
-    # Every Friday at 6:00 AM UTC (11pm Thursday / midnight Friday in Arizona MST)
-    - cron: '0 6 * * 5'
+  # Schedule is paused until ANTHROPIC_API_KEY is added to repo secrets — every
+  # scheduled run since this workflow existed has failed at the "Validate
+  # secrets" step because that key was never configured. Re-add the schedule
+  # trigger once the secret is in place:
+  #   schedule:
+  #     - cron: '0 6 * * 5'  # Every Friday at 6:00 AM UTC
   workflow_dispatch: # Allow manual trigger from the Actions tab
 
 permissions:

@@ -1,4 +1,5 @@
 import React from 'react'
+import AppInstallButton from '@/components/home-page/AppInstallButton'
 
 const YeshuaHero = () => {
   return (
@@ -51,6 +52,7 @@ const YeshuaHero = () => {
           >
             Support Us
           </a>
+          <AppInstallButton />
         </div>
       </div>
     </section>

@@ -47,12 +47,9 @@ describe('ProgramStatus section', () => {
     expect(statusLabels['seeking-sponsors'].label).not.toMatch(/serving/i)
   })
 
-  it('should link to the board of directors page', () => {
+  it('should not link to the board of directors page', () => {
     render(<ProgramStatus />)
-    expect(screen.getByRole('link', { name: /board of directors/i })).toHaveAttribute(
-      'href',
-      '/board-of-directors'
-    )
+    expect(screen.queryByRole('link', { name: /board of directors/i })).toBeNull()
   })
 
   it('should have no accessibility violations', async () => {
