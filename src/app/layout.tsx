@@ -5,6 +5,7 @@ import Footer from './../components/footer'
 import CookieConsent from './../components/cookie-consent'
 import SiteHelper from './../components/site-helper'
 import GoogleTagManager, { GoogleTagManagerNoScript } from './../components/google-tag-manager'
+import { CONSENT_MODE_BOOTSTRAP } from '@/lib/consent-mode'
 import ServiceWorkerRegistration from './../components/ServiceWorkerRegistration'
 import InstallBanner from './../components/InstallBanner'
 import {
@@ -111,6 +112,14 @@ export default function RootLayout({
           fetchPriority="high"
         />
 
+        {/* Google Consent Mode v2 defaults — MUST run before any Google tag
+            (i.e. before the GoogleTagManager component below) so the global
+            consent defaults are already on the dataLayer when GTM/GA4
+            initialise. Denied worldwide: one unscoped default withholds
+            analytics and ad storage from every visitor until they opt in, so
+            there is no region left for Google to resolve from the visitor's IP
+            address. See src/lib/consent-mode.ts. */}
+        <script dangerouslySetInnerHTML={{ __html: CONSENT_MODE_BOOTSTRAP }} />
         <GoogleTagManager />
 
         {/* Capture beforeinstallprompt before React mounts so the InstallBanner can use it */}
