@@ -7,6 +7,9 @@ interface BusinessSponsorsProps {
   sponsors?: Sponsor[]
 }
 
+const cardClasses =
+  'h-full flex flex-col items-center text-center bg-white border border-[#E5DFD3] rounded-lg p-6 shadow-md'
+
 const BusinessSponsors = ({ sponsors = defaultSponsors }: BusinessSponsorsProps) => {
   return (
     <section id="sponsors" className="py-[52px]">
@@ -27,15 +30,9 @@ const BusinessSponsors = ({ sponsors = defaultSponsors }: BusinessSponsorsProps)
 
         {sponsors.length > 0 && (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-[40px] list-none p-0">
-            {sponsors.map((sponsor) => (
-              <li key={sponsor.url}>
-                <a
-                  href={sponsor.url}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  aria-label={`${sponsor.name} website (opens in a new tab)`}
-                  className="h-full flex flex-col items-center text-center bg-white border border-[#E5DFD3] rounded-lg p-6 shadow-md transition-shadow hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#C9A24B]"
-                >
+            {sponsors.map((sponsor) => {
+              const card = (
+                <>
                   {sponsor.logo && (
                     <img
                       src={assetPath(sponsor.logo)}
@@ -53,12 +50,32 @@ const BusinessSponsors = ({ sponsors = defaultSponsors }: BusinessSponsorsProps)
                       {sponsor.description}
                     </p>
                   )}
-                  <span className="text-[16px] text-[#C9A24B] mt-auto pt-3" id="lato-font">
-                    Visit website
-                  </span>
-                </a>
-              </li>
-            ))}
+                  {sponsor.url && (
+                    <span className="text-[16px] text-[#C9A24B] mt-auto pt-3" id="lato-font">
+                      Visit website
+                    </span>
+                  )}
+                </>
+              )
+
+              return (
+                <li key={sponsor.name}>
+                  {sponsor.url ? (
+                    <a
+                      href={sponsor.url}
+                      target="_blank"
+                      rel="noopener noreferrer sponsored"
+                      aria-label={`${sponsor.name} website (opens in a new tab)`}
+                      className={`${cardClasses} transition-shadow hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#C9A24B]`}
+                    >
+                      {card}
+                    </a>
+                  ) : (
+                    <div className={cardClasses}>{card}</div>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         )}
 

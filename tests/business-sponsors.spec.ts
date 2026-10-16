@@ -40,17 +40,33 @@ test.describe('Homepage Business Sponsors section', () => {
     await expect(page.locator('section#sponsors')).toBeInViewport()
   })
 
-  test('each listed sponsor links to their website in a new tab', async ({ page }) => {
-    test.skip(sponsors.length === 0, 'No business sponsors are listed yet')
+  test('each sponsor with a website links to it in a new tab', async ({ page }) => {
+    const linked = sponsors.filter((sponsor) => sponsor.url)
+    test.skip(linked.length === 0, 'No business sponsors with a website are listed yet')
 
     await page.goto('/')
     const section = page.locator('section#sponsors')
 
-    for (const sponsor of sponsors) {
+    for (const sponsor of linked) {
       const link = section.getByRole('link', { name: new RegExp(`${sponsor.name} website`, 'i') })
       await expect(link).toBeVisible()
-      await expect(link).toHaveAttribute('href', sponsor.url)
+      await expect(link).toHaveAttribute('href', sponsor.url!)
       await expect(link).toHaveAttribute('target', '_blank')
+    }
+  })
+
+  test('a sponsor without a website is listed without a link', async ({ page }) => {
+    const unlinked = sponsors.filter((sponsor) => !sponsor.url)
+    test.skip(unlinked.length === 0, 'Every listed sponsor has a website')
+
+    await page.goto('/')
+    const section = page.locator('section#sponsors')
+
+    for (const sponsor of unlinked) {
+      await expect(section.getByText(sponsor.name, { exact: true })).toBeVisible()
+      await expect(
+        section.getByRole('link', { name: new RegExp(`${sponsor.name} website`, 'i') })
+      ).toHaveCount(0)
     }
   })
 })

@@ -1,10 +1,11 @@
 /**
  * Business sponsors of The Way of Yeshua Ministries.
  *
- * To add a sponsor, add an entry to the array below. Only `name` and `url` are
- * required — a card is rendered with the business name linking to their website.
+ * To add a sponsor, add an entry to the array below. Only `name` is required.
  *
  * Optional fields:
+ *   - `url`: the business website. With one, the whole card links out to it and
+ *     shows a "Visit website" line; without one, the card is plain text.
  *   - `description`: one short line shown under the business name.
  *   - `logo`: path to a logo placed in `public/Images/yeshua/sponsors/`
  *     (for example `/Images/yeshua/sponsors/acme-hardware.png`).
@@ -16,8 +17,8 @@
 export interface Sponsor {
   /** Business name, shown as the card title. */
   name: string
-  /** Full URL to the business website, including https://. */
-  url: string
+  /** Optional full URL to the business website, including https://. */
+  url?: string
   /** Optional one-line description of the business. */
   description?: string
   /** Optional logo path under /public, e.g. '/Images/yeshua/sponsors/acme.png'. */
@@ -43,6 +44,11 @@ export const sponsors: Sponsor[] = [
     url: 'https://projectrebirth.org',
     description: 'A resilience resource for all who serve community and country',
     logo: '/Images/yeshua/sponsors/project-rebirth.png',
+  },
+  {
+    name: 'The G610 Project',
+    description:
+      'G610 is based on Galatians 6:10, an instruction to help the church body. This ministry seeks no formal acknowledgement, but we could not fund several of our missions without them.',
   },
   // Example — copy this shape for each business that gives to the ministry:
   // {

@@ -17,6 +17,10 @@ const sampleSponsors: Sponsor[] = [
     name: 'Desert Bakery',
     url: 'https://www.desertbakery.example',
   },
+  {
+    name: 'Anonymous Benefactor',
+    description: 'A supporter who asked for no acknowledgement',
+  },
 ]
 
 describe('BusinessSponsors component', () => {
@@ -50,6 +54,20 @@ describe('BusinessSponsors component', () => {
     render(<BusinessSponsors sponsors={sampleSponsors} />)
     expect(screen.getByText('Desert Bakery')).toBeInTheDocument()
     expect(screen.queryByAltText('Desert Bakery logo')).not.toBeInTheDocument()
+  })
+
+  it('should render a sponsor without a website as plain text, with no link', () => {
+    render(<BusinessSponsors sponsors={sampleSponsors} />)
+    expect(screen.getByText('Anonymous Benefactor')).toBeInTheDocument()
+    expect(screen.getByText('A supporter who asked for no acknowledgement')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: /Anonymous Benefactor website/i })
+    ).not.toBeInTheDocument()
+  })
+
+  it('should only show "Visit website" on sponsors that have a website', () => {
+    render(<BusinessSponsors sponsors={sampleSponsors} />)
+    expect(screen.getAllByText('Visit website')).toHaveLength(2)
   })
 
   it('should show the become-a-sponsor invitation when there are no sponsors', () => {
