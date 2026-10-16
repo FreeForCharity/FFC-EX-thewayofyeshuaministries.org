@@ -48,7 +48,7 @@ export const sponsors: Sponsor[] = [
   {
     name: 'The G610 Project',
     description:
-      'G610 is based on Galatians 6:10, an instruction to help the church body. This ministry seeks no formal acknowledgement, but we could not fund several of our missions without them.',
+      'G610 is based on Galatians 6:10, an instruction to help the church body. This ministry seeks no formal acknowledgement, but we could not fund several of our missions without them. We thank you.',
   },
   // Example — copy this shape for each business that gives to the ministry:
   // {
