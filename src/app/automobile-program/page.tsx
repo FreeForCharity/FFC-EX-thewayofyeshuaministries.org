@@ -34,6 +34,11 @@ const placedVehicles = [
     alt: 'A recipient standing beside the crossover SUV she received through the Automobile Program',
     position: 'object-center',
   },
+  {
+    src: '/Images/yeshua/automobile-program-trailer.jpg',
+    alt: 'A recipient standing beside the travel trailer she received through the Automobile Program',
+    position: 'object-center',
+  },
 ]
 
 export default function AutomobileProgram() {
@@ -100,18 +105,20 @@ export default function AutomobileProgram() {
               Vehicles we accept
             </h2>
             <p className="text-[16px] text-gray-700 mb-6" id="lato-font">
-              We work with a range of donated vehicles — sedans, hatchbacks, SUVs, minivans, and
-              pickups, running or in need of repair. Below are a few we’ve repaired and/or placed
-              with families in our community. If your car isn’t shown, reach out anyway. We can
-              usually find a way to put it to use.
+              We work with a range of donated vehicles — sedans, hatchbacks, SUVs, minivans,
+              pickups, and travel trailers, running or in need of repair. Below are a few we’ve
+              repaired and/or placed with families in our community. If your vehicle isn’t shown,
+              reach out anyway. We can usually find a way to put it to use.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* flex rather than grid so a trailing partial row centres instead
+                of leaving a gap — the photo count changes as more arrive */}
+            <div className="flex flex-wrap justify-center gap-4">
               {placedVehicles.map((photo) => (
                 <img
                   key={photo.src}
                   src={assetPath(photo.src)}
                   alt={photo.alt}
-                  className={`w-full aspect-[4/3] object-cover ${photo.position} rounded-lg shadow-md`}
+                  className={`w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] aspect-[4/3] object-cover ${photo.position} rounded-lg shadow-md`}
                 />
               ))}
             </div>
