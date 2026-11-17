@@ -480,19 +480,41 @@ jobs:
               complianceFailures.push('No donation capability detected (no Zeffy, PayPal, or other donation provider found). Wire a Zeffy campaign, or set SMOKE_DONATION_SCOPE=none only if this site intentionally takes no donations.');
             }
             // Every surface must be reachable, whatever the provider.
+            //
+            // Checked in a real browser, not via fetch(). Donation hosts sit
+            // behind bot protection that answers a bare request from a CI IP
+            // with 403 even while the page works perfectly for donors — Zeffy
+            // did exactly that, failing this job daily from 2026-10-09 while
+            // the campaign was live and taking money. A fetch 403 therefore
+            // says nothing about whether donors can give. Navigating with a
+            // normal Chrome UA tests what a donor actually experiences, so a
+            // genuinely dead link still fails here.
+            const donationCtx = await browser.newContext({
+              viewport: { width: 1366, height: 900 },
+              ignoreHTTPSErrors: false,
+            }); // no userAgent override: Playwright's default is a real Chrome UA
             for (const s of donationSurfaces) {
               if (s.kind === 'page') { donationChecks.push({ ...s, status: 200 }); continue; }
+              const target = s.url.startsWith('http') ? s.url : 'https:' + s.url;
+              const dpage = await donationCtx.newPage();
+              dpage.setDefaultTimeout(45000);
               try {
-                const r = await fetch(s.url.startsWith('http') ? s.url : 'https:' + s.url, { method: 'GET', redirect: 'follow' });
-                donationChecks.push({ ...s, status: r.status });
-                if (r.status >= 400) {
-                  complianceFailures.push(`${s.provider} donation ${s.kind} unreachable (${r.status}): ${s.url}`);
+                const r = await dpage.goto(target, { waitUntil: 'domcontentloaded' });
+                const st = r ? r.status() : 0;
+                donationChecks.push({ ...s, status: st });
+                if (st === 0) {
+                  complianceFailures.push(`${s.provider} donation ${s.kind} returned no response: ${s.url}`);
+                } else if (st >= 400) {
+                  complianceFailures.push(`${s.provider} donation ${s.kind} unreachable (${st}): ${s.url}`);
                 }
               } catch (e) {
                 donationChecks.push({ ...s, status: 0 });
-                complianceFailures.push(`${s.provider} donation ${s.kind} fetch failed: ${s.url} (${e.message})`);
+                complianceFailures.push(`${s.provider} donation ${s.kind} navigation failed: ${s.url} (${e.message})`);
+              } finally {
+                await dpage.close().catch(() => {});
               }
             }
+            await donationCtx.close().catch(() => {});
             const donationInterim = donationScope === 'ffc-interim' && zeffySurfaces.length > 0;
             // Working-but-non-preferred: real donations flow via PayPal etc.,
             // no Zeffy yet -> tracked for migration, never failed.
